@@ -5,7 +5,6 @@ import nest.data.ArrowType;
 import nest.data.Node;
 import nest.data.NodeType;
 import nest.service.CrudService;
-import nest.service.QueryService;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,7 +29,7 @@ public class TestController {
         }
         for (int i = 0; i < nodes.length; i++) {
             for (int j = i + 1; j < nodes.length; j++) {
-                cs.putArrow(new Arrow(nodes[i].getId(), ArrowType.depending_on, nodes[j].getId()));
+                cs.putArrow(new Arrow(nodes[i].getId(), ArrowType.TYPE, nodes[j].getId()));
             }
         }
         return "success!";
@@ -39,7 +38,7 @@ public class TestController {
     /*
         @RequestMapping("/{id}/sibling")
         public String sibling(@PathVariable Integer id, Model model) {
-            GraphContainer graphSequencer = gs.sibling(id, ArrowType.tagged_by);
+            GraphContainer graphSequencer = gs.sibling(id, ArrowType.TAGGED_BY);
             List<Arrow> arrows = graphSequencer.sliceByRank(0, 2).arrows();
             StringBuilder sb = new StringBuilder();
             arrows.forEach(a -> sb.append(a).append('\n'));
@@ -60,7 +59,7 @@ public class TestController {
 
         @RequestMapping("/{id}/chain")
         public String chain(@PathVariable Integer id, Model model) {
-            GraphContainer graphSequencer = gs.chain(id, ArrowType.tagged_by);
+            GraphContainer graphSequencer = gs.chain(id, ArrowType.TAGGED_BY);
             List<Arrow> arrows = graphSequencer.sliceByDepth(0, 1).arrows();
             StringBuilder sb = new StringBuilder();
             arrows.forEach(a -> sb.append(a).append('\n'));

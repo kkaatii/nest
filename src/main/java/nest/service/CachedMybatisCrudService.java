@@ -45,7 +45,7 @@ public class CachedMybatisCrudService implements CrudService {
         if ((content = node.getContent()) != null) {
             keywordIndexer.anatomize(content).forEach(
                     kw -> putArrow(new Arrow(putNode(new Node(kw, NodeType.SEARCH_KEYWORD)),
-                            ArrowType.keyword_of,
+                            ArrowType.KEYWORD_OF,
                             node))
             );
         }

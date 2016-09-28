@@ -4,10 +4,10 @@ package nest.data;
  * Created by Dun Liu on 5/21/2016.
  */
 public enum ArrowType {
-    parent_of, child_of,
-    tagged_by, tagging,
-    keyword_of, containing_keyword,
-    depending_on, depended_by,
+    PARENT_OF, CHILD_OF,
+    TAGGED_BY, TAGGING,
+    KEYWORD_OF, HAVING_KEYWORD,
+    TYPE, DEPENDED_BY,
 
     unspecified, paired, ;
 

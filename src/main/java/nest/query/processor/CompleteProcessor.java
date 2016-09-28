@@ -21,7 +21,7 @@ public class CompleteProcessor implements Processor {
     }
 
     @Override
-    public GraphContainer execute(Object... args) throws ArgumentClassMismatchException {
+    public GraphContainer process(Object... args) throws ArgumentClassMismatchException {
         try {
             int[] ids = (int[]) args[0];
             ArrowType arrowType = (ArrowType) args[1];

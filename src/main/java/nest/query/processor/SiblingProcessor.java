@@ -18,7 +18,7 @@ public class SiblingProcessor implements Processor {
     }
 
     @Override
-    public GraphContainer execute(Object... args) throws ArgumentClassMismatchException {
+    public GraphContainer process(Object... args) throws ArgumentClassMismatchException {
         try {
             int[] origins = (int[]) args[0];
             if (origins.length == 0) return GraphContainer.emptyInstance();

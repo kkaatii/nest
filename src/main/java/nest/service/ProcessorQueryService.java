@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * The core service as a proxy to process queries.<br>
- * After receiving a query, it will find corresponding <tt>Processor</tt> to execute the query then store returned <tt>GraphContainer</tt>
+ * After receiving a query, it will find corresponding <tt>Processor</tt> to process the query then store returned <tt>GraphContainer</tt>
  * for next query with the same <tt>qid</tt>
  */
 @Service
@@ -30,7 +30,7 @@ public class ProcessorQueryService implements QueryService {
         try {
             String qid = isNewQuery(context) ? generateQid(context.token) : context.qid;
             GraphContainer gc = gcStore.computeIfAbsent(qid,
-                    k -> getProcessor(context.processorName).execute(context.args));
+                    k -> getProcessor(context.processorName).process(context.args));
             return new QueryResult(qid)
                     .withInfo(gc.info())
                     .withSlice(context.sliceParam.applyOn(gc));
