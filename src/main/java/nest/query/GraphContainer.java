@@ -12,7 +12,7 @@ import nest.data.Point;
 import nest.util.Util;
 
 /**
- * The core data object for describing a query. Controllers get <tt>GraphContainer</tt> from <tt>QueryService</tt> and send it to
+ * The core data object for describing a execute. Controllers get <tt>GraphContainer</tt> from <tt>QueryService</tt> and send it to
  * the client side. <p>
  * Supports the following features: <p>
  * + Containing all essential elements: <tt>Point</tt>s, <tt>Arrow</tt>s and <tt>Extension</tt>s <p>
@@ -54,7 +54,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
      * @param points     points to be contained
      * @param arrows     arrows to be contained
      * @param extensions extensions to be contained
-     * @return an <i>"immutable"</i> query as if it is just a applyOn of another query
+     * @return an <i>"immutable"</i> execute as if it is just a applyOn of another execute
      */
     public static GraphContainer fixateWith(final List<Point> points,
                                             final List<Arrow> arrows,

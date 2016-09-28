@@ -22,7 +22,6 @@ public class CachedMybatisCrudService implements CrudService {
     private ExtensionMapper extensionMapper;
     private KeywordIndexer keywordIndexer;
 
-    @Autowired
     public void setMappers(NodeMapper nodeMapper, ArrowMapper arrowMapper, ExtensionMapper extensionMapper) {
         this.nodeMapper = nodeMapper;
         this.arrowMapper = arrowMapper;
@@ -39,7 +38,12 @@ public class CachedMybatisCrudService implements CrudService {
         catalog.cache(id, arrows);
     }
 
-    public CachedMybatisCrudService() {}
+    @Autowired
+    public CachedMybatisCrudService(NodeMapper nodeMapper, ArrowMapper arrowMapper, ExtensionMapper extensionMapper) {
+        this.nodeMapper = nodeMapper;
+        this.arrowMapper = arrowMapper;
+        this.extensionMapper = extensionMapper;
+    }
 
     @Override
     public Node putNode(Node node) {

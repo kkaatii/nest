@@ -3,7 +3,7 @@ package nest.query;
 /**
  * Created by Dun Liu on 5/27/2016.
  */
-public class QueryContext {
+public class Query {
     public String token;
     public String qid;
     public Object[] args;

@@ -1,7 +1,7 @@
 package nest.api;
 
 import nest.data.ArrowType;
-import nest.query.QueryContext;
+import nest.query.Query;
 import nest.query.QueryResult;
 import nest.query.SliceParam;
 import nest.service.QueryService;
@@ -34,12 +34,12 @@ public class QueryApiController {
                              @RequestParam(defaultValue = "true") boolean leftInclusive,
                              @RequestParam(defaultValue = "true") boolean rightInclusive) {
         //if (id.length == 0) return new QueryResult(null, GraphSlice.BLANK);
-        QueryContext qc = new QueryContext();
-        qc.token = token;
-        qc.qid = qid;
-        qc.args = new Object[]{ id, reversed ? arrowType.reverse() : arrowType };
-        qc.processorName = graphView;
-        qc.sliceParam = new SliceParam(sliceMode, leftLimit, rightLimit, leftInclusive, rightInclusive);
-        return queryService.query(qc);
+        Query query = new Query();
+        query.token = token;
+        query.qid = qid;
+        query.args = new Object[]{ id, reversed ? arrowType.reverse() : arrowType };
+        query.processorName = graphView;
+        query.sliceParam = new SliceParam(sliceMode, leftLimit, rightLimit, leftInclusive, rightInclusive);
+        return queryService.execute(query);
     }
 }
