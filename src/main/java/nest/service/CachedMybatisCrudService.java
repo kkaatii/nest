@@ -17,17 +17,23 @@ public class CachedMybatisCrudService implements CrudService {
 
     private final ArrowCacheCatalog catalog = new ArrowCacheCatalog();
 
-    @Autowired
     private NodeMapper nodeMapper;
-
-    @Autowired
     private ArrowMapper arrowMapper;
-
-    @Autowired
     private ExtensionMapper extensionMapper;
+    private KeywordIndexer keywordIndexer;
 
     @Autowired
-    private KeywordIndexer keywordIndexer;
+    public void setMappers(NodeMapper nodeMapper, ArrowMapper arrowMapper, ExtensionMapper extensionMapper) {
+        this.nodeMapper = nodeMapper;
+        this.arrowMapper = arrowMapper;
+        this.extensionMapper = extensionMapper;
+    }
+
+
+    @Autowired
+    public void setKeywordIndexer(KeywordIndexer keywordIndexer) {
+        this.keywordIndexer = keywordIndexer;
+    }
 
     private void precache(Integer id, List<Arrow> arrows) {
         catalog.cache(id, arrows);

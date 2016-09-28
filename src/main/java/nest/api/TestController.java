@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/test")
 public class TestController {
 
-    @Autowired
     private CrudService cs;
+
+    @Autowired
+    public TestController(CrudService cs) {
+        this.cs = cs;
+    }
 
     @RequestMapping("/setup")
     public

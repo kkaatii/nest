@@ -14,8 +14,12 @@ import static nest.query.SliceParam.DO_NOT_SLICE;
 @RequestMapping("/api/query")
 public class QueryApiController {
 
-    @Autowired
     private QueryService queryService;
+
+    @Autowired
+    public QueryApiController(QueryService queryService) {
+        this.queryService = queryService;
+    }
 
     @RequestMapping(value = "/{graphView}/{id}", method = RequestMethod.GET)
     public QueryResult query(@PathVariable String graphView,

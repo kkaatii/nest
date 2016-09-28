@@ -22,8 +22,12 @@ public class ProcessorQueryService implements QueryService {
     private final Map<String, GraphContainer> gcStore = new HashMap<>();
     private final Map<String, Processor> procMap = new HashMap<>();
 
-    @Autowired
     private CrudService crudService;
+
+    @Autowired
+    public ProcessorQueryService(CrudService crudService) {
+        this.crudService = crudService;
+    }
 
     @Override
     public QueryResult query(QueryContext context) {
