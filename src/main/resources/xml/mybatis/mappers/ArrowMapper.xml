@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="nest.data.persistence.ArrowMapper">
+
+  <resultMap type="arrow" id="arrowResultMap">
+    <id property="id" column="id" />
+    <result property="origin" column="origin" />
+    <result property="target" column="target" />
+    <result property="type" column="type" />
+    <result property="extension" column="extension" />
+  </resultMap>
+
+  <select id="selectOne" resultMap="arrowResultMap">
+    select
+      *
+    from nest.arrow where id = #{id}
+  </select>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+  	insert into nest.arrow (origin,target,type,extension)
+  	values (#{origin},#{target},#{type},#{extension})
+  </insert>
+
+  <select id="selectByOrigin" resultMap="arrowResultMap">
+    select 
+      *
+    from nest.arrow where origin = #{origin}
+  </select>
+
+  <select id="selectAll" resultMap="arrowResultMap">
+    select
+      *
+    from nest.arrow
+  </select>
+
+  <select id="originIdSet" resultType="int">
+    select
+      origin
+    from nest.arrow
+  </select>
+
+  <select id="neighborIdSet" resultType="int">
+    select 
+      target
+    from nest.arrow where origin = #{origin} and type = #{type}
+  </select>
+
+  <delete id="delete">
+    delete from nest.arrow
+    where id = #{id}
+  </delete>
+
+  <delete id="deleteSimilar">
+    delete from nest.arrow
+    where origin = #{origin} and target = #{target} and type = #{type}
+  </delete>
+
+  <delete id="deleteByPoint">
+    delete from nest.arrow
+    where origin = #{id} or target = #{id}
+  </delete>
+
+</mapper>
