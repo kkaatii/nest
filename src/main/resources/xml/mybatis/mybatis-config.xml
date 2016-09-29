@@ -5,7 +5,7 @@
 <configuration>
 
     <typeAliases>
-  		<package name="nest.data"/>
+  		<package name="photon.data"/>
 	</typeAliases>
 
     <environments default="development">

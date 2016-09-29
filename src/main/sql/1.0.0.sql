@@ -1,6 +1,6 @@
-CREATE SCHEMA `nest` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_bin;
+CREATE SCHEMA `photon` DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_bin;
 
-CREATE TABLE `nest`.`node` (
+CREATE TABLE `photon`.`node` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(100) NULL ,
   `type` VARCHAR(20) NULL ,
@@ -10,7 +10,7 @@ CREATE TABLE `nest`.`node` (
   `content` TEXT NULL ,
   PRIMARY KEY (`id`) );
   
-CREATE TABLE `nest`.`arrow` (
+CREATE TABLE `photon`.`arrow` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `origin` INT NOT NULL ,
   `target` INT NOT NULL ,
@@ -18,7 +18,7 @@ CREATE TABLE `nest`.`arrow` (
   `extension` INT NULL ,
   PRIMARY KEY (`id`) );
     
-CREATE TABLE `nest`.`extension` (
+CREATE TABLE `photon`.`extension` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `code` TEXT NULL ,
   PRIMARY KEY (`id`) );

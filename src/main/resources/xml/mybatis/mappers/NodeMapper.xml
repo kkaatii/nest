@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="nest.data.persistence.NodeMapper">
+<mapper namespace="photon.data.persistence.NodeMapper">
 
   <resultMap type="point" id="pointRM">
     <id property="id" column="id" />
@@ -31,7 +31,7 @@
       state ,
       digest ,
       timestamp
-    from nest.node where id = #{id}
+    from photon.node where id = #{id}
   </select>
   
   <select id="preselectMany" resultMap="pointRM">
@@ -42,7 +42,7 @@
       state ,
       digest ,
       timestamp 
-    from nest.node where id in (
+    from photon.node where id in (
       <foreach item="id" index="index" collection="ids" separator="," >
         #{id}
       </foreach>
@@ -58,7 +58,7 @@
       digest ,
       content ,
       timestamp
-    from nest.node where id = #{id}
+    from photon.node where id = #{id}
   </select>
    
   <select id="preselectByState" resultMap="pointRM">
@@ -69,7 +69,7 @@
       state ,
       digest ,
       timestamp
-    from nest.node where state = #{state}
+    from photon.node where state = #{state}
   </select>
 
   <select id="preselectMap" resultMap="pointRM">
@@ -80,7 +80,7 @@
     state ,
     digest ,
     timestamp
-    from nest.node where id in (
+    from photon.node where id in (
     <foreach item="id" index="index" collection="ids" separator="," >
       #{id}
     </foreach>
@@ -88,7 +88,7 @@
   </select>
    
   <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-  	insert into nest.node (id,name,type,digest,state,content,timestamp)
+  	insert into photon.node (id,name,type,digest,state,content,timestamp)
   	values (#{id},#{name},#{type},#{digest},#{state},#{content},#{timestamp}) on duplicate key update
       name = values(name) ,
       type = values(type) ,
@@ -98,13 +98,13 @@
   </insert>
   
   <update id="changeState">
-    update nest.node set
+    update photon.node set
       state = #{state}
     where id = #{id}
   </update>
   
   <delete id="delete">
-    delete from nest.node
+    delete from photon.node
     where id = #{id}
   </delete>
   

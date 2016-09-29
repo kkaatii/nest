@@ -7,7 +7,7 @@
 	</configSuffixes>
 	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
-		<config>java:nest.Application</config>
+		<config>java:photon.Application</config>
 	</configs>
 	<autoconfigs>
 	</autoconfigs>
