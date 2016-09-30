@@ -14,7 +14,7 @@ public interface CrudService {
     // Save/update a node into db
     Node putNode(Node n);
 
-    // Retrieve a node by its id of db
+    // Retrieve a node by its qid of db
     Node getNode(int id);
 
     Point getPoint(int id);
@@ -26,7 +26,7 @@ public interface CrudService {
     // Change the state of a node
     void updateNodeState(int id, NodeState ns);
 
-    // Delete a node by its id
+    // Delete a node by its qid
     void deleteNode(int id);
 
     // Draw an arrow between two nodes

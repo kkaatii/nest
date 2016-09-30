@@ -4,5 +4,7 @@ import photon.query.Query;
 import photon.query.QueryResult;
 
 public interface QueryService {
-    QueryResult execute(Query query);
+
+    QueryResult execute(Query q);
+
 }

@@ -40,9 +40,9 @@ public class TestController {
     }
 
     /*
-        @RequestMapping("/{id}/sibling")
-        public String sibling(@PathVariable Integer id, Model model) {
-            GraphContainer graphSequencer = gs.sibling(id, ArrowType.TAGGED_BY);
+        @RequestMapping("/{qid}/sibling")
+        public String sibling(@PathVariable Integer qid, Model model) {
+            GraphContainer graphSequencer = gs.sibling(qid, ArrowType.TAGGED_BY);
             List<Arrow> arrows = graphSequencer.sliceByRank(0, 2).arrows();
             StringBuilder sb = new StringBuilder();
             arrows.forEach(a -> sb.append(a).append('\n'));
@@ -50,9 +50,9 @@ public class TestController {
             return "test";
         }
 
-        @RequestMapping("/{id}/radiant")
-        public String radiant(@PathVariable Integer id, Model model) {
-            GraphContainer graphSequencer = gs.radiant(id, ArrowType.unspecified);
+        @RequestMapping("/{qid}/radiant")
+        public String radiant(@PathVariable Integer qid, Model model) {
+            GraphContainer graphSequencer = gs.radiant(qid, ArrowType.unspecified);
             List<Arrow> arrows = graphSequencer.sliceByRank(0, 0).arrows();
             StringBuilder sb = new StringBuilder();
             arrows.forEach(a -> sb.append(a).append('\n'));
@@ -61,9 +61,9 @@ public class TestController {
             return "test";
         }
 
-        @RequestMapping("/{id}/chain")
-        public String chain(@PathVariable Integer id, Model model) {
-            GraphContainer graphSequencer = gs.chain(id, ArrowType.TAGGED_BY);
+        @RequestMapping("/{qid}/chain")
+        public String chain(@PathVariable Integer qid, Model model) {
+            GraphContainer graphSequencer = gs.chain(qid, ArrowType.TAGGED_BY);
             List<Arrow> arrows = graphSequencer.sliceByDepth(0, 1).arrows();
             StringBuilder sb = new StringBuilder();
             arrows.forEach(a -> sb.append(a).append('\n'));
@@ -72,9 +72,9 @@ public class TestController {
         }
 
         @RequestMapping("/testactivate")
-        public String testactivate(@RequestParam(value = "id") Integer id, Model model) {
-            cs.updateNodeState(id, NodeState.ACTIVE);
-            model.addAttribute("name", cs.getNode(id).getName());
+        public String testactivate(@RequestParam(value = "qid") Integer qid, Model model) {
+            cs.updateNodeState(qid, NodeState.ACTIVE);
+            model.addAttribute("name", cs.getNode(qid).getName());
             return "edit";
         }
     */

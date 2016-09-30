@@ -4,12 +4,12 @@ package photon.query;
  * Created by Dun Liu on 5/28/2016.
  */
 public class QueryResult {
-    private String qid;
+    private Query query;
     private GraphInfo info;
     private GraphSlice slice;
 
-    public QueryResult(String qid) {
-        this.qid = qid;
+    public QueryResult(Query query) {
+        this.query = query;
     }
 
     public QueryResult withInfo(GraphInfo graphInfo) {
@@ -22,8 +22,8 @@ public class QueryResult {
         return this;
     }
 
-    public String getQid() {
-        return qid;
+    public Query getQuery() {
+        return query;
     }
 
     public GraphInfo getInfo() {

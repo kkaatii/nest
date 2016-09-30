@@ -101,7 +101,7 @@ public class SimpleGraphQueryService {
         }
 
         Map<Integer, Point> pointMap = crudService.getPointMap(nodeIdToDepth.keySet());
-        pointMap.forEach((id, point) -> graphSequencer.add(point, nodeIdToDepth.get(id)));
+        pointMap.forEach((qid, point) -> graphSequencer.add(point, nodeIdToDepth.get(qid)));
         graphSequencer.addExtension(crudService.getExtensions(extIdSet));
         return graphSequencer.organize();
     }
