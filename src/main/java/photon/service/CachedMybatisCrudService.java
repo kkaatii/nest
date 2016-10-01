@@ -22,13 +22,6 @@ public class CachedMybatisCrudService implements CrudService {
     private ExtensionMapper extensionMapper;
     private KeywordIndexer keywordIndexer;
 
-    public void setMappers(NodeMapper nodeMapper, ArrowMapper arrowMapper, ExtensionMapper extensionMapper) {
-        this.nodeMapper = nodeMapper;
-        this.arrowMapper = arrowMapper;
-        this.extensionMapper = extensionMapper;
-    }
-
-
     @Autowired
     public void setKeywordIndexer(KeywordIndexer keywordIndexer) {
         this.keywordIndexer = keywordIndexer;
@@ -47,11 +40,11 @@ public class CachedMybatisCrudService implements CrudService {
 
     @Override
     public Node putNode(Node node) {
-        node.setDigest(Digest.digest(node.getContent()));
+        Digest.digest(node);
         nodeMapper.insert(node);
-        String content;
 
         // Create index for search
+        String content;
         if ((content = node.getContent()) != null) {
             keywordIndexer.anatomize(content).forEach(
                     kw -> putArrow(new Arrow(putNode(new Node(kw, NodeType.SEARCH_KEYWORD)),

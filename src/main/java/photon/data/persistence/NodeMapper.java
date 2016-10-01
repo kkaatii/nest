@@ -22,10 +22,10 @@ public interface NodeMapper {
 
     void delete(Integer id);
 
-    void changeState(@Param("qid") Integer id, @Param("state") NodeState state);
+    void changeState(@Param("id") Integer id, @Param("state") NodeState state);
 
     List<Point> preselectByState(NodeState state);
 
-    @MapKey("qid")
+    @MapKey("id")
     Map<Integer, Point> preselectMap(@Param("ids") Iterable<Integer> ids);
 }

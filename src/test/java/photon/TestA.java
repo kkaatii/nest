@@ -77,7 +77,7 @@ public class TestA {
         for (int i = 0; i < TESTTIMES; i++) {
             for (int j = i + 1; j < TESTTIMES; j++) {
                 if ((j + i) % 2 == 0)
-                    g.addArrow(new Arrow(points[i].getId(), ArrowType.paired, points[j].getId()));
+                    g.addArrow(new Arrow(points[i].getId(), ArrowType.PAIRED, points[j].getId()));
             }
         }
 
@@ -148,5 +148,8 @@ public class TestA {
 	public static void main(String[] args) {
         int i = Integer.MIN_VALUE;
         System.out.println(i);
+        System.out.print((int) 2.3);
+        System.out.print((int) 2.0);
+        System.out.print((int)2.5);
     }
 }

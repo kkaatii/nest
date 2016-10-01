@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- *  The <tt>NQueue</tt> class represents a first-in-first-out (FIFO)
+ *  The <tt>EQueue</tt> class represents a first-in-first-out (FIFO)
  *  queue of generic items.
  *  It supports the usual <em>enqueue</em> and <em>dequeue</em>
  *  operations, along fixateWith methods for peeking at the first item,
@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
  *
  *  @param <Item> the generic type of an item in this queue
  */
-public class NQueue<Item> implements Iterable<Item> {
+public class EQueue<Item> implements Iterable<Item> {
     private Node<Item> first;    // beginning of queue
     private Node<Item> last;     // end of queue
     private int N;               // number of elements on queue
@@ -39,7 +39,7 @@ public class NQueue<Item> implements Iterable<Item> {
     /**
      * Initializes an emptyInstance queue.
      */
-    public NQueue() {
+    public EQueue() {
         first = null;
         last = null;
         N = 0;
@@ -70,7 +70,7 @@ public class NQueue<Item> implements Iterable<Item> {
      * @throws NoSuchElementException if this queue is emptyInstance
      */
     public Item peek() {
-        if (isEmpty()) throw new NoSuchElementException("NQueue underflow");
+        if (isEmpty()) throw new NoSuchElementException("EQueue underflow");
         return first.item;
     }
 
@@ -96,7 +96,7 @@ public class NQueue<Item> implements Iterable<Item> {
      * @throws NoSuchElementException if this queue is emptyInstance
      */
     public Item dequeue() {
-        if (isEmpty()) throw new NoSuchElementException("NQueue underflow");
+        if (isEmpty()) throw new NoSuchElementException("EQueue underflow");
         Item item = first.item;
         first = first.next;
         N--;

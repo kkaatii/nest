@@ -57,7 +57,7 @@ public class ProcessorBasedQueryService implements QueryService {
     }
 
     private static String completeProcessorName(String name) {
-        return String.format("photon.execute.processor.%sProcessor", WordUtils.capitalizeFully(name));
+        return String.format("photon.query.processor.%sProcessor", WordUtils.capitalizeFully(name));
     }
 
     /*

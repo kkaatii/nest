@@ -29,7 +29,7 @@ public class CompleteProcessor implements Processor {
             Arrow tmp;
             for (int i = 0; i < ids.length; i++) {
                 for (int j = i + 1; j < ids.length; j++) {
-                    if (arrowType == ArrowType.unspecified)
+                    if (arrowType == ArrowType.UNSPECIFIED)
                         arrows.addAll(crudService.getAllArrowsBetween(ids[i], ids[j]));
                     else if ((tmp = crudService.getArrow(ids[i], arrowType, ids[j])) != null)
                         arrows.add(tmp);

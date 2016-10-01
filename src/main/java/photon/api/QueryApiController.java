@@ -25,7 +25,7 @@ public class QueryApiController {
     @RequestMapping(value = "/{graphView}/{id}", method = RequestMethod.GET)
     public QueryResult query(@PathVariable String graphView,
                              @PathVariable int[] id,
-                             @RequestParam(defaultValue = "unspecified") ArrowType arrowType,
+                             @RequestParam(defaultValue = "UNSPECIFIED") ArrowType arrowType,
                              @RequestParam(defaultValue = "false") boolean reversed,
                              @RequestParam(defaultValue = DO_NOT_SLICE) String sliceMode,
                              @RequestParam(defaultValue = "0") int leftLimit,

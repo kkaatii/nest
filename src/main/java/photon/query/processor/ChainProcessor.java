@@ -6,7 +6,7 @@ import photon.data.Point;
 import photon.query.ArgumentClassMismatchException;
 import photon.query.GraphContainer;
 import photon.service.CrudService;
-import photon.util.NQueue;
+import photon.util.EQueue;
 
 import java.util.*;
 
@@ -29,7 +29,7 @@ public class ChainProcessor implements Processor {
             int[] origins = (int[]) args[0];
             ArrowType at = (ArrowType) args[1];
 
-            NQueue<Integer> queue = new NQueue<>();
+            EQueue<Integer> queue = new EQueue<>();
             Set<Integer> extIdSet = new HashSet<>();
             Set<Arrow> arrowSet = new HashSet<>();
             Map<Integer, Integer> nodeIdToDepth = new HashMap<>();

@@ -74,7 +74,7 @@ public class SimpleGraphQueryService {
 
     
     public GraphContainer chain(int origin, ArrowType at) {
-        NQueue<Integer> queue = new NQueue<>();
+        EQueue<Integer> queue = new EQueue<>();
         Set<Integer> extIdSet = new HashSet<>();
         Map<Integer, Integer> nodeIdToDepth = new HashMap<>();
         GraphContainer graphSequencer = new GraphContainer();

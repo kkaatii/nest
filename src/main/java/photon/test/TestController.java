@@ -1,5 +1,6 @@
-package photon.api;
+package photon.test;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import photon.data.Arrow;
 import photon.data.ArrowType;
 import photon.data.Node;
@@ -16,27 +17,40 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class TestController {
 
     private CrudService cs;
+    private TestSetGenerator tsg;
 
     @Autowired
     public TestController(CrudService cs) {
         this.cs = cs;
     }
 
+    @Autowired
+    public void setTestSetGenerator(TestSetGenerator tsg) {this.tsg = tsg;}
+
     @RequestMapping("/setup")
     public
     @ResponseBody
-    String setup(Model model) {
-        Node[] nodes = new Node[100];
-        for (int i = 0; i < nodes.length; i++) {
-            nodes[i] = new Node("Node" + i, NodeType.NODE);
-            cs.putNode(nodes[i]);
-        }
-        for (int i = 0; i < nodes.length; i++) {
-            for (int j = i + 1; j < nodes.length; j++) {
-                cs.putArrow(new Arrow(nodes[i].getId(), ArrowType.TYPE, nodes[j].getId()));
+    String setup(@RequestParam(required = false) Integer depth, @RequestParam(required = false) Integer startId, Model model) {
+        if (depth == null) {
+            Node[] nodes = new Node[100];
+            for (int i = 0; i < nodes.length; i++) {
+                nodes[i] = new Node("Node" + i, NodeType.NODE);
+                cs.putNode(nodes[i]);
             }
+            for (int i = 0; i < nodes.length; i++) {
+                for (int j = i + 1; j < nodes.length; j++) {
+                    cs.putArrow(new Arrow(nodes[i].getId(), ArrowType.TYPE, nodes[j].getId()));
+                }
+            }
+            return "Success!";
         }
-        return "success!";
+
+        TestSetGenerator tsg = TestSetGenerator.buildDefault(depth, (startId == null) ? 1 : startId);
+        assert tsg != null;
+        tsg.nodes.forEach(node -> cs.putNode(node));
+        tsg.arrows.forEach(arrow -> cs.putArrow(arrow));
+
+        return "Success";
     }
 
     /*
@@ -52,7 +66,7 @@ public class TestController {
 
         @RequestMapping("/{qid}/radiant")
         public String radiant(@PathVariable Integer qid, Model model) {
-            GraphContainer graphSequencer = gs.radiant(qid, ArrowType.unspecified);
+            GraphContainer graphSequencer = gs.radiant(qid, ArrowType.UNSPECIFIED);
             List<Arrow> arrows = graphSequencer.sliceByRank(0, 0).arrows();
             StringBuilder sb = new StringBuilder();
             arrows.forEach(a -> sb.append(a).append('\n'));
