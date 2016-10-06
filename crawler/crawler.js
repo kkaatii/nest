@@ -28,7 +28,6 @@ function getRecommendedArticleList(pageNum, cb) {
         for (var i = 0; i < 12; i++) {
             articleUrls[i] = {urlNumber: res[i * 3].substr(3, 7), dest: dest[i].substr(dest[i].length - 17, 12)};
         }
-        ;
         async.each(articleUrls, getArticle, function (err) {
             console.log('err: ' + err);
             self.error = err;
@@ -41,7 +40,7 @@ function getRecommendedArticleList(pageNum, cb) {
 
 function getArticle(articleInfo, cb) {
     var url = "http://www.mafengwo.cn/i/" + articleInfo.urlNumber + ".html";
-    var self = this, dat;
+    var self = this, data;
     request({
         url: url,
         headers: {
@@ -63,7 +62,8 @@ function getArticle(articleInfo, cb) {
                 "Title": title,
                 "ImageUrls": imageUrls,
                 "Destination": dest
-            }
+            },
+            ReturnConsumedCapacity: 'INDEXES'
         };
 
         docClient.put(params, function(err, data) {
@@ -72,7 +72,7 @@ function getArticle(articleInfo, cb) {
             } else {
                 console.log("PutItem succeeded:", title);
                 console.log("data");
-                self.dat = data;
+                self.data = data;
             }
         });
     });
