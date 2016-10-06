@@ -7,6 +7,7 @@ import photon.data.Arrow;
 import photon.data.ArrowType;
 import photon.data.Extension;
 import photon.data.Node;
+import photon.util.BinTree;
 import photon.util.EQueue;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * Created by Dun Liu on 9/30/2016.
+ * Manual testing.
  */
 
 @Component
@@ -65,79 +66,67 @@ public class TestSetGenerator {
         if (depth <= 0) return null;
 
         TestSetGenerator tsg = new TestSetGenerator();
-  /*      ArrowType[] arrTypes = ArrowType.values();
-        int arrTypeCount = arrTypes.length;
-        Set<ArrowType> testedArrTypes = new HashSet<>();
-        int uArrTypeCount = Arrays.stream(arrTypes).mapToInt(at -> {
-            if (testedArrTypes.add(at)) {
-                testedArrTypes.add(at.reverse());
-                return 1;
-            } else return 0;
-        }).sum();
-*/
-        Tree tree = Tree.createFibTree(depth, startId);
-
+        FibTree tree = FibTree.createFibTree(depth, startId);
         traverseTree(tree, tsg.nodes, tsg.arrows);
 
         return tsg;
     }
 
-    private static void traverseTree(Tree tree, Collection<Node> nodes, Collection<Arrow> arrows) {
+    private static void traverseTree(BinTree tree, Collection<Node> nodes, Collection<Arrow> arrows) {
         if (tree == null) return;
 
-        Node n = new Node("Node #" + String.valueOf(tree.id));
-        n.setId(tree.id);
+        Node n = new Node("Node #" + String.valueOf(tree.getId()));
+        n.setId(tree.getId());
         nodes.add(n);
 
-        if (tree.left == null) return;
+        if (tree.getLeft() == null) return;
 
-        Arrow al = new Arrow(n.getId(), ArrowType.PARENT_OF, tree.left.id);
+        Arrow al = new Arrow(n.getId(), ArrowType.PARENT_OF, tree.getLeft().getId());
 
-        if (tree.spawning) {
-            Arrow ar = new Arrow(n.getId(), ArrowType.PARENT_OF, tree.right.id);
+        if (tree.getRight() != null) {
+            Arrow ar = new Arrow(n.getId(), ArrowType.PARENT_OF, tree.getRight().getId());
             arrows.add(ar);
-            traverseTree(tree.right, nodes, arrows);
+            traverseTree(tree.getRight(), nodes, arrows);
         }
 
         arrows.add(al);
-        traverseTree(tree.left, nodes, arrows);
+        traverseTree(tree.getLeft(), nodes, arrows);
 
     }
 
-    private static class Tree {
+    private static class FibTree extends BinTree {
         boolean spawning = false;
-        Tree left = null, right = null;
         int id;
 
-        Tree(int id, boolean b) {
+        FibTree(int id, boolean b) {
             this.id = id;
             spawning = b;
         }
 
-        public static Tree createFibTree(int depth, int startId) {
+        static FibTree createFibTree(int depth, int startId) {
             if (depth <= 0) return null;
-            Tree root = new Tree(startId, false);
-            EQueue<Tree> q = new EQueue<>();
+            FibTree root = new FibTree(startId, false);
+            EQueue<BinTree> q = new EQueue<>();
             q.enqueue(root);
-            Map<Tree, Integer> depthMap = new HashMap<>();
+            Map<BinTree, Integer> depthMap = new HashMap<>();
             depthMap.put(root, depth);
             int id = startId, d;
 
             while (!q.isEmpty()) {
-                Tree tree = q.dequeue();
-                d = depthMap.get(tree);
+                FibTree fibTree = (FibTree) q.dequeue();
+                d = depthMap.get(fibTree);
                 if (d > 0) {
-                    if (tree.spawning) {
-                        tree.left = new Tree(++id, false);
-                        tree.right = new Tree(++id, true);
-                        q.enqueue(tree.left);
-                        q.enqueue(tree.right);
-                        depthMap.put(tree.left, d - 1);
-                        depthMap.put(tree.right, d - 1);
+                    if (fibTree.spawning) {
+                        fibTree.left = new FibTree(++id, false);
+                        fibTree.right = new FibTree(++id, true);
+                        q.enqueue(fibTree.left);
+                        q.enqueue(fibTree.right);
+                        depthMap.put(fibTree.left, d - 1);
+                        depthMap.put(fibTree.right, d - 1);
                     } else {
-                        tree.left = new Tree(++id, true);
-                        q.enqueue(tree.left);
-                        depthMap.put(tree.left, d - 1);
+                        fibTree.left = new FibTree(++id, true);
+                        q.enqueue(fibTree.left);
+                        depthMap.put(fibTree.left, d - 1);
                     }
                 }
             }
