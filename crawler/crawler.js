@@ -14,7 +14,7 @@ AWS.config.update({
 var docClient = new AWS.DynamoDB.DocumentClient();
 
 function getRecommendedArticleList(pageNum, cb) {
-    var self=this, error;
+    var self = this, error;
     request({
         url: "http://www.mafengwo.cn/ajax/ajax_fetch_pagelet.php?api=%3Amfw%3Apagelet%3ArecommendGinfoApi" +
         "&params=%7B%22type%22%3A0%2C%22objid%22%3A0%2C%22page%22%3A" + pageNum + "%2C%22ajax%22%3A1%2C%22retina%22%3A0%7D",
@@ -30,7 +30,7 @@ function getRecommendedArticleList(pageNum, cb) {
         }
         async.each(articleUrls, getArticle, function (err) {
             if (err)
-            console.log('err: ' + err);
+                console.log('err: ' + err);
             self.error = err;
         });
     });
@@ -65,15 +65,17 @@ function getArticle(articleInfo, cb) {
                 "ImageUrls": imageUrls,
                 "Destination": dest
             },
-            ReturnConsumedCapacity: 'INDEXES'
+            ReturnItemCollectionMetrics: 'SIZE'
         };
 
-        docClient.put(params, function(err, data) {
+        docClient.put(params, function (err, data) {
             if (err) {
                 console.error("Unable to add article", title);
             } else {
                 console.log("PutItem succeeded:", title);
                 console.log(data);
+                if (data.ItemCollectionMetrics.SizeEstimateRangeGB<4)
+                    cb(data.ItemCollectionMetrics.SizeEstimateRangeGB);
             }
         });
     });
@@ -82,23 +84,22 @@ function getArticle(articleInfo, cb) {
 
 !function (pageList) {
     async.each(pageList, getRecommendedArticleList, function (err) {
-        console.log('err: ' + err);
     });
 }([1]);
 
 /*
-var delay = 600000;
+ var delay = 600000;
 
-async.forever(function(cb) {
-    request({
+ async.forever(function(cb) {
+ request({
 
-    }, function (error, response, data) {
-       if (true) {
-           crawl([1]);
-       }
-       setTimeout(function() { cb(); }, delay);
-    });
-});
-*/
+ }, function (error, response, data) {
+ if (true) {
+ crawl([1]);
+ }
+ setTimeout(function() { cb(); }, delay);
+ });
+ });
+ */
 
 
