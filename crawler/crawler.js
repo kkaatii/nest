@@ -40,7 +40,7 @@ function getRecommendedArticleList(pageNum, cb) {
 
 function getArticle(articleInfo, cb) {
     var url = "http://www.mafengwo.cn/i/" + articleInfo.urlNumber + ".html";
-    var self = this, data;
+    var self = this, data = {};
     request({
         url: url,
         headers: {
