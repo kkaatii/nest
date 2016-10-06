@@ -3,24 +3,24 @@ package photon.util;
 /**
  * Created by dan on 10/6/16.
  */
-public class BinTree {
+public class BinaryTree {
 
-    protected BinTree left = null, right = null;
+    protected BinaryTree left = null, right = null;
     private int id;
 
-    public BinTree getLeft() {
+    public BinaryTree getLeft() {
         return left;
     }
 
-    public void setLeft(BinTree left) {
+    public void setLeft(BinaryTree left) {
         this.left = left;
     }
 
-    public BinTree getRight() {
+    public BinaryTree getRight() {
         return right;
     }
 
-    public void setRight(BinTree right) {
+    public void setRight(BinaryTree right) {
         this.right = right;
     }
 

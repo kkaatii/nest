@@ -18,7 +18,7 @@ public class ArrowApiController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public List<Arrow> get(@PathVariable int[] id) {
         if (id.length != 2) {
-            throw new WrongRequestFormatException("An arrow must have 2 ends!");
+            throw new BadRequestException("An arrow must have 2 ends!");
         }
         return crudService.getAllArrowsBetween(id[0], id[1]);
     }

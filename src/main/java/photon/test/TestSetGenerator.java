@@ -7,7 +7,7 @@ import photon.data.Arrow;
 import photon.data.ArrowType;
 import photon.data.Extension;
 import photon.data.Node;
-import photon.util.BinTree;
+import photon.util.BinaryTree;
 import photon.util.EQueue;
 
 import java.io.IOException;
@@ -72,7 +72,7 @@ public class TestSetGenerator {
         return tsg;
     }
 
-    private static void traverseTree(BinTree tree, Collection<Node> nodes, Collection<Arrow> arrows) {
+    private static void traverseTree(BinaryTree tree, Collection<Node> nodes, Collection<Arrow> arrows) {
         if (tree == null) return;
 
         Node n = new Node("Node #" + String.valueOf(tree.getId()));
@@ -94,7 +94,7 @@ public class TestSetGenerator {
 
     }
 
-    private static class FibTree extends BinTree {
+    private static class FibTree extends BinaryTree {
         boolean spawning = false;
         int id;
 
@@ -106,9 +106,9 @@ public class TestSetGenerator {
         static FibTree createFibTree(int depth, int startId) {
             if (depth <= 0) return null;
             FibTree root = new FibTree(startId, false);
-            EQueue<BinTree> q = new EQueue<>();
+            EQueue<BinaryTree> q = new EQueue<>();
             q.enqueue(root);
-            Map<BinTree, Integer> depthMap = new HashMap<>();
+            Map<BinaryTree, Integer> depthMap = new HashMap<>();
             depthMap.put(root, depth);
             int id = startId, d;
 
