@@ -65,7 +65,8 @@ function getArticle(articleInfo, cb) {
                 "ImageUrls": imageUrls,
                 "Destination": dest
             },
-            ReturnItemCollectionMetrics: 'SIZE'
+            ReturnItemCollectionMetrics: 'SIZE',
+            ReturnConsumedCapacity: 'INDEXES'
         };
 
         docClient.put(params, function (err, data) {
@@ -74,7 +75,7 @@ function getArticle(articleInfo, cb) {
             } else {
                 console.log("PutItem succeeded:", title);
                 console.log(data);
-                if (data.ItemCollectionMetrics.SizeEstimateRangeGB<4)
+                if (data.ItemCollectionMetrics.SizeEstimateRangeGB && data.ItemCollectionMetrics.SizeEstimateRangeGB<4)
                     cb(data.ItemCollectionMetrics.SizeEstimateRangeGB);
             }
         });
