@@ -41,7 +41,7 @@ function getRecommendedArticleList(pageNum, cb) {
 
 function getArticle(articleInfo, cb) {
     var url = "http://www.mafengwo.cn/i/" + articleInfo.urlNumber + ".html";
-    var self = this, data;
+    var self = this, dat;
     request({
         url: url,
         headers: {
@@ -72,7 +72,7 @@ function getArticle(articleInfo, cb) {
             } else {
                 console.log("PutItem succeeded:", title);
                 console.log("data");
-                self.data = data;
+                self.dat = data;
             }
         });
     });
