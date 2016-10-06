@@ -29,6 +29,7 @@ function getRecommendedArticleList(pageNum, cb) {
             articleUrls[i] = {urlNumber: res[i * 3].substr(3, 7), dest: dest[i].substr(dest[i].length - 17, 12)};
         }
         async.each(articleUrls, getArticle, function (err) {
+            if (err)
             console.log('err: ' + err);
             self.error = err;
         });
@@ -72,7 +73,7 @@ function getArticle(articleInfo, cb) {
                 console.error("Unable to add article", title);
             } else {
                 console.log("PutItem succeeded:", title);
-                console.log("data");
+                console.log(data);
             }
         });
     });
