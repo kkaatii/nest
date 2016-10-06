@@ -20,9 +20,9 @@ import java.util.*;
 
 @Component
 public class TestSetGenerator {
-    final Collection<Node> nodes;
-    final Collection<Arrow> arrows;
-    final Collection<Extension> extensions;
+    private final Collection<Node> nodes;
+    private final Collection<Arrow> arrows;
+    private final Collection<Extension> extensions;
 
     public Collection<Node> getNodes() {
         return nodes;
@@ -36,9 +36,9 @@ public class TestSetGenerator {
         return extensions;
     }
 
-    static final double SQRT_5 = Math.sqrt(5);
-    static final double LGR = (SQRT_5 + 1) / 2;
-    static final double SGR = (1 - SQRT_5) / 2;
+    private static final double SQRT_5 = Math.sqrt(5);
+    private static final double LGR = (SQRT_5 + 1) / 2;
+    private static final double SGR = (1 - SQRT_5) / 2;
 
     private TestSetGenerator() {
         nodes = new ArrayList<>();
@@ -129,6 +129,7 @@ public class TestSetGenerator {
                         depthMap.put(fibTree.left, d - 1);
                     }
                 }
+
             }
             return root;
         }
