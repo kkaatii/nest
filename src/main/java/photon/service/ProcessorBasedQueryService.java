@@ -13,8 +13,8 @@ import java.util.Map;
 
 /**
  * The core service as a proxy to process queries.<br>
- * After receiving a execute, it will find corresponding <tt>Processor</tt> to process the execute then store returned <tt>GraphContainer</tt>
- * for next execute with the same <tt>Query</tt>
+ * After receiving a <tt>Query</tt>, it will find corresponding <tt>Processor</tt> to process it and cache the result <tt>GraphContainer</tt>
+ * for the same query in the future.
  */
 
 @Service

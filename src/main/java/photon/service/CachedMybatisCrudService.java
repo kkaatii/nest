@@ -8,6 +8,7 @@ import photon.data.persistence.NodeMapper;
 import photon.query.KeywordIndexer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photon.service.CrudService;
 
 import java.util.List;
 import java.util.Map;
