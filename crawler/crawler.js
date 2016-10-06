@@ -7,19 +7,14 @@ var http = require('http'),
     AWS = require('aws-sdk'),
     assert = require('assert');
 
-var MAX_STORAGE = 100, MAX_PAGE_NUM = 1;
-var articleUrls = [], pageList = [];
-for (var i = 0; i < MAX_PAGE_NUM; i++) {
-    pageList[i] = i + 1;
-};
-
 AWS.config.update({
     region: "us-west-1"
 });
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-function getRecommendedArticleList(pageNum) {
+function getRecommendedArticleList(pageNum, cb) {
+    var self=this, error;
     request({
         url: "http://www.mafengwo.cn/ajax/ajax_fetch_pagelet.php?api=%3Amfw%3Apagelet%3ArecommendGinfoApi" +
         "&params=%7B%22type%22%3A0%2C%22objid%22%3A0%2C%22page%22%3A" + pageNum + "%2C%22ajax%22%3A1%2C%22retina%22%3A0%7D",
@@ -27,6 +22,7 @@ function getRecommendedArticleList(pageNum) {
             'User-Agent': 'Mozilla/5.0'
         }
     }, function (error, response, data) {
+        var articleUrls = [];
         var res = data.match(/i\\\/\d{7}/g);
         var dest = data.match(/tn-place.+?<\\\/a>/g);
         for (var i = 0; i < 12; i++) {
@@ -35,12 +31,17 @@ function getRecommendedArticleList(pageNum) {
         ;
         async.each(articleUrls, getArticle, function (err) {
             console.log('err: ' + err);
+            self.error = err;
         });
     });
+    if (error) {
+        cb(error);
+    } else cb();
 }
 
-function getArticle(articleInfo) {
+function getArticle(articleInfo, cb) {
     var url = "http://www.mafengwo.cn/i/" + articleInfo.urlNumber + ".html";
+    var self = this, data;
     request({
         url: url,
         headers: {
@@ -70,14 +71,33 @@ function getArticle(articleInfo) {
                 console.error("Unable to add article", title);
             } else {
                 console.log("PutItem succeeded:", title);
+                console.log("data");
+                self.data = data;
             }
         });
     });
+
 }
 
-async.each(pageList, getRecommendedArticleList, function(err) {
-    console.log('err: ' + err);
-});
+!function (pageList) {
+    async.each(pageList, getRecommendedArticleList, function (err) {
+        console.log('err: ' + err);
+    });
+}([1]);
 
+/*
+var delay = 600000;
+
+async.forever(function(cb) {
+    request({
+
+    }, function (error, response, data) {
+       if (true) {
+           crawl([1]);
+       }
+       setTimeout(function() { cb(); }, delay);
+    });
+});
+*/
 
 
