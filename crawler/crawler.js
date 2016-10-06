@@ -73,7 +73,6 @@ function getArticle(articleInfo, cb) {
             } else {
                 console.log("PutItem succeeded:", title);
                 console.log("data");
-                self.data = data;
             }
         });
     });
