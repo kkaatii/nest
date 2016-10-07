@@ -22,16 +22,19 @@ function getRecommendedArticleList(pageNum, cb) {
             'User-Agent': 'Mozilla/5.0'
         }
     }, function (error, response, data) {
-        var articleUrls = [];
-        var re = /i\\\/(\d{7}).+?tn-place.+?data-name=\\"(.+?)\\"/g;
-        for (var i = 0, match; (match = re.exec(data)) != null; i++) {
-            articleUrls[i] = {urlNumber: match[1], dest: match[2]};
+        if (!error && response.statusCode == 200) {
+            console.log('Retrieved article list on Page:', pageNum);
+            var articleUrls = [];
+            var re = /i\\\/(\d{7}).+?tn-place.+?data-name=\\"(.+?)\\"/g;
+            for (var i = 0, match; (match = re.exec(data)) != null; i++) {
+                articleUrls[i] = {urlNumber: match[1], dest: match[2]};
+            }
+            async.each(articleUrls, getArticle, function (err) {
+                if (err)
+                    console.log('err: ' + err);
+                self.error = err;
+            });
         }
-        async.each(articleUrls, getArticle, function (err) {
-            if (err)
-                console.log('err: ' + err);
-            self.error = err;
-        });
     });
     if (error) {
         cb(error);
