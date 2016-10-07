@@ -41,44 +41,48 @@ function getRecommendedArticleList(pageNum, cb) {
 
 function getArticle(articleInfo, cb) {
     var url = "http://www.mafengwo.cn/i/" + articleInfo.urlNumber + ".html";
-    var data = {};
-    var self = this;
     request({
         url: url,
         headers: {
             'User-Agent': 'Mozilla/5.0'
         }
     }, function (error, response, data) {
-        var title, imageUrls, dest = articleInfo.dest;
-        /*获取标题*/
-        title = data.match(/<h1.*>\s*.+\s*<\/h1>/).toString().replace(/\s*/g, "").replace(/$/g, "").replace(/\//g, "|").match(/>.+</).toString();
-        title = title.substring(1, title.length - 1);
-        imageUrls = data.match(/data-src="http.+?\.(jpeg|png|jpg).+?"/g);
-        for (var i = 0, len = imageUrls.length; i < len; i++) {
-            imageUrls[i] = imageUrls[i].substr(10, imageUrls[i].length - 11);
-        }
-        var params = {
-            TableName: "mafengwo-pic-gallery",
-            Item: {
-                "ArticleUrl": url,
-                "Title": title,
-                "ImageUrls": imageUrls,
-                "Destination": dest
-            },
-            ReturnItemCollectionMetrics: 'SIZE',
-            ReturnConsumedCapacity: 'INDEXES'
-        };
-
-        docClient.put(params, function (err, data) {
-            if (err) {
-                console.error("Unable to add article", title);
-            } else {
-                console.log("PutItem succeeded:", title);
-                console.log(data);
-              //  if (data.ItemCollectionMetrics && data.ItemCollectionMetrics.SizeEstimateRangeGB<4)
-                //    cb(data.ItemCollectionMetrics.SizeEstimateRangeGB);
+        var title, imageUrls, created, dest = unescape(articleInfo.dest.replace(/\\u/g, "%u"));
+        var datestring = data.match(/time.+?(\d{4}-\d{2}-\d{2})/);
+        if (datestring) {
+            created = new Date(datestring[1]).valueOf();
+            var offset, offsetmatch = data.match(/day".+?(\d+) 天<\/li>/);
+            if (offsetmatch) offset = parseInt(offsetmatch[1]);
+            title = data.match(/<h1.*>\s*.+\s*<\/h1>/).toString().replace(/\s*/g, "").replace(/$/g, "").replace(/\//g, "|").match(/>.+</).toString();
+            title = title.substring(1, title.length - 1);
+            imageUrls = data.match(/data-src="http.+?\.(jpeg|png|jpg).+?"/g);
+            for (var i = 0, len = imageUrls.length; i < len; i++) {
+                imageUrls[i] = imageUrls[i].substr(10, imageUrls[i].length - 11);
             }
-        });
+            var params = {
+                TableName: "mafengwo-pic-gallery",
+                Item: {
+                    "Destination": dest,
+                    "Created": created + offset,
+                    "Title": title,
+                    "ArticleUrl": url,
+                    "ImageUrls": imageUrls
+                },
+                ReturnItemCollectionMetrics: 'SIZE',
+                ReturnConsumedCapacity: 'INDEXES'
+            };
+
+            docClient.put(params, function (err, data) {
+                if (err) {
+                    console.error("Unable to add article", title);
+                } else {
+                    console.log("PutItem succeeded:", title);
+                    console.log(data);
+                    //  if (data.ItemCollectionMetrics && data.ItemCollectionMetrics.SizeEstimateRangeGB<4)
+                    //    cb(data.ItemCollectionMetrics.SizeEstimateRangeGB);
+                }
+            });
+        }
     });
 
 }
