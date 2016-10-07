@@ -24,12 +24,12 @@ function getRecommendedArticleList(pageNum, cb) {
     }, function (error, response, data) {
         var articleUrls = [];
         var res = data.match(/i\\\/\d{7}/g);
-        var destRe = /tn-place.+?data-name=\\"(.+?)\\"/g;
+        var destRe = /tn-place.+?data-name=\\"([a-z0-9\\]+?)\\"/g;
         var dest = [];
         for (var i = 0, match; (match = destRe.exec(data)) != null; i++){
             dest[i] = match[1];
         }
-        for (var i = 0; i < 12; i++) {
+        for (i = 0; i < 12; i++) {
             articleUrls[i] = {urlNumber: res[i * 3].substr(3, 7), dest: dest[i].substr(dest[i].length - 17, 12)};
         }
         async.each(articleUrls, getArticle, function (err) {
