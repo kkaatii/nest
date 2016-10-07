@@ -26,9 +26,8 @@ function getRecommendedArticleList(pageNum, cb) {
         var res = data.match(/i\\\/\d{7}/g);
         var destRe = /tn-place.+?data-name=\\"(.+?)\\"/g;
         var dest = [];
-        for (var i = 0, match; (match = destRe.exec(data)) != null; i++){
+        for (var i = 0, match; (match = destRe.exec(data)) != null; i++) {
             dest[i] = match[1];
-console.log(match[1]);
         }
         for (i = 0; i < 12; i++) {
             articleUrls[i] = {urlNumber: res[i * 3].substr(3, 7), dest: dest[i]};
@@ -83,33 +82,23 @@ function getArticle(articleInfo, cb) {
                 } else {
                     console.log("PutItem succeeded:", title);
                     console.log(data);
-                    //  if (data.ItemCollectionMetrics && data.ItemCollectionMetrics.SizeEstimateRangeGB<4)
-                    //    cb(data.ItemCollectionMetrics.SizeEstimateRangeGB);
                 }
             });
         }
     });
-
 }
 
-!function (pageList) {
-    async.each(pageList, getRecommendedArticleList, function (err) {
+var delay = 60 * 60 * 1000 * 6;
+
+async.forever(function (next) {
+    async.each([1, 2, 3], getRecommendedArticleList, function (err) {
     });
-}([1]);
+    setTimeout(function () {
+        next();
+    }, delay);
+}, function (err) {
+    console.log(err);
+});
 
-/*
- var delay = 600000;
-
- async.forever(function(cb) {
- request({
-
- }, function (error, response, data) {
- if (true) {
- crawl([1]);
- }
- setTimeout(function() { cb(); }, delay);
- });
- });
- */
 
 
