@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @MapperScan("photon.data.persistence")
 public class BeanConfig {
-	
+
 	@Bean
 	public SqlSessionFactory sqlSessionFactory() throws Exception {
 		String resource = "xml/mybatis/mybatis-config.xml";

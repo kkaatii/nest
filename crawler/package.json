@@ -4,8 +4,9 @@
   "version": "0.0.1",
   "dependencies": {
     "async": "~1.5.2",
-    "request": "^2.61.0",
+    "aws-sdk": ">= 2.6.6",
     "body-parser": "~1.8.0",
-    "aws-sdk": ">= 2.6.6"
+    "express": "^4.13.4",
+    "request": "^2.61.0"
   }
 }

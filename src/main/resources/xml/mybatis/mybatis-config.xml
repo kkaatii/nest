@@ -5,8 +5,11 @@
 <configuration>
 
     <typeAliases>
-  		<package name="photon.data"/>
-	</typeAliases>
+        <typeAlias alias="point" type="photon.data.Point"/>
+        <typeAlias alias="node" type="photon.data.Node"/>
+        <typeAlias alias="arrow" type="photon.data.Arrow"/>
+        <typeAlias alias="extension" type="photon.data.Extension"/>
+    </typeAliases>
 
     <environments default="development">
         <environment id="development">
