@@ -86,10 +86,10 @@ function getArticle(articleInfo, cb) {
     });
 }
 
-var delay = 60 * 60 * 1000 * 6;
+var delay = 60 * 60 * 1000 * 2;
 
 async.forever(function (next) {
-    async.each([1, 2, 3], getRecommendedArticleList, function (err) {
+    async.each([1], getRecommendedArticleList, function (err) {
     });
     setTimeout(function () {
         next();
