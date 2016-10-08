@@ -16,28 +16,29 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @MapperScan("photon.data.persistence")
 public class BeanConfig {
 
-	@Bean
-	public SqlSessionFactory sqlSessionFactory() throws Exception {
-		String resource = "xml/mybatis/mybatis-config.xml";
-		InputStream inputStream = Resources.getResourceAsStream(resource);
+    @Bean
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
+        String resource = "xml/mybatis/mybatis-config.xml";
+        InputStream inputStream = Resources.getResourceAsStream(resource);
         return new SqlSessionFactoryBuilder().build(inputStream);
-	}
-	
-	@Bean
-	public SqlSessionTemplate sessionTemplate() throws Exception {
-		return new SqlSessionTemplate(sqlSessionFactory());
-	}
+    }
 
-	@Bean
-	public WebMvcConfigurer corsConfigurer() {
-		return new WebMvcConfigurerAdapter() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/**")
-						.allowedOrigins("http://52.8.162.98")
-						.allowedMethods("PUT", "GET", "DELETE")
-						.allowCredentials(false);
-			}
-		};
-	}
+    @Bean
+    public SqlSessionTemplate sessionTemplate() throws Exception {
+        return new SqlSessionTemplate(sqlSessionFactory());
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("PUT", "GET", "DELETE")
+                        .allowCredentials(false)
+                        .maxAge(3600);
+            }
+        };
+    }
 }

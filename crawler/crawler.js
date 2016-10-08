@@ -24,10 +24,12 @@ function getRecommendedArticleList(pageNum, cb) {
     }, function (error, response, data) {
         if (!error && response.statusCode == 200) {
             console.log('Retrieved article list on Page:', pageNum);
-            var articleUrls = [];
+            var articleUrls = [], match;
             var re = /i\\\/(\d{7}).+?tn-place.+?data-name=\\"(.+?)\\"/g;
-            for (var i = 0, match; (match = re.exec(data)) != null; i++) {
-                articleUrls[i] = {urlNumber: match[1], dest: match[2]};
+            while ((match = re.exec(data)) != null) {
+                var dest = unescape(match[2].replace(/\\u/g, "%u"));
+                if (!isInChina(dest))
+                articleUrls.push({urlNumber: match[1], dest: dest});
             }
             async.each(articleUrls, getArticle, function (err) {
                 if (err)
@@ -41,6 +43,19 @@ function getRecommendedArticleList(pageNum, cb) {
     } else cb();
 }
 
+function isInChina(placename) {
+    var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + placename + "&key=AIzaSyCSFkgwLSAbnYip79h9q3NvS-BP2ILIHWg";
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, false);
+    xhr.send(null);
+    if (xhr.status === 200) {
+        var geoInfo = JSON.parse(xhr.responseText);
+        if (geoInfo.status === "OK")
+            return geoInfo.results.formatted_address.endsWith("China");
+    }
+    return false;
+}
+
 function getArticle(articleInfo, cb) {
     var url = "http://www.mafengwo.cn/i/" + articleInfo.urlNumber + ".html";
     request({
@@ -49,7 +64,7 @@ function getArticle(articleInfo, cb) {
             'User-Agent': 'Mozilla/5.0'
         }
     }, function (error, response, data) {
-        var title, imageUrls, created, dest = unescape(articleInfo.dest.replace(/\\u/g, "%u"));
+        var title, imageUrls, created;
         var datestring = data.match(/time.+?(\d{4}-\d{2}-\d{2})/);
         if (datestring) {
             created = new Date(datestring[1]).valueOf();
@@ -64,7 +79,7 @@ function getArticle(articleInfo, cb) {
             var params = {
                 TableName: "mafengwo-pic-gallery",
                 Item: {
-                    "Destination": dest,
+                    "Destination": articleInfo.dest,
                     "Created": created + offset,
                     "Title": title,
                     "ArticleUrl": url,
