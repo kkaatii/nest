@@ -8,10 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import photon.gallery.MfwGalleryService;
 import photon.gallery.Panel;
 
-/**
- * Created by dan on 07/10/2016.
- */
-
 @RestController
 @RequestMapping("/api/mfw")
 public class MfwApiController {

@@ -5,10 +5,10 @@
 
 	<groupId>com.emtheo</groupId>
 	<version>0.0.3-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<!--<packaging>war</packaging>-->
 
 	<name>photon</name>
-	<description></description>
+	<description>Still in development</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
+			<!--<scope>provided</scope>-->
 		</dependency>
 
 		<dependency>

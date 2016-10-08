@@ -8,13 +8,13 @@ var ArticleList = React.createClass({
                 marginTop: 8
             };
             for (var i = 0; i < displayed; i++)
-                h.push(<div className="row"><a href={item.content.ArticleUrl}
+                h.push(<div className="row" title={item.content.Destination}><a href={item.content.ArticleUrl}
                                                target="_blank"><img
                     src={item.content.ImageUrls[denominator * i]} className="img-responsive"
-                    style={picStyle} /></a></div>);
+                    style={picStyle}/></a></div>);
             return <div className="col-md-3" key={item.content.Created}>{h}</div>;
         };
-        return <div className="row" style={{ marginTop:50 }}>{this.props.panels.map(createItem)}</div>
+        return <div className="row" style={{marginTop: 50}}>{this.props.panels.map(createItem)}</div>
     }
 });
 
@@ -33,13 +33,11 @@ var Body = React.createClass({
     componentDidMount: function () {
         var self = this;
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', this.props.source + 'init');
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    console.log("Successful init");
-                    self.nextBatch();
-                }
+        xhr.open('GET', this.props.source + 'init', true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log("Successful init");
+                self.nextBatch();
             }
         };
         xhr.send();
@@ -52,16 +50,14 @@ var Body = React.createClass({
         var self = this;
         var xhr = new XMLHttpRequest();
         var batchSize = this.state.batchSize;
-        xhr.open('GET', this.props.source + '?batchSize=' + batchSize);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    var panels_raw, panels = [];
-                    panels_raw = JSON.parse(xhr.responseText);
-                    for (var i = 0; i < batchSize; i++)
-                        panels[i] = {content: JSON.parse(panels_raw[i].content)};
-                    self.setState({panels: panels});
-                }
+        xhr.open('GET', this.props.source + '?batchSize=' + batchSize, true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                var panels_raw, panels = [];
+                panels_raw = JSON.parse(xhr.responseText);
+                for (var i = 0; i < batchSize; i++)
+                    panels[i] = {content: JSON.parse(panels_raw[i].content)};
+                self.setState({panels: panels});
             }
         };
         xhr.send();
@@ -70,7 +66,14 @@ var Body = React.createClass({
     render: function () {
         return (
             <div className="container">
-                <div className="row" style={{ position:'fixed', zIndex: 1, height: 50, backgroundColor: '#fff', width:'100%', paddingTop: 8 }}>
+                <div className="row" style={{
+                    position: 'fixed',
+                    zIndex: 1,
+                    height: 50,
+                    backgroundColor: '#fff',
+                    width: '100%',
+                    paddingTop: 8
+                }}>
                     <button className="btn btn-primary" onClick={this.nextBatch}>Refresh</button>
                 </div>
                 <ArticleList panels={this.state.panels}/>
