@@ -6,7 +6,7 @@ var http = require('http'),
     request = require('request'),
     AWS = require('aws-sdk'),
     assert = require('assert');
-var httpclient= require('httpclient');
+var httpclient = require('httpclient');
 
 AWS.config.update({
     region: "us-west-1"
@@ -14,8 +14,7 @@ AWS.config.update({
 
 var docClient = new AWS.DynamoDB.DocumentClient();
 
-function getRecommendedArticleList(pageNum, cb) {
-    var self = this, error;
+function getRecommendedArticleList(pageNum) {
     request({
         url: "http://www.mafengwo.cn/ajax/ajax_fetch_pagelet.php?api=%3Amfw%3Apagelet%3ArecommendGinfoApi" +
         "&params=%7B%22type%22%3A0%2C%22objid%22%3A0%2C%22page%22%3A" + pageNum + "%2C%22ajax%22%3A1%2C%22retina%22%3A0%7D",
@@ -28,36 +27,31 @@ function getRecommendedArticleList(pageNum, cb) {
             var articleUrls = [], match;
             var re = /i\\\/(\d{7}).+?tn-place.+?data-name=\\"(.+?)\\"/g;
             while ((match = re.exec(data)) != null) {
-                var dest = unescape(match[2].replace(/\\u/g, "%u"));
-                if (!isInChina(dest))
-                    articleUrls.push({urlNumber: match[1], dest: dest});
+                articleUrls.push([match[1], unescape(match[2].replace(/\\u/g, "%u"))]);
             }
-            async.each(articleUrls, getArticle, function (err) {
+
+            async.each(articleUrls, function (articleUrl) {
+                var dest = articleUrl[1];
+                var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + dest + "&key=AIzaSyCSFkgwLSAbnYip79h9q3NvS-BP2ILIHWg";
+                request({
+                    url: url
+                }, function (error, response, data) {
+                    var geoInfo = JSON.parse(data);
+                    if (geoInfo.status === "OK")
+                        if (!geoInfo.results.formatted_address.endsWith("China"))
+                            getArticle(articleUrl[0], dest)
+                })
+
+            }, function (err) {
                 if (err)
                     console.log('err: ' + err);
-                self.error = err;
             });
         }
     });
-    if (error) {
-        cb(error);
-    } else cb();
 }
 
-function isInChina(placename) {
-    var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + placename + "&key=AIzaSyCSFkgwLSAbnYip79h9q3NvS-BP2ILIHWg";
-    var responseText = new (httpclient.HTTPClient)({
-        method: 'GET',
-        url: url
-    }).finish().body.read().decodeToString();
-    var geoInfo = JSON.parse(responseText);
-    if (geoInfo.status === "OK")
-        return geoInfo.results.formatted_address.endsWith("China");
-    return false;
-}
-
-function getArticle(articleInfo) {
-    var url = "http://www.mafengwo.cn/i/" + articleInfo.urlNumber + ".html";
+function getArticle(urlNumber, dest) {
+    var url = "http://www.mafengwo.cn/i/" + urlNumber + ".html";
     request({
         url: url,
         headers: {
@@ -79,7 +73,7 @@ function getArticle(articleInfo) {
             var params = {
                 TableName: "mafengwo-pic-gallery",
                 Item: {
-                    "Destination": articleInfo.dest,
+                    "Destination": dest,
                     "Created": created + offset,
                     "Title": title,
                     "ArticleUrl": url,
