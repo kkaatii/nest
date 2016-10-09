@@ -6,7 +6,6 @@ var http = require('http'),
     request = require('request'),
     AWS = require('aws-sdk'),
     assert = require('assert');
-var httpclient = require('httpclient');
 
 AWS.config.update({
     region: "us-west-1"
@@ -32,14 +31,14 @@ function getRecommendedArticleList(pageNum) {
 
             async.each(articleUrls, function (articleUrl) {
                 var dest = articleUrl[1];
-                var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + dest + "&key=AIzaSyCSFkgwLSAbnYip79h9q3NvS-BP2ILIHWg";
+                var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURI(dest) + "&key=AIzaSyCSFkgwLSAbnYip79h9q3NvS-BP2ILIHWg";
                 request({
                     url: url
                 }, function (error, response, data) {
                     var geoInfo = JSON.parse(data);
-                    if (geoInfo.status === "OK")
-                        if (!geoInfo.results.formatted_address.endsWith("China"))
-                            getArticle(articleUrl[0], dest)
+                    if (geoInfo.status === "OK"){
+                        if (!geoInfo.results[0].formatted_address.endsWith("China"))
+                            getArticle(articleUrl[0], dest)} else console.log(geoInfo.error_message);
                 })
 
             }, function (err) {
