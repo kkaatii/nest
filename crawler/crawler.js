@@ -6,6 +6,7 @@ var http = require('http'),
     request = require('request'),
     AWS = require('aws-sdk'),
     assert = require('assert');
+var httpclient= require('httpclient');
 
 AWS.config.update({
     region: "us-west-1"
@@ -29,7 +30,7 @@ function getRecommendedArticleList(pageNum, cb) {
             while ((match = re.exec(data)) != null) {
                 var dest = unescape(match[2].replace(/\\u/g, "%u"));
                 if (!isInChina(dest))
-                articleUrls.push({urlNumber: match[1], dest: dest});
+                    articleUrls.push({urlNumber: match[1], dest: dest});
             }
             async.each(articleUrls, getArticle, function (err) {
                 if (err)
@@ -45,18 +46,17 @@ function getRecommendedArticleList(pageNum, cb) {
 
 function isInChina(placename) {
     var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + placename + "&key=AIzaSyCSFkgwLSAbnYip79h9q3NvS-BP2ILIHWg";
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, false);
-    xhr.send(null);
-    if (xhr.status === 200) {
-        var geoInfo = JSON.parse(xhr.responseText);
-        if (geoInfo.status === "OK")
-            return geoInfo.results.formatted_address.endsWith("China");
-    }
+    var responseText = new (httpclient.HTTPClient)({
+        method: 'GET',
+        url: url
+    }).finish().body.read().decodeToString();
+    var geoInfo = JSON.parse(responseText);
+    if (geoInfo.status === "OK")
+        return geoInfo.results.formatted_address.endsWith("China");
     return false;
 }
 
-function getArticle(articleInfo, cb) {
+function getArticle(articleInfo) {
     var url = "http://www.mafengwo.cn/i/" + articleInfo.urlNumber + ".html";
     request({
         url: url,
