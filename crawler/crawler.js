@@ -36,9 +36,10 @@ function getRecommendedArticleList(pageNum) {
                     url: url
                 }, function (error, response, data) {
                     var geoInfo = JSON.parse(data);
-                    if (geoInfo.status === "OK"){
+                    if (geoInfo.status === "OK") {
                         if (!geoInfo.results[0].formatted_address.endsWith("China"))
-                            getArticle(articleUrl[0], dest)} else console.log(geoInfo.error_message);
+                            getArticle(articleUrl[0], dest)
+                    } else console.error(geoInfo.error_message);
                 })
 
             }, function (err) {
@@ -69,17 +70,17 @@ function getArticle(urlNumber, dest) {
             for (var i = 0, len = imageUrls.length; i < len; i++) {
                 imageUrls[i] = imageUrls[i].substr(10, imageUrls[i].length - 11);
             }
+            var now = new Date();
             var params = {
-                TableName: "mafengwo-pic-gallery",
+                TableName: "mfw-gallery",
                 Item: {
                     "Destination": dest,
-                    "Created": created + offset,
+                    "Date": created + offset,
                     "Title": title,
                     "ArticleUrl": url,
-                    "ImageUrls": imageUrls
-                },
-                ReturnItemCollectionMetrics: 'SIZE',
-                ReturnConsumedCapacity: 'INDEXES'
+                    "ImageUrls": imageUrls,
+                    "Created": now.getFullYear() * 12 + now.getMonth()
+                }
             };
 
             docClient.put(params, function (err, data) {
