@@ -10,7 +10,7 @@ public class HomeController {
 
     @RequestMapping(value = "/mfw", method = RequestMethod.GET)
     public String get(Model model) {
-        return "index.html";
+        return "mfw-home.html";
     }
 
 }

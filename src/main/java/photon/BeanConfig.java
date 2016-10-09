@@ -36,8 +36,7 @@ public class BeanConfig {
                 registry.addMapping("/api/**")
                         .allowedOrigins("*")
                         .allowedMethods("PUT", "GET", "DELETE")
-                        .allowCredentials(false)
-                        .maxAge(3600);
+                        .allowCredentials(false);
             }
         };
     }

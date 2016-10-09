@@ -12,7 +12,7 @@ var ArticleList = React.createClass({
                                                target="_blank"><img
                     src={item.content.ImageUrls[denominator * i]} className="img-responsive"
                     style={picStyle}/></a></div>);
-            return <div className="col-md-3" key={item.content.Created}>{h}</div>;
+            return <div className="col-md-3 col-xs-6" key={item.content.Date}>{h}</div>;
         };
         return <div className="row" style={{marginTop: 50}}>{this.props.panels.map(createItem)}</div>
     }
@@ -55,6 +55,7 @@ var Body = React.createClass({
             if (xhr.status === 200) {
                 var panels_raw, panels = [];
                 panels_raw = JSON.parse(xhr.responseText);
+                console.log(panels_raw);
                 for (var i = 0; i < batchSize; i++)
                     panels[i] = {content: JSON.parse(panels_raw[i].content)};
                 self.setState({panels: panels});
@@ -83,6 +84,6 @@ var Body = React.createClass({
 });
 
 ReactDOM.render(
-    <Body source="http://52.8.162.98:8080/api/mfw/"/>,
+    <Body source="http://52.8.191.155:8080/api/mfw/"/>,
     document.getElementById("content")
 );
