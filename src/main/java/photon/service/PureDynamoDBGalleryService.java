@@ -1,13 +1,12 @@
-package photon.gallery;
+package photon.service;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import org.joda.time.Days;
 import org.springframework.stereotype.Service;
-import photon.service.GalleryService;
+import photon.gallery.Panel;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
@@ -15,7 +14,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
-public class MfwGalleryService implements GalleryService {
+public class PureDynamoDBGalleryService implements GalleryService {
 
     private Table table;
     private List<Item> items;
@@ -27,7 +26,7 @@ public class MfwGalleryService implements GalleryService {
     private static String TABLE_NAME = "mfw-gallery";
     private static String INDEX_NAME = "CreatedIndex";
 
-    public MfwGalleryService() {
+    public PureDynamoDBGalleryService() {
         AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         client.withRegion(Regions.US_WEST_1);
         items = new ArrayList<>();
@@ -35,8 +34,14 @@ public class MfwGalleryService implements GalleryService {
         DynamoDB db = new DynamoDB(client);
         table = db.getTable(TABLE_NAME);
         yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
-        // yesterday = LocalDate.now();
+        //yesterday = LocalDate.now();
         index = table.getIndex(INDEX_NAME);
+    }
+
+    @Override
+    public boolean init() {
+        int createdAtYesterday = yesterday.getYear() * 13 * 32 + yesterday.getMonthValue() *32 + yesterday.getDayOfMonth();
+        return queryWithCreatedIndex(createdAtYesterday);
     }
 
     @Override
@@ -55,17 +60,6 @@ public class MfwGalleryService implements GalleryService {
         }
 
         return p;
-    }
-
-    @Override
-    public boolean permanentRemove(PanelId panelId) {
-        return false;
-    }
-
-    @Override
-    public boolean init() {
-        int createdAtYesterday = yesterday.getYear() * 13 * 32 + yesterday.getMonthValue() *32 + yesterday.getDayOfMonth();
-        return queryWithCreatedIndex(createdAtYesterday);
     }
 
     private boolean queryWithCreatedIndex(int indexValue) {

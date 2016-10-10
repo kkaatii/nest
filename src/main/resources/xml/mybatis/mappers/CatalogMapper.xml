@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="photon.data.persistence.NodeMapper">
-
+<mapper namespace="photon.data.CatalogMapper">
+<!--
   <resultMap type="point" id="pointRM">
     <id property="id" column="id" />
     <result property="name" column="name" />
@@ -107,5 +107,5 @@
     delete from photon.node
     where id = #{id}
   </delete>
-  
+  -->
 </mapper>

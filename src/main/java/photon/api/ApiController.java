@@ -5,16 +5,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import photon.gallery.MfwGalleryService;
+import photon.service.GalleryService;
 import photon.gallery.Panel;
 
 @RestController
 @RequestMapping("/api/mfw")
-public class MfwApiController {
-    private MfwGalleryService gallery;
+public class ApiController {
+    private GalleryService gallery;
 
     @Autowired
-    public MfwApiController(MfwGalleryService gallery) {
+    public ApiController(GalleryService gallery) {
         this.gallery = gallery;
     }
 

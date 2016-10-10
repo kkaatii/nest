@@ -5,10 +5,7 @@
 <configuration>
 
     <typeAliases>
-        <typeAlias alias="point" type="photon.data.Point"/>
-        <typeAlias alias="node" type="photon.data.Node"/>
-        <typeAlias alias="arrow" type="photon.data.Arrow"/>
-        <typeAlias alias="extension" type="photon.data.Extension"/>
+        <typeAlias alias="catalog" type="photon.data.Catalog"/>
     </typeAliases>
 
     <environments default="development">
@@ -24,8 +21,6 @@
     </environments>
     
     <mappers>
-        <mapper resource="xml/mybatis/mappers/NodeMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/ArrowMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/ExtensionMapper.xml"/>
+        <!--<mapper resource="xml/mybatis/mappers/CatalogMapper.xml"/>-->
     </mappers>
 </configuration>
