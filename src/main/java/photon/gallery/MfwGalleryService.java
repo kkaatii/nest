@@ -35,6 +35,7 @@ public class MfwGalleryService implements GalleryService {
         DynamoDB db = new DynamoDB(client);
         table = db.getTable(TABLE_NAME);
         yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
+        // yesterday = LocalDate.now();
         index = table.getIndex(INDEX_NAME);
     }
 
