@@ -5,11 +5,13 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import org.joda.time.Days;
 import org.springframework.stereotype.Service;
 import photon.service.GalleryService;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -18,7 +20,7 @@ public class MfwGalleryService implements GalleryService {
     private Table table;
     private List<Item> items;
     private Set<Integer> displayedItemPos;
-    private LocalDate today;
+    private LocalDate yesterday;
     private Index index;
 
     private static SecureRandom rnd = new SecureRandom();
@@ -32,7 +34,7 @@ public class MfwGalleryService implements GalleryService {
         displayedItemPos = new HashSet<>();
         DynamoDB db = new DynamoDB(client);
         table = db.getTable(TABLE_NAME);
-        today = LocalDate.now();
+        yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
         index = table.getIndex(INDEX_NAME);
     }
 
@@ -61,7 +63,8 @@ public class MfwGalleryService implements GalleryService {
 
     @Override
     public boolean init() {
-        return queryWithCreatedIndex(today.getYear() * 12 + today.getMonthValue() - 1);
+        int createdAtYesterday = yesterday.getYear() * 13 * 32 + yesterday.getMonthValue() *32 + yesterday.getDayOfMonth();
+        return queryWithCreatedIndex(createdAtYesterday);
     }
 
     private boolean queryWithCreatedIndex(int indexValue) {

@@ -25,7 +25,7 @@ function getRecommendedArticleList(pageNum) {
             console.log('Retrieved article list on Page:', pageNum);
             var articleUrls = [], match;
             var re = /i\\\/(\d{7}).+?tn-place.+?data-name=\\"(.+?)\\"/g;
-            while ((match = re.exec(data)) != null) {
+            for (var i = 0; ((match = re.exec(data)) != null) && (i < 6); i++) {
                 articleUrls.push([match[1], unescape(match[2].replace(/\\u/g, "%u"))]);
             }
 
@@ -79,7 +79,7 @@ function getArticle(urlNumber, dest) {
                     "Title": title,
                     "ArticleUrl": url,
                     "ImageUrls": imageUrls,
-                    "Created": now.getFullYear() * 12 + now.getMonth()
+                    "Created": now.getFullYear() * 13 * 32 + (now.getMonth() + 1) * 32 + now.getDate()
                 }
             };
 
@@ -95,7 +95,7 @@ function getArticle(urlNumber, dest) {
     });
 }
 
-var delay = 60 * 60 * 1000 * 2;
+var delay = 60 * 60 * 1000;
 
 async.forever(function (next) {
     async.each([1], getRecommendedArticleList, function (err) {
@@ -106,6 +106,3 @@ async.forever(function (next) {
 }, function (err) {
     console.log(err);
 });
-
-
-
