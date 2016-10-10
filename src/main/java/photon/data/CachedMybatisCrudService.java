@@ -1,6 +1,5 @@
-package photon.service;
+package photon.data;
 
-import photon.data.*;
 import photon.data.cache.ArrowCacheCatalog;
 import photon.data.persistence.ArrowMapper;
 import photon.data.persistence.ExtensionMapper;

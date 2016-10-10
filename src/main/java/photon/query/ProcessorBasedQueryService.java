@@ -1,11 +1,12 @@
-package photon.service;
+package photon.query;
 
-import photon.query.*;
 import photon.query.processor.Processor;
 import photon.query.processor.ProcessorNotFoundException;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photon.service.CrudService;
+import photon.service.QueryService;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
