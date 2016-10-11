@@ -2,15 +2,28 @@ var ArticleList = React.createClass({
     render: function () {
         var createItem = function (item) {
             var displayed = 8;
-            var denominator = Math.floor(item.content.ImageUrls.length / displayed), h = [];
+            var totalSize = item.content.ImageUrls.length;
+            var arr = [];
+            while (arr.length < displayed) {
+                var r = Math.floor(Math.random() * totalSize);
+                var found = false;
+                for (var i = 0; i < arr.length; i++) {
+                    if (arr[i] == r) {
+                        found = true;
+                        break
+                    }
+                }
+                if (!found) arr.push(r);
+            }
+            var h = [];
             var picStyle = {
                 maxWidth: '94%',
                 marginTop: 8
             };
             for (var i = 0; i < displayed; i++)
                 h.push(<div className="row" title={item.content.Destination}><a href={item.content.ArticleUrl}
-                                               target="_blank"><img
-                    src={item.content.ImageUrls[denominator * i]} className="img-responsive"
+                                                                                target="_blank"><img
+                    src={item.content.ImageUrls[arr[i]]} className="img-responsive"
                     style={picStyle}/></a></div>);
             return <div className="col-md-3 col-xs-6" key={item.content.Date}>{h}</div>;
         };
