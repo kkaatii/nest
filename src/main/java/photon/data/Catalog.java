@@ -1,12 +1,15 @@
 package photon.data;
 
+import java.util.Date;
+
 /**
  * Created by Dun Liu on 10/10/2016.
  */
 public class Catalog {
-    String destination;
-    int date;
-    String country;
-    int created;
+    String articleUrl; // Serve as Primary Key for Dynamodb
+    String country; // Parsed by Google Maps API from article destination
+    Date created;
+
+
 
 }

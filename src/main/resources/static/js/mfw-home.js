@@ -17,16 +17,17 @@ var ArticleList = React.createClass({
             }
             var h = [];
             var picStyle = {
-                maxWidth: '94%',
-                marginTop: 8
+                margin: "0 auto",
+                padding: "0.2em"
             };
             for (var i = 0; i < displayed; i++)
                 h.push(<div className="row" title={item.content.Destination}><a href={item.content.ArticleUrl}
                                                                                 target="_blank"><img
                     src={item.content.ImageUrls[arr[i]]} className="img-responsive"
                     style={picStyle}/></a></div>);
-            return <div className="col-md-3 col-xs-6" key={item.content.Date}>{h}</div>;
+            return <div className="col-md-3 col-xs-6" key={item.content.Date} style={{marginTop: "-0.2em"}}>{h}</div>;
         };
+
         return <div className="row" style={{marginTop: 50}}>{this.props.panels.map(createItem)}</div>
     }
 });
@@ -34,6 +35,7 @@ var ArticleList = React.createClass({
 var Body = React.createClass({
     getInitialState: function () {
         return {
+            refreshing: false,
             batchSize: 4,
             panels: []
         }
@@ -56,10 +58,8 @@ var Body = React.createClass({
         xhr.send();
     },
 
-    nextBatch1: function () {
-        this.setState({panels: JSON.parse('[{"content" : "{\\"Destination\\":\\"东京\\"}"}, {"content" : "{\\"Destination\\":\\"北京\\"}"}]')});
-    },
     nextBatch: function () {
+        this.setState({refreshing: true});
         var self = this;
         var xhr = new XMLHttpRequest();
         var batchSize = this.state.batchSize;
@@ -71,7 +71,7 @@ var Body = React.createClass({
                 console.log(panels_raw);
                 for (var i = 0; i < batchSize; i++)
                     panels[i] = {content: JSON.parse(panels_raw[i].content)};
-                self.setState({panels: panels});
+                self.setState({panels: panels, refreshing: false});
             }
         };
         xhr.send();
@@ -79,16 +79,19 @@ var Body = React.createClass({
 
     render: function () {
         return (
-            <div className="container">
+            <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
                 <div className="row" style={{
                     position: 'fixed',
                     zIndex: 1,
                     height: 50,
                     backgroundColor: '#fff',
                     width: '100%',
-                    paddingTop: 8
+                    paddingLeft: "0.2em"
                 }}>
-                    <button className="btn btn-primary" onClick={this.nextBatch}>Refresh</button>
+                    <button className="btn btn-primary" onClick={this.nextBatch} disabled={this.state.refreshing}
+                            style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}>
+                        { this.state.refreshing ? 'Refreshing...' : 'Refresh'}
+                    </button>
                 </div>
                 <ArticleList panels={this.state.panels}/>
             </div>
