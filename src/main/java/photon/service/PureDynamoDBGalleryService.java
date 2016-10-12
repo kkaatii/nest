@@ -19,7 +19,6 @@ public class PureDynamoDBGalleryService implements GalleryService {
     private Table table;
     private List<Item> items;
     private Set<Integer> displayedItemPos;
-    private LocalDate yesterday;
     private Index index;
 
     private static SecureRandom rnd = new SecureRandom();
@@ -33,13 +32,12 @@ public class PureDynamoDBGalleryService implements GalleryService {
         displayedItemPos = new HashSet<>();
         DynamoDB db = new DynamoDB(client);
         table = db.getTable(TABLE_NAME);
-        yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
-        //yesterday = LocalDate.now();
         index = table.getIndex(INDEX_NAME);
     }
 
     @Override
     public boolean init() {
+        LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
         int createdAtYesterday = yesterday.getYear() * 13 * 32 + yesterday.getMonthValue() *32 + yesterday.getDayOfMonth();
         return queryWithCreatedIndex(createdAtYesterday);
     }
