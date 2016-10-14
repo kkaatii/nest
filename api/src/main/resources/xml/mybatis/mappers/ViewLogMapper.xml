@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="photon.model.ViewLogMapper">
+
+    <insert id="init" useGeneratedKeys="true" keyProperty="viewLogId">
+        INSERT INTO viewlog (article_id, user_id)
+            SELECT
+                #{articleId},
+                #{userId}
+            FROM dual
+            WHERE NOT EXISTS(SELECT 1
+                             FROM viewlog
+                             WHERE article_id = #{articleId} AND user_id = #{userId})
+    </insert>
+
+    <update id="increment">
+        UPDATE viewlog
+        SET `count` = `count` + 1
+        WHERE article_id = #{articleId} AND user_id = #{userId}
+    </update>
+
+    <update id="batchIncrement">
+        UPDATE viewlog
+        SET `count` = `count` + 1
+        WHERE user_id = #{userId} AND article_id in (
+        <foreach item="articleId" index="index" collection="articleIds" separator=",">
+            #{articleId}
+        </foreach>
+        )
+    </update>
+
+    <select id="randomCollection" resultType="int" statementType="CALLABLE">
+        {call get_rands(#{size}, #{threshold})}
+    </select>
+
+</mapper>

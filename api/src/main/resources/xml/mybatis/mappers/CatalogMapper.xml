@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="photon.model.CatalogMapper">
+    <resultMap type="Catalog" id="catalogRM">
+        <id property="articleId" column="article_id"/>
+        <result property="country" column="country"/>
+        <result property="created" column="created"/>
+        <result property="date" column="date"/>
+    </resultMap>
+
+    <select id="select" resultMap="catalogRM">
+        SELECT
+            article_id,
+            country,
+            created,
+            `date`
+        FROM catalog
+        WHERE article_id = #{articleId}
+    </select>
+
+    <select id="selectMany" resultMap="catalogRM">
+        select
+        article_id ,
+        country ,
+        created ,
+        `date`
+        FROM catalog where article_id in (
+        <foreach item="articleId" index="index" collection="articleIds" separator=",">
+            #{articleId}
+        </foreach>
+        )
+    </select>
+
+    <insert id="insert">
+        INSERT INTO catalog (article_id, country, created, `date`)
+        VALUES (#{articleId}, #{country}, #{created}, #{date})
+        ON DUPLICATE KEY UPDATE article_id = values(article_id)
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM catalog
+        WHERE article_id = #{articleId}
+    </delete>
+</mapper>

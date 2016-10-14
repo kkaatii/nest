@@ -5,12 +5,13 @@ var http = require('http'),
     async = require('async'),
     request = require('request'),
     AWS = require('aws-sdk'),
-    assert = require('assert'),
-    mysql = require('mysql');
+    assert = require('assert');
 
 AWS.config.update({
     region: "us-west-1"
 });
+
+var docClient = new AWS.DynamoDB.DocumentClient();
 
 function getRecommendedArticleList(pageNum) {
     request({
@@ -22,23 +23,25 @@ function getRecommendedArticleList(pageNum) {
     }, function (error, response, data) {
         if (!error && response.statusCode == 200) {
             console.log('Retrieved article list on Page:', pageNum);
-            var articleUrls = [], match;
+            var articleIds = [], match;
             var re = /i\\\/(\d{7}).+?tn-place.+?data-name=\\"(.+?)\\"/g;
-            for (var i = 0; ((match = re.exec(data)) != null) && (i < 6); i++) {
-                articleUrls.push([match[1], unescape(match[2].replace(/\\u/g, "%u"))]);
+            for (var i = 0; ((match = re.exec(data)) != null) && (i < 3); i++) {
+                articleIds.push([match[1], unescape(match[2].replace(/\\u/g, "%u"))]);
             }
 
-            async.each(articleUrls, function (articleUrl) {
-                var dest = articleUrl[1];
+            async.each(articleIds, function (articleId) {
+                var dest = articleId[1];
                 var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + encodeURI(dest) + "&key=AIzaSyCSFkgwLSAbnYip79h9q3NvS-BP2ILIHWg";
                 request({
                     url: url
                 }, function (error, response, data) {
                     var geoInfo = JSON.parse(data);
                     if (geoInfo.status === "OK") {
-                        var country = geoInfo.results[0].formatted_address.split(', ').pop();
-                        if (!(country === 'China'))
-                            getArticle(articleUrl[0], dest, country)
+                        var splitaddr = geoInfo.results[0].formatted_address.split(', ');
+                        var country = splitaddr.pop();
+                        if (/\d/.test(country)) country = splitaddr.pop();
+                        if (!(country === 'China' || country === 'Yemen' || country === 'Botswana'))
+                            getArticle(parseInt(articleId[0]), dest, country)
                     } else console.error(geoInfo.error_message);
                 })
 
@@ -50,8 +53,8 @@ function getRecommendedArticleList(pageNum) {
     });
 }
 
-function getArticle(urlNumber, dest, country) {
-    var url = "http://www.mafengwo.cn/i/" + urlNumber + ".html";
+function getArticle(articleId, dest, country) {
+    var url = "http://www.mafengwo.cn/i/" + articleId + ".html";
     request({
         url: url,
         headers: {
@@ -71,7 +74,7 @@ function getArticle(urlNumber, dest, country) {
             var params = {
                 TableName: "mfw-gallery-v2",
                 Item: {
-                    "ArticleId": urlNumber,
+                    "ArticleId": articleId,
                     "Date": date,
                     "Destination": dest,
                     "Title": title,
@@ -86,15 +89,16 @@ function getArticle(urlNumber, dest, country) {
                     console.log("PutItem succeeded:", title);
                     console.log(data);
                     request.post({
-                        url: 'http://localhost/api/mfw/create',
+                        url: 'http://localhost:8080/api/mfw/create',
                         form: {
-                            "cid": urlNumber,
+                            "articleId": articleId,
                             "country": country,
                             "created": new Date(),
                             "date": date
                         }
                     }, function (err, response, body) {
                         if (err) console.log(err);
+                        else console.log(body);
                     })
                 }
             });
@@ -102,7 +106,7 @@ function getArticle(urlNumber, dest, country) {
     });
 }
 
-var delay = 60 * 60 * 1000;
+var delay = 30 * 60 * 1000;
 
 async.forever(function (next) {
     async.each([1], getRecommendedArticleList, function (err) {
