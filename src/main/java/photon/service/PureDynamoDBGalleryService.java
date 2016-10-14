@@ -13,7 +13,6 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-@Service
 public class PureDynamoDBGalleryService implements GalleryService {
 
     private Table table;

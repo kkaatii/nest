@@ -5,13 +5,12 @@ var http = require('http'),
     async = require('async'),
     request = require('request'),
     AWS = require('aws-sdk'),
-    assert = require('assert');
+    assert = require('assert'),
+    mysql = require('mysql');
 
 AWS.config.update({
     region: "us-west-1"
 });
-
-var docClient = new AWS.DynamoDB.DocumentClient();
 
 function getRecommendedArticleList(pageNum) {
     request({
@@ -37,8 +36,9 @@ function getRecommendedArticleList(pageNum) {
                 }, function (error, response, data) {
                     var geoInfo = JSON.parse(data);
                     if (geoInfo.status === "OK") {
-                        if (!geoInfo.results[0].formatted_address.endsWith("China"))
-                            getArticle(articleUrl[0], dest)
+                        var country = geoInfo.results[0].formatted_address.split(', ').pop();
+                        if (!(country === 'China'))
+                            getArticle(articleUrl[0], dest, country)
                     } else console.error(geoInfo.error_message);
                 })
 
@@ -50,7 +50,7 @@ function getRecommendedArticleList(pageNum) {
     });
 }
 
-function getArticle(urlNumber, dest) {
+function getArticle(urlNumber, dest, country) {
     var url = "http://www.mafengwo.cn/i/" + urlNumber + ".html";
     request({
         url: url,
@@ -58,28 +58,24 @@ function getArticle(urlNumber, dest) {
             'User-Agent': 'Mozilla/5.0'
         }
     }, function (error, response, data) {
-        var title, imageUrls, created;
+        var title, imageUrls, date;
         var datestring = data.match(/time.+?(\d{4}-\d{2}-\d{2})/);
         if (datestring) {
-            created = new Date(datestring[1]).valueOf();
-            var offset, offsetmatch = data.match(/day".+?(\d+) 天<\/li>/);
-            if (offsetmatch) offset = parseInt(offsetmatch[1]);
+            date = new Date(datestring[1]);
             title = data.match(/<h1.*>\s*.+\s*<\/h1>/).toString().replace(/\s*/g, "").replace(/$/g, "").replace(/\//g, "|").match(/>.+</).toString();
             title = title.substring(1, title.length - 1);
             imageUrls = data.match(/data-src="http.+?\.(jpeg|png|jpg).+?"/g);
             for (var i = 0, len = imageUrls.length; i < len; i++) {
                 imageUrls[i] = imageUrls[i].substr(10, imageUrls[i].length - 11);
             }
-            var now = new Date();
             var params = {
-                TableName: "mfw-gallery",
+                TableName: "mfw-gallery-v2",
                 Item: {
+                    "ArticleId": urlNumber,
+                    "Date": date,
                     "Destination": dest,
-                    "Date": created + offset,
                     "Title": title,
-                    "ArticleUrl": url,
-                    "ImageUrls": imageUrls,
-                    "Created": now.getFullYear() * 13 * 32 + (now.getMonth() + 1) * 32 + now.getDate()
+                    "ImageUrls": imageUrls
                 }
             };
 
@@ -89,6 +85,17 @@ function getArticle(urlNumber, dest) {
                 } else {
                     console.log("PutItem succeeded:", title);
                     console.log(data);
+                    request.post({
+                        url: 'http://localhost/api/mfw/create',
+                        form: {
+                            "cid": urlNumber,
+                            "country": country,
+                            "created": new Date(),
+                            "date": date
+                        }
+                    }, function (err, response, body) {
+                        if (err) console.log(err);
+                    })
                 }
             });
         }
