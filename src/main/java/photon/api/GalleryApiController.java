@@ -10,11 +10,11 @@ import photon.gallery.Panel;
 
 @RestController
 @RequestMapping("/api/mfw")
-public class ApiController {
+public class GalleryApiController {
     private GalleryService gallery;
 
     @Autowired
-    public ApiController(GalleryService gallery) {
+    public GalleryApiController(GalleryService gallery) {
         this.gallery = gallery;
     }
 
@@ -27,4 +27,5 @@ public class ApiController {
     public boolean init() {
         return gallery.init();
     }
+
 }

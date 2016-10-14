@@ -1,7 +1,7 @@
 var ArticleList = React.createClass({
     render: function () {
         var createItem = function (item) {
-            var displayed = 8;
+            var displayed = 5;
             var totalSize = item.content.ImageUrls.length;
             var arr = [];
             while (arr.length < displayed) {
