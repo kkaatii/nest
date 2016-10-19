@@ -100,6 +100,6 @@ var Body = React.createClass({
 });
 
 ReactDOM.render(
-    <Body source="http://52.8.191.155/api/mfw/"/>,
+    <Body source="http://localhost:8080/api/mfw/"/>,
     document.getElementById("content")
 );
