@@ -30,12 +30,12 @@ router.get('/callback',
   });
 
 router.get('/mfw', function (req, res, next) {
-  // if (typeof req.user !== 'undefined' && req.user.id === "windowslive|a0d76fa73ee8c755")
+  if (typeof req.user !== 'undefined' && req.user.id === "windowslive|a0d76fa73ee8c755")
     res.render('mfw');
-  /* else {
+  else {
     req.logout();
     res.redirect('/login');
-  } */
+  }
 });
 
 module.exports = router;
