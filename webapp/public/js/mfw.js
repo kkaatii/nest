@@ -112,6 +112,6 @@ var Body = React.createClass({
 });
 
 ReactDOM.render(
-    <Body source="https://api.artificy.com/mfw/"/>,
+    <Body source="https://www.artificy.com/api/mfw/"/>,
     document.getElementById("content")
 );
