@@ -1,5 +1,6 @@
 var express = require('express');
 var passport = require('passport');
+var request = require('request');
 var router = express.Router();
 
 var env = {
@@ -7,6 +8,8 @@ var env = {
   AUTH0_DOMAIN: process.env.AUTH0_DOMAIN,
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:3000/callback'
 };
+
+var auth = require('./auth');
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -29,13 +32,24 @@ router.get('/callback',
     res.redirect(req.session.returnTo || '/mfw');
   });
 
-router.get('/mfw', function (req, res, next) {
+router.get('/mfw', auth, function (req, res, next) {
   // if (typeof req.user !== 'undefined' && req.user.id === "windowslive|a0d76fa73ee8c755")
     res.render('mfw');
   /* else {
     req.logout();
     res.redirect('/login');
   }*/
+});
+
+router.get('/api/*', auth, function (req, res, next) {
+  console.log(req.url.substring(5));
+  request({ url: 'http://localhost:8080/' + req.url.substring(5) },
+    function (error, response, data) {
+      if (!error && response.statusCode == 200) {
+        res.send(data);
+      }
+    }
+  );
 });
 
 module.exports = router;
