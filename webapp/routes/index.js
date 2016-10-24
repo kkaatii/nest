@@ -12,8 +12,7 @@ var env = {
 var auth = require('./auth');
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  //res.render('index', { title: 'Express' });
+router.get('/', function (req, res) {
   res.render('index', {env: env});
 });
 
@@ -22,8 +21,7 @@ router.get('/login', function (req, res) {
 });
 
 router.get('/logout', function (req, res) {
-  req.logout();
-  res.redirect('/');
+  res.redirect('https://kkaatii.auth0.com/v2/logout');
 });
 
 router.get('/callback',
@@ -32,18 +30,12 @@ router.get('/callback',
     res.redirect(req.session.returnTo || '/mfw');
   });
 
-router.get('/mfw', auth, function (req, res, next) {
-  // if (typeof req.user !== 'undefined' && req.user.id === "windowslive|a0d76fa73ee8c755")
-    res.render('mfw');
-  /* else {
-    req.logout();
-    res.redirect('/login');
-  }*/
+router.get('/mfw', auth, function (req, res) {
+  res.render('mfw');
 });
 
-router.get('/api/*', auth, function (req, res, next) {
-  console.log(req.url.substring(5));
-  request({ url: 'http://localhost:8080/' + req.url.substring(5) },
+router.get('/api/*', auth, function (req, res) {
+  request({url: 'http://localhost:8080' + req.url},
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
         res.send(data);

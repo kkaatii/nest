@@ -8,7 +8,7 @@ import photon.service.MfwCrudService;
 import photon.service.GalleryService;
 
 @RestController
-@RequestMapping("/mfw")
+@RequestMapping("/api/mfw")
 public class MfwApiController {
 
     private MfwCrudService mfwCrud;
@@ -21,9 +21,7 @@ public class MfwApiController {
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    Catalog create(@ModelAttribute Catalog catalog) {
+    public Catalog create(@ModelAttribute Catalog catalog) {
         return mfwCrud.put(catalog);
     }
 
