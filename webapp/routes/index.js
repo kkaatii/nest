@@ -21,7 +21,8 @@ router.get('/login', function (req, res) {
 });
 
 router.get('/logout', function (req, res) {
-  res.redirect('https://kkaatii.auth0.com/v2/logout');
+  req.logout();
+  res.redirect('https://kkaatii.auth0.com/v2/logout?federated&returnTo=https%3A%2F%2Fwww.artificy.com');
 });
 
 router.get('/callback',
