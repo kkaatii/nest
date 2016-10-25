@@ -36,7 +36,7 @@ router.get('/mfw', auth, function (req, res) {
 });
 
 router.get('/api/*', auth, function (req, res) {
-  request({url: 'http://localhost:8080' + req.url},
+  request({url: 'http://localhost:8080' + req.originalUrl},
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
         res.send(data);
