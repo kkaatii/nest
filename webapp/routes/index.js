@@ -31,9 +31,11 @@ router.get('/callback',
     res.redirect(req.session.returnTo || '/mfw');
   });
 
-router.get('/mfw', auth, function (req, res) {
-  res.render('mfw');
-});
+router.get('/mfw',
+  auth,
+  function (req, res) {
+    res.render('mfw');
+  });
 
 router.get('/api/*', auth, function (req, res) {
   request({url: 'http://localhost:8080' + req.originalUrl},

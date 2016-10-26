@@ -18,7 +18,9 @@ var ArticleList = React.createClass({
                   style={{marginTop: "-0.2em"}}>{h}</div>;
     };
     var createPair = function (panelpair) {
-      return <div className="col-md-6 col-xs-6"><div className="row">{createItem(panelpair[0])}{createItem(panelpair[1])}</div></div>;
+      return <div className="col-md-6 col-xs-6">
+        <div className="row">{createItem(panelpair[0])}{createItem(panelpair[1])}</div>
+      </div>;
     };
 
     return <div className="row" style={{marginTop: 50}}>{this.props.panels.map(createPair)}</div>
@@ -104,21 +106,18 @@ var Body = React.createClass({
 
   render: function () {
     return (
-      <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
-        <div className="row" style={{
-          position: 'fixed',
-          zIndex: 1,
-          height: 50,
-          backgroundColor: '#fff',
-          width: '100%',
-          paddingLeft: "0.2em"
-        }}>
-          <button className="btn btn-primary" onClick={this.nextBatch} disabled={this.state.refreshing}
-                  style={{position: "absolute", top: "50%", transform: "translateY(-50%)"}}>
-            { this.state.refreshing ? 'Refreshing...' : 'Refresh'}
-          </button>
+      <div>
+        <nav className="navbar navbar-default navbar-fixed-bottom" role="navigation">
+          <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
+            <button className="btn btn-primary navbar-btn navbar-right" onClick={this.nextBatch}
+                    disabled={this.state.refreshing}>
+              { this.state.refreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
+          </div>
+        </nav>
+        <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
+          <ArticleList panels={this.state.panels}/>
         </div>
-        <ArticleList panels={this.state.panels}/>
       </div>
     )
   }

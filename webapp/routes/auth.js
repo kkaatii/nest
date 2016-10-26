@@ -1,6 +1,10 @@
 'use strict';
 
-module.exports = function (req, res, next) {
+var devMode = JSON.parse(process.env.DEV_MODE);
+
+module.exports = devMode ? function (req, res, next) {
+  next();
+} : function (req, res, next) {
   if (typeof req.user !== 'undefined' && validUser(req.user))
     next();
   else {
