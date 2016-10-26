@@ -23,7 +23,7 @@ var ArticleList = React.createClass({
       </div>;
     };
 
-    return <div className="row" style={{marginTop: 50}}>{this.props.panels.map(createPair)}</div>
+    return <div className="row" style={{marginBottom: 50}}>{this.props.panels.map(createPair)}</div>
   },
 
   complementURL: function (articleId) {
@@ -107,7 +107,7 @@ var Body = React.createClass({
   render: function () {
     return (
       <div>
-        <nav className="navbar navbar-default navbar-fixed-bottom" role="navigation">
+        <nav className="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
           <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
             <button className="btn btn-primary navbar-btn navbar-right" onClick={this.nextBatch}
                     disabled={this.state.refreshing}>
