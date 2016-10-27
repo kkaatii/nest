@@ -14,8 +14,7 @@ var ArticleList = React.createClass({
           target="_blank"><img
           src={item.content.ImageUrls[item.displayedPos[i]]} className="img-responsive"
           style={picStyle}/></a></div>);
-      return <div className="col-md-6 col-xs-12" key={item.content.ArticleId}
-                  style={{marginTop: "-0.2em"}}>{h}</div>;
+      return <div className="col-md-6 col-xs-12" key={item.content.ArticleId}>{h}</div>;
     };
     var createPair = function (panelpair) {
       return <div className="col-md-6 col-xs-6">
@@ -23,7 +22,7 @@ var ArticleList = React.createClass({
       </div>;
     };
 
-    return <div className="row" style={{marginBottom: "4em"}}>{this.props.panels.map(createPair)}</div>
+    return <div className="row" style={{marginBottom: "3.6em"}}>{this.props.panels.map(createPair)}</div>
   },
 
   complementURL: function (articleId) {
@@ -45,7 +44,7 @@ var Body = React.createClass({
   },
 
   componentDidMount: function () {
-    var self = this;
+    /*var self = this;
     var xhr = new XMLHttpRequest();
     xhr.open('GET', this.props.source + 'init', true);
     xhr.onload = function () {
@@ -54,7 +53,8 @@ var Body = React.createClass({
         self.nextBatch();
       }
     };
-    xhr.send();
+    xhr.send();*/
+    this.nextBatch();
   },
 
   nextBatch: function () {
@@ -109,8 +109,8 @@ var Body = React.createClass({
       <div>
         <nav className="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
           <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
-            <button className="btn btn-default navbar-btn pull-right" onClick={this.nextBatch}
-                    disabled={this.state.refreshing} style={{marginRight: -15}}>
+            <button className="btn btn-danger navbar-btn" onClick={this.nextBatch}
+                    disabled={this.state.refreshing} style={{marginLeft: -15, paddingLeft: "0.2em"}}>
               { this.state.refreshing ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>

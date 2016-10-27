@@ -34,11 +34,12 @@ router.get('/callback',
 router.get('/mfw',
   auth,
   function (req, res) {
+    request.get('http://localhost:8080/api/mfw/init');
     res.render('mfw');
   });
 
 router.get('/api/*', auth, function (req, res) {
-  request({url: 'http://localhost:8080' + req.originalUrl},
+  request({url: 'http://localhost:8080' + req.url},
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
         res.send(data);
