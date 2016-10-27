@@ -45,15 +45,15 @@ var Body = React.createClass({
 
   componentDidMount: function () {
     /*var self = this;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', this.props.source + 'init', true);
-    xhr.onload = function () {
-      if (xhr.status === 200) {
-        console.log("Successful init");
-        self.nextBatch();
-      }
-    };
-    xhr.send();*/
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', this.props.source + 'init', true);
+     xhr.onload = function () {
+     if (xhr.status === 200) {
+     console.log("Successful init");
+     self.nextBatch();
+     }
+     };
+     xhr.send();*/
     this.nextBatch();
   },
 
@@ -109,10 +109,12 @@ var Body = React.createClass({
       <div>
         <nav className="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
           <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
-            <button className="btn btn-danger navbar-btn" onClick={this.nextBatch}
-                    disabled={this.state.refreshing} style={{marginLeft: -15, paddingLeft: "0.2em"}}>
-              { this.state.refreshing ? 'Refreshing...' : 'Refresh'}
-            </button>
+            <div style={{paddingLeft: "0.2em"}}>
+              <button className="btn btn-danger navbar-btn" onClick={this.nextBatch}
+                      disabled={this.state.refreshing} style={{marginLeft: -15}}>
+                { this.state.refreshing ? 'Refreshing...' : 'Refresh'}
+              </button>
+            </div>
           </div>
         </nav>
         <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>

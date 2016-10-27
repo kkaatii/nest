@@ -34,8 +34,9 @@ router.get('/callback',
 router.get('/mfw',
   auth,
   function (req, res) {
-    request.get('http://localhost:8080/api/mfw/init');
-    res.render('mfw');
+    request.get('http://localhost:8080/api/mfw/init').then(function () {
+      res.render('mfw');
+    });
   });
 
 router.get('/api/*', auth, function (req, res) {
