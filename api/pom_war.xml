@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.artificy</groupId>
-	<version>0.2.1</version>
+	<version>0.2.2</version>
 	<packaging>war</packaging>
 
 	<name>photon</name>

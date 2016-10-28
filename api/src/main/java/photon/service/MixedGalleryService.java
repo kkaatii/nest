@@ -9,6 +9,7 @@ import photon.model.User;
 import photon.util.EQueue;
 
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class MixedGalleryService implements GalleryService {
@@ -16,6 +17,7 @@ public class MixedGalleryService implements GalleryService {
     private MfwCrudService mfwCrud;
     private static EQueue<Catalog> displayQueue;
     private static EQueue<Catalog> cacheQueue;
+    private final ReentrantLock lock = new ReentrantLock();
 
     private static int DEFAULT_BUFFER_SIZE = 64;
     private static int DEFAULT_VIEW_THRESHOLD = 12;
@@ -23,14 +25,20 @@ public class MixedGalleryService implements GalleryService {
     @Autowired
     public MixedGalleryService(MfwCrudService mfwCrud) {
         this.mfwCrud = mfwCrud;
-        //cacheQueue = preload(DEFAULT_BUFFER_SIZE);
     }
 
     @Override
     public boolean init() {
-        displayQueue = (cacheQueue == null) ? preload(DEFAULT_BUFFER_SIZE) : cacheQueue;
-        new Thread(() -> cacheQueue = preload(DEFAULT_BUFFER_SIZE)).start();
-        return displayQueue != null;
+        lock.lock();
+        try {
+            if (displayQueue == null) {
+                displayQueue = (cacheQueue == null) ? preload() : cacheQueue;
+                new Thread(() -> cacheQueue = preload()).start();
+            }
+            return displayQueue != null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -43,12 +51,15 @@ public class MixedGalleryService implements GalleryService {
             Integer i = displayQueue.dequeue().getArticleId();
             articleIdSet.add(i);
         }
-        new Thread(() -> mfwCrud.batchIncrementViewCount(articleIdSet, User.DEFAULT_USER_ID)).start();
-        return batchGetFromDynamo(articleIdSet.toArray(new Integer[batchSize]));
+        if (!articleIdSet.isEmpty()) {
+            new Thread(() -> mfwCrud.batchIncrementViewCount(articleIdSet, User.DEFAULT_USER_ID)).start();
+            return batchGetFromDynamo(articleIdSet.toArray(new Integer[batchSize]));
+        }
+        return new Panel[0];
     }
 
-    private EQueue<Catalog> preload(int bufferSize) {
-        List<Catalog> c = mfwCrud.randomBuffer(bufferSize, DEFAULT_VIEW_THRESHOLD);
+    private EQueue<Catalog> preload() {
+        List<Catalog> c = mfwCrud.randomBuffer(DEFAULT_BUFFER_SIZE, DEFAULT_VIEW_THRESHOLD);
         if (c != null) {
             EQueue<Catalog> queue = new EQueue<>();
             c.forEach(queue::enqueue);

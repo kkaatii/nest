@@ -9,6 +9,8 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:3000/callback'
 };
 
+var API_SERVER = process.env.API_SERVER;
+
 var auth = require('./auth');
 
 /* GET home page. */
@@ -34,13 +36,12 @@ router.get('/callback',
 router.get('/mfw',
   auth,
   function (req, res) {
-    request.get('http://localhost:8080/api/mfw/init').then(function () {
-      res.render('mfw');
-    });
+    request.get(API_SERVER + '/api/mfw/init');
+    res.render('mfw');
   });
 
 router.get('/api/*', auth, function (req, res) {
-  request({url: 'http://localhost:8080' + req.url},
+  request({url: API_SERVER + req.url},
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
         res.send(data);
