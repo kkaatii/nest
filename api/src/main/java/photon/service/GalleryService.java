@@ -4,7 +4,7 @@ import photon.gallery.Panel;
 
 public interface GalleryService {
 
-    boolean init();
+    void init(Integer userId);
 
-    Panel[] nextBatch(int batchSize);
+    Panel[] nextBatch(Integer userId, int batchSize);
 }

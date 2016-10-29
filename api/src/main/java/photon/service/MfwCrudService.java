@@ -45,8 +45,8 @@ public class MfwCrudService {
             Arrays.stream(catalogs).forEach(this::put);
     }
 
-    public List<Catalog> randomBuffer(int size, int viewThreshold) {
-        Collection<Integer> randomArticleIds = new HashSet<>(viewLogMapper.randomCollection(size, viewThreshold));
+    public List<Catalog> randomBuffer(Integer userId, int size, int viewThreshold) {
+        Collection<Integer> randomArticleIds = new HashSet<>(viewLogMapper.randomCollection(userId, size, viewThreshold));
         return catalogMapper.selectMany(randomArticleIds);
     }
 

@@ -35,14 +35,14 @@ public class PureDynamoDBGalleryService implements GalleryService {
     }
 
     @Override
-    public boolean init() {
+    public void init(Integer userId) {
         LocalDate yesterday = LocalDate.now().minus(1, ChronoUnit.DAYS);
         int createdAtYesterday = yesterday.getYear() * 13 * 32 + yesterday.getMonthValue() *32 + yesterday.getDayOfMonth();
-        return queryWithCreatedIndex(createdAtYesterday);
+        queryWithCreatedIndex(createdAtYesterday);
     }
 
     @Override
-    public Panel[] nextBatch(int batchSize) {
+    public Panel[] nextBatch(Integer userId, int batchSize) {
         Panel[] p = new Panel[batchSize];
 
         if (!items.isEmpty()) {

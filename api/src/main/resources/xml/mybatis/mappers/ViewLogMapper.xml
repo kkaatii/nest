@@ -32,7 +32,7 @@
     </update>
 
     <select id="randomCollection" resultType="int" statementType="CALLABLE">
-        {call get_rands(#{size}, #{threshold})}
+        {call get_rands(#{userId}, #{size}, #{threshold})}
     </select>
 
 </mapper>

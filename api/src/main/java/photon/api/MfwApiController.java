@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import photon.gallery.Panel;
 import photon.model.Catalog;
+import photon.model.User;
 import photon.service.MfwCrudService;
 import photon.service.GalleryService;
 
@@ -31,13 +32,13 @@ public class MfwApiController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Panel[] getPanels(@RequestParam(defaultValue = "4") int batchSize) {
-        return gallery.nextBatch(batchSize);
+    public Panel[] getPanels(@RequestParam(required = false) Integer userId, @RequestParam(defaultValue = "4") int batchSize) {
+        return gallery.nextBatch(userId == null ? User.DEFAULT_USER_ID : userId, batchSize);
     }
 
     @RequestMapping("/init")
-    public boolean init() {
-        return gallery.init();
+    public void init(@RequestParam(required = false) Integer userId) {
+        gallery.init(userId == null ? User.DEFAULT_USER_ID : userId);
     }
 
 }
