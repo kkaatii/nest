@@ -25,6 +25,7 @@ public class MfwCrudService {
     }
 
     public Catalog put(Catalog catalog) {
+        if (catalogMapper.select(catalog.getArticleId()) != null) return null;
         catalogMapper.insert(catalog);
         //viewLogMapper.insert(new ViewLog(catalog.getArticleId(), User.DEFAULT_USER_ID));
         viewLogMapper.init(catalog.getArticleId());

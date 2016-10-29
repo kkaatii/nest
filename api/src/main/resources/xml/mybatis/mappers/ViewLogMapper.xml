@@ -21,10 +21,6 @@
                 #{articleId},
                 user_id
             FROM `user`
-            WHERE NOT EXISTS(SELECT 1
-                             FROM viewlog
-                             WHERE article_id = #{articleId}
-                             LIMIT 1)
     </insert>
 
     <update id="increment">

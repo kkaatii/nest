@@ -36,7 +36,6 @@
     <insert id="insert">
         INSERT INTO catalog (article_id, country, created, `date`)
         VALUES (#{articleId}, #{country}, #{created}, #{date})
-        ON DUPLICATE KEY UPDATE article_id = values(article_id)
     </insert>
 
     <delete id="delete">

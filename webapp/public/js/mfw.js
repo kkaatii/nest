@@ -30,8 +30,8 @@ var ArticleList = React.createClass({
           fontSize: "2.1em",
           marginTop: "0.5em",
           marginBottom: "0.3em",
-          paddingLeft: "3em",
-          paddingRight: "3em"
+          paddingLeft: "20%",
+          paddingRight: "20%"
         }}>
           <span
             className={"pull-left glyphicon glyphicon-star" + (self.state.starred[item.content.ArticleId] ? "" : "-empty") }
