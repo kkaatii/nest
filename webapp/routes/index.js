@@ -11,6 +11,7 @@ var env = {
 
 var LOCAL_API_SERVER = process.env.LOCAL_API_SERVER;
 var REMOTE_API_SERVER = process.env.REMOTE_API_SERVER;
+var authEnabled = JSON.parse(process.env.ENABLE_AUTH);
 
 var auth = require('./auth');
 
@@ -37,7 +38,7 @@ router.get('/callback',
 router.get('/mfw',
   auth,
   function (req, res) {
-    request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'name', req.user.name));
+    if (authEnabled) request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'name', req.user.name));
     res.render('mfw', {api_url: REMOTE_API_SERVER});
   });
 
