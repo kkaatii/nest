@@ -1,3 +1,5 @@
+var apiServer = document.getElementById('api').getAttribute('source');
+
 var ArticleList = React.createClass({
   render: function () {
     var self = this;
@@ -8,6 +10,13 @@ var ArticleList = React.createClass({
         margin: "0 auto",
         padding: "0.2em"
       };
+      h.push(
+        <div className="row" style={{fontSize: "1.6em", paddingLeft: "1em", paddingRight: "1em"}}>
+          <button className="btn btn-warning pull-right" onClick={self.noshow(item.content.ArticleId)}>
+            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          </button>
+        </div>
+      );
       for (var i = 0; i < item.displayedPos.length; i++)
         h.push(<div className="row" title={item.content.Destination}><a
           href={self.complementURL(item.content.ArticleId)}
@@ -27,6 +36,13 @@ var ArticleList = React.createClass({
 
   complementURL: function (articleId) {
     return "http://www.mafengwo.cn/i/" + articleId + ".html";
+  },
+  noshow: function (articleId) {
+    return function () {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', apiServer + '/noshow?articleId=' + articleId, true);
+      xhr.send();
+    }
   }
 });
 
@@ -62,7 +78,7 @@ var Body = React.createClass({
     var self = this;
     var xhr = new XMLHttpRequest();
     var batchSize = this.state.batchSize;
-    xhr.open('GET', this.props.source + '?batchSize=' + batchSize, true);
+    xhr.open('GET', apiServer + '/?batchSize=' + batchSize, true);
     xhr.onload = function () {
       if (xhr.status === 200) {
         var panels_raw, panelpairs = [];
@@ -126,6 +142,6 @@ var Body = React.createClass({
 });
 
 ReactDOM.render(
-  <Body source="http://localhost:3000/api/mfw/"/>,
+  <Body />,
   document.getElementById("content")
 );

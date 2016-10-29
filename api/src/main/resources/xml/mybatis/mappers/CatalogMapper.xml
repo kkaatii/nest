@@ -21,7 +21,7 @@
     </select>
 
     <select id="selectMany" resultMap="catalogRM">
-        select
+        SELECT
         article_id ,
         country ,
         created ,

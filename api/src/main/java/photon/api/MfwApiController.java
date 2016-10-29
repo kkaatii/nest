@@ -27,18 +27,27 @@ public class MfwApiController {
     }
 
     @RequestMapping(value = "/mark", method = RequestMethod.POST)
-    public void mark(@RequestParam Integer articleId) {
-        mfwCrud.markFavorite(articleId, true);
+    public void mark(@RequestParam Integer articleId, @RequestParam Integer userId) {
+        mfwCrud.markFavorite(articleId, userId, true);
+    }
+
+    @RequestMapping(value = "/noshow", method = RequestMethod.POST)
+    public boolean noshow(@RequestParam Integer articleId, @RequestParam String name) {
+        mfwCrud.noshow(articleId, name);
+        return true;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Panel[] getPanels(@RequestParam(required = false) Integer userId, @RequestParam(defaultValue = "4") int batchSize) {
-        return gallery.nextBatch(userId == null ? User.DEFAULT_USER_ID : userId, batchSize);
+    public Panel[] getPanels(@RequestParam(required = false) String name, @RequestParam(defaultValue = "4") int batchSize) {
+        return gallery.nextBatch(mfwCrud.findUserId(name), batchSize);
     }
 
     @RequestMapping("/init")
-    public void init(@RequestParam(required = false) Integer userId) {
-        gallery.init(userId == null ? User.DEFAULT_USER_ID : userId);
+    public Integer init(@RequestParam(required = false) String name) {
+        Integer id = mfwCrud.findUserId(name);
+        if (id == null) return null;
+        new Thread(() -> gallery.init(id)).start();
+        return id;
     }
 
 }

@@ -8,18 +8,16 @@ import photon.model.Dynamo;
 import photon.util.EQueue;
 
 import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class MixedGalleryService implements GalleryService {
 
     private MfwCrudService mfwCrud;
-    private static Map<Integer, EQueue<Catalog>> displayQueues;
-    private static Map<Integer, EQueue<Catalog>> cacheQueues;
-    private final ReentrantLock lock = new ReentrantLock();
+    private final Map<Integer, EQueue<Catalog>> displayQueues;
+    private Map<Integer, EQueue<Catalog>> cacheQueues;
 
-    private static int DEFAULT_BUFFER_SIZE = 64;
-    private static int DEFAULT_VIEW_THRESHOLD = 12;
+    private static final int DEFAULT_BUFFER_SIZE = 128;
+    private static final int DEFAULT_VIEW_THRESHOLD = 32;
 
     @Autowired
     public MixedGalleryService(MfwCrudService mfwCrud) {
@@ -30,21 +28,29 @@ public class MixedGalleryService implements GalleryService {
 
     @Override
     public void init(Integer userId) {
-        EQueue<Catalog> cache = cacheQueues.get(userId);
-        displayQueues.put(userId, cache == null ? preload(userId) : cache);
-        new Thread(() -> cacheQueues.put(userId, preload(userId))).start();
+        _init(userId);
+    }
+
+    private EQueue<Catalog> _init(Integer userId) {
+        synchronized (displayQueues) {
+            EQueue<Catalog> dq = displayQueues.get(userId);
+            if (dq != null && !dq.isEmpty()) return dq;
+            EQueue<Catalog> cache = cacheQueues.get(userId);
+            if (cache == null) cache = preload(userId);
+            displayQueues.put(userId, cache);
+            new Thread(() -> cacheQueues.put(userId, preload(userId))).start();
+            return cache;
+        }
     }
 
     @Override
     public Panel[] nextBatch(Integer userId, int batchSize) {
         Set<Integer> articleIdSet = new HashSet<>();
-        EQueue<Catalog> display = displayQueues.get(userId);
+        EQueue<Catalog> dq = displayQueues.get(userId);
+        if (dq == null) dq = _init(userId);
         while (articleIdSet.size() < batchSize) {
-            if (display.isEmpty()) {
-                init(userId);
-                display = displayQueues.get(userId);
-            }
-            Integer i = display.dequeue().getArticleId();
+            if (dq.isEmpty()) dq = _init(userId);
+            Integer i = dq.dequeue().getArticleId();
             articleIdSet.add(i);
         }
         if (!articleIdSet.isEmpty()) {

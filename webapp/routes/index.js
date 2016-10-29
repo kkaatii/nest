@@ -9,7 +9,8 @@ var env = {
   AUTH0_CALLBACK_URL: process.env.AUTH0_CALLBACK_URL || 'http://localhost:3000/callback'
 };
 
-var API_SERVER = process.env.API_SERVER;
+var LOCAL_API_SERVER = process.env.LOCAL_API_SERVER;
+var REMOTE_API_SERVER = process.env.REMOTE_API_SERVER;
 
 var auth = require('./auth');
 
@@ -36,12 +37,12 @@ router.get('/callback',
 router.get('/mfw',
   auth,
   function (req, res) {
-    request.get(API_SERVER + '/api/mfw/init');
-    res.render('mfw');
+    request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'name', req.user.name));
+    res.render('mfw', {api_url: REMOTE_API_SERVER});
   });
 
-router.get('/api/*', auth, function (req, res) {
-  request({url: API_SERVER + req.url},
+router.all('/api/*', auth, function (req, res) {
+  request({url: appendParameter(LOCAL_API_SERVER + req.url, 'name', req.user.name), method: req.method},
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
         res.send(data);
@@ -49,5 +50,11 @@ router.get('/api/*', auth, function (req, res) {
     }
   );
 });
+
+function appendParameter(url, paramname, paramvalue) {
+  var matched = url.match(/.+\?.+/);
+  if (matched !== null) return url + '&' + paramname + '=' + paramvalue;
+  else return url + '?' + paramname + '=' + paramvalue;
+}
 
 module.exports = router;

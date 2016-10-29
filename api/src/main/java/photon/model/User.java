@@ -2,7 +2,7 @@ package photon.model;
 
 public class User {
     public static final Integer DEFAULT_USER_ID = 0;
-    private int userId;
+    private Integer userId;
     private String name;
 
     public int getUserId() {

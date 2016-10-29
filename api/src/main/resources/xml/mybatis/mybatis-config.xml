@@ -9,6 +9,7 @@
     <typeAliases>
         <typeAlias alias="Catalog" type="photon.model.Catalog"/>
         <typeAlias alias="ViewLog" type="photon.model.ViewLog"/>
+        <typeAlias alias="User" type="photon.model.User"/>
     </typeAliases>
 
     <environments default="prod">
@@ -35,5 +36,6 @@
     <mappers>
         <mapper resource="xml/mybatis/mappers/CatalogMapper.xml"/>
         <mapper resource="xml/mybatis/mappers/ViewLogMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/UserMapper.xml"/>
     </mappers>
 </configuration>

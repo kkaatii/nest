@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="photon.model.ViewLogMapper">
 
-    <insert id="init" useGeneratedKeys="true" keyProperty="viewLogId">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="viewLogId">
         INSERT INTO viewlog (article_id, user_id)
             SELECT
                 #{articleId},
@@ -15,9 +15,27 @@
                              WHERE article_id = #{articleId} AND user_id = #{userId})
     </insert>
 
+    <insert id="init" useGeneratedKeys="true" keyProperty="viewLogId">
+        INSERT INTO viewlog (article_id, user_id)
+            SELECT
+                #{articleId},
+                user_id
+            FROM `user`
+            WHERE NOT EXISTS(SELECT 1
+                             FROM viewlog
+                             WHERE article_id = #{articleId}
+                             LIMIT 1)
+    </insert>
+
     <update id="increment">
         UPDATE viewlog
         SET `count` = `count` + 1
+        WHERE article_id = #{articleId} AND user_id = #{userId}
+    </update>
+
+    <update id="incrementTo">
+        UPDATE viewlog
+        SET `count` = #{count}
         WHERE article_id = #{articleId} AND user_id = #{userId}
     </update>
 

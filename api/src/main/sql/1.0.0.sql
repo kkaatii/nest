@@ -22,6 +22,12 @@ CREATE TABLE `mfw`.`viewlog` (
     ON UPDATE CASCADE
 );
 
+CREATE TABLE `mfw`.`user` (
+  `user_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name`    VARCHAR(64)  NULL,
+  PRIMARY KEY (`user_id`)
+);
+
 CREATE DEFINER =`sa`@`%` PROCEDURE `get_rands`(IN cnt INT)
   BEGIN
     DROP TEMPORARY TABLE IF EXISTS rands;

@@ -14,5 +14,15 @@ module.exports = devMode ? function (req, res, next) {
 };
 
 function validUser(user) {
-  return user.id === "windowslive|a0d76fa73ee8c755" || user.nickname === "finn199411" || user.nickname === "bulb.dan" || user.nickname === "evomjv";
+  switch (user.nickname) {
+    case "finn199411":
+      user.name = "finn199411";
+      return true;
+    case "bulb.dan":
+    case "evomjv":
+      user.name = "evomjv";
+      return true;
+    default:
+      return false;
+  }
 }
