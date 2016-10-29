@@ -1,6 +1,13 @@
 var apiServer = document.getElementById('api').getAttribute('source');
 
 var ArticleList = React.createClass({
+  getInitialState: function () {
+    return {
+      starred: {},
+      noshowed: {}
+    }
+  },
+
   render: function () {
     var self = this;
     var createItem = function (item) {
@@ -10,11 +17,28 @@ var ArticleList = React.createClass({
         margin: "0 auto",
         padding: "0.2em"
       };
+      var glyphStyle = {
+        star: {
+          color: self.state.starred[item.content.ArticleId] ? "#ffbb00" : "#666666"
+        },
+        remove: {
+          color: self.state.noshowed[item.content.ArticleId] ? "#bd0000" : "#666666"
+        }
+      };
       h.push(
-        <div className="row" style={{fontSize: "1.6em", paddingLeft: "1em", paddingRight: "1em"}}>
-          <button className="btn btn-warning pull-right" onClick={self.noshow(item.content.ArticleId)}>
-            <span className="glyphicon glyphicon-remove" aria-hidden="true"></span>
-          </button>
+        <div className="row" style={{
+          fontSize: "2.1em",
+          marginTop: "0.5em",
+          marginBottom: "0.3em",
+          paddingLeft: "3em",
+          paddingRight: "3em"
+        }}>
+          <span
+            className={"pull-left glyphicon glyphicon-star" + (self.state.starred[item.content.ArticleId] ? "" : "-empty") }
+            aria-hidden="true" onClick={self.star(item.content.ArticleId)} style={glyphStyle.star}/>
+          <span className="pull-right glyphicon glyphicon-remove"
+                aria-hidden="true" onClick={self.noshow(item.content.ArticleId)}
+                style={glyphStyle.remove}/>
         </div>
       );
       for (var i = 0; i < item.displayedPos.length; i++)
@@ -38,10 +62,25 @@ var ArticleList = React.createClass({
     return "http://www.mafengwo.cn/i/" + articleId + ".html";
   },
   noshow: function (articleId) {
+    var self = this;
     return function () {
       var xhr = new XMLHttpRequest();
       xhr.open('POST', apiServer + '/noshow?articleId=' + articleId, true);
       xhr.send();
+      var noshowed = self.state.noshowed;
+      noshowed[articleId] = true;
+      self.setState({noshowed: noshowed});
+    }
+  },
+  star: function (articleId) {
+    var self = this;
+    return function () {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', apiServer + '/star?articleId=' + articleId, true);
+      xhr.send();
+      var starred = self.state.starred;
+      starred[articleId] = true;
+      self.setState({starred: starred});
     }
   }
 });
@@ -53,10 +92,6 @@ var Body = React.createClass({
       batchSize: 4,
       panels: []
     }
-  },
-
-  handleChange: function (event) {
-    this.setState({query: event.target.value})
   },
 
   componentDidMount: function () {

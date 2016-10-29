@@ -26,9 +26,10 @@ public class MfwApiController {
         return mfwCrud.put(catalog);
     }
 
-    @RequestMapping(value = "/mark", method = RequestMethod.POST)
-    public void mark(@RequestParam Integer articleId, @RequestParam Integer userId) {
-        mfwCrud.markFavorite(articleId, userId, true);
+    @RequestMapping(value = "/star", method = RequestMethod.POST)
+    public boolean star(@RequestParam Integer articleId, @RequestParam String name) {
+        mfwCrud.markFavorite(articleId, name, true);
+        return true;
     }
 
     @RequestMapping(value = "/noshow", method = RequestMethod.POST)

@@ -4,10 +4,10 @@ package photon.model;
 
 public interface FavoriteLogMapper {
 
-    FavoriteLog selectByUserId(Integer uid);
+    //FavoriteLog selectByUserId(Integer uid);
 
     void insert(FavoriteLog flog);
 
-    void deleteByUserId(Integer uid);
+    //void deleteByUserId(Integer uid);
 
 }

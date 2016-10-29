@@ -17,7 +17,21 @@ CREATE TABLE `mfw`.`viewlog` (
   `count`      TINYINT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`viewlog_id`),
   FOREIGN KEY (`article_id`)
-  REFERENCES `catalog` (`article_id`)
+  REFERENCES `mfw`.`catalog` (`article_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+CREATE TABLE `mfw`.`favlog` (
+  `article_id` INT UNSIGNED     NOT NULL,
+  `user_id`    INT UNSIGNED     NOT NULL,
+  PRIMARY KEY (`article_id`),
+  FOREIGN KEY (`article_id`)
+  REFERENCES `mfw`.`catalog` (`article_id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  FOREIGN KEY (`user_id`)
+  REFERENCES `mfw`.`user` (`user_id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );

@@ -1,16 +1,16 @@
 'use strict';
 
-var devMode = JSON.parse(process.env.DEV_MODE);
+var authEnabled = JSON.parse(process.env.ENABLE_AUTH);
 
-module.exports = devMode ? function (req, res, next) {
-  next();
-} : function (req, res, next) {
+module.exports = authEnabled ? function (req, res, next) {
   if (typeof req.user !== 'undefined' && validUser(req.user))
     next();
   else {
     req.logout();
     res.redirect('/login');
   }
+} : function (req, res, next) {
+  next();
 };
 
 function validUser(user) {

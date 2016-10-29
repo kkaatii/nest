@@ -14,6 +14,8 @@ public class MfwCrudService {
     private final FavoriteLogMapper favMapper;
     private final UserMapper userMapper;
 
+    private static final int MAX_VIEW_COUNT = 255;
+
     @Autowired
     public MfwCrudService(CatalogMapper catalogMapper, ViewLogMapper viewLogMapper, FavoriteLogMapper favMapper, UserMapper userMapper) {
         this.catalogMapper = catalogMapper;
@@ -38,8 +40,10 @@ public class MfwCrudService {
         }
     }
 
-    public void markFavorite(Integer articleId, Integer userId, boolean favorite) {
+    public void markFavorite(Integer articleId, String name, boolean favorite) {
+        Integer userId = userMapper.find(name);
         favMapper.insert(new FavoriteLog(articleId, userId));
+        viewLogMapper.incrementTo(articleId, userId, MAX_VIEW_COUNT);
     }
 
     public void putAll(Catalog[] catalogs) {
@@ -61,7 +65,7 @@ public class MfwCrudService {
     }
 
     public void noshow(Integer articleId, String name) {
-        viewLogMapper.incrementTo(articleId, userMapper.find(name), 255);
+        viewLogMapper.incrementTo(articleId, userMapper.find(name), MAX_VIEW_COUNT);
     }
 
     public Integer findUserId(String name) {
