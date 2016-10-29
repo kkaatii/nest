@@ -15,7 +15,7 @@
                              WHERE article_id = #{articleId} AND user_id = #{userId})
     </insert>
 
-    <insert id="init" useGeneratedKeys="true" keyProperty="viewLogId">
+    <insert id="init">
         INSERT INTO viewlog (article_id, user_id)
             SELECT
                 #{articleId},
