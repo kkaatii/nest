@@ -26,11 +26,17 @@ var ArticleList = React.createClass({
           color: self.state.noshowed[item.content.ArticleId] ? "#bd0000" : "#666666"
         }
       };
+      for (var i = 0; i < item.displayedPos.length; i++)
+        h.push(<div className="row" title={item.content.Destination}><a
+          href={self.complementURL(item.content.ArticleId)}
+          target="_blank"><img
+          src={item.content.ImageUrls[item.displayedPos[i]]} className="img-responsive"
+          style={picStyle}/></a></div>);
       h.push(
         <div className="row" style={{
           fontSize: "2.1em",
-          marginTop: "0.5em",
-          marginBottom: "0.3em",
+          marginTop: "0.3em",
+          marginBottom: "0.5em",
           paddingLeft: "20%",
           paddingRight: "20%"
         }}>
@@ -42,12 +48,6 @@ var ArticleList = React.createClass({
                 style={glyphStyle.remove}/>
         </div>
       );
-      for (var i = 0; i < item.displayedPos.length; i++)
-        h.push(<div className="row" title={item.content.Destination}><a
-          href={self.complementURL(item.content.ArticleId)}
-          target="_blank"><img
-          src={item.content.ImageUrls[item.displayedPos[i]]} className="img-responsive"
-          style={picStyle}/></a></div>);
       return <div className="col-md-6 col-xs-12" key={item.content.ArticleId}>{h}</div>;
     };
     var createPair = function (panelpair) {
