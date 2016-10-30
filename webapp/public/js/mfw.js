@@ -35,8 +35,8 @@ var ArticleList = React.createClass({
       h.push(
         <div className="row" style={{
           fontSize: "2.1em",
-          marginTop: "0.25em",
-          marginBottom: "0.6em",
+          marginTop: "0.24em",
+          marginBottom: "0.64em",
           paddingLeft: "20%",
           paddingRight: "20%"
         }}>
