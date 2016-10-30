@@ -39,7 +39,7 @@ router.get('/mfw',
   auth,
   function (req, res) {
     if (authEnabled) request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'name', req.user.name));
-    res.render('mfw', {api_url: REMOTE_API_SERVER});
+    res.render('mfw', {server: REMOTE_API_SERVER});
   });
 
 router.all('/api/*', auth, function (req, res) {

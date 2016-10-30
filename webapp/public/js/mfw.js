@@ -1,4 +1,5 @@
-var API_SERVER = document.getElementById('api').getAttribute('source');
+var REMOTE_SERVER = document.getElementById('api').getAttribute('server');
+var MFW_API_URL = REMOTE_SERVER + '/api/mfw';
 
 var ArticleList = React.createClass({
   getInitialState: function () {
@@ -65,7 +66,7 @@ var ArticleList = React.createClass({
     var self = this;
     return function () {
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', API_SERVER + '/noshow?articleId=' + articleId, true);
+      xhr.open('POST', MFW_API_URL + '/noshow?articleId=' + articleId, true);
       xhr.send();
       var noshowed = self.state.noshowed;
       noshowed[articleId] = true;
@@ -76,7 +77,7 @@ var ArticleList = React.createClass({
     var self = this;
     return function () {
       var xhr = new XMLHttpRequest();
-      xhr.open('POST', API_SERVER + '/star?articleId=' + articleId, true);
+      xhr.open('POST', MFW_API_URL + '/star?articleId=' + articleId, true);
       xhr.send();
       var starred = self.state.starred;
       starred[articleId] = true;
@@ -113,10 +114,10 @@ var Body = React.createClass({
     var self = this;
     var xhr = new XMLHttpRequest();
     var batchSize = this.state.batchSize;
-    xhr.open('GET', API_SERVER + '/?batchSize=' + batchSize, true);
+    xhr.open('GET', MFW_API_URL + '/?batchSize=' + batchSize, true);
     xhr.onload = function () {
       if (xhr.status === 200) {
-        if (xhr.responseText.startsWith('<')) window.location = API_SERVER.replace(/(\w)\/.+/, '$1/login');
+        if (xhr.responseText.startsWith('<')) window.location = REMOTE_SERVER + '/login';
         var panels_raw, panelpairs = [];
         panels_raw = JSON.parse(xhr.responseText);
         console.log(panels_raw);
@@ -161,7 +162,7 @@ var Body = React.createClass({
       <div>
         <nav className="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
           <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
-            <div className="text-center" style={{paddingLeft: "0.2em"}}>
+            <div className="text-center">
               <button className="btn btn-danger navbar-btn" onClick={this.nextBatch}
                       disabled={this.state.refreshing} style={{width: "12em"}}>
                 { this.state.refreshing ? 'Refreshing...' : 'Refresh'}
