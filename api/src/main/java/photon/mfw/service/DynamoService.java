@@ -1,4 +1,4 @@
-package photon.model.mfw;
+package photon.mfw.service;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -13,22 +13,22 @@ import java.util.stream.Collectors;
 /**
  * Helper singleton for accessing DynamoDB.
  */
-public class Dynamo {
+public class DynamoService {
     private static String TABLE_NAME = "mfw-gallery-v2";
     private static String PK_NAME = "ArticleId";
 
-    private static Dynamo ourInstance = new Dynamo();
+    private static DynamoService ourInstance = new DynamoService();
 
     private final DynamoDB db;
     private final Table table;
 
     private static SecureRandom rnd = new SecureRandom();
 
-    public static Dynamo helper() {
+    public static DynamoService helper() {
         return ourInstance;
     }
 
-    private Dynamo() {
+    private DynamoService() {
         AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         client.withRegion(Regions.US_WEST_1);
         db = new DynamoDB(client);

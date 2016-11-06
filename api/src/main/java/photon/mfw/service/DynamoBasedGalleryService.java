@@ -1,18 +1,18 @@
-package photon.service;
+package photon.mfw.service;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import photon.model.mfw.Panel;
+import photon.mfw.model.Panel;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class DynamoMfwGalleryService implements MfwGalleryService {
+public class DynamoBasedGalleryService implements GalleryService {
 
     private Table table;
     private List<Item> items;
@@ -23,7 +23,7 @@ public class DynamoMfwGalleryService implements MfwGalleryService {
     private static String TABLE_NAME = "mfw-gallery";
     private static String INDEX_NAME = "CreatedIndex";
 
-    public DynamoMfwGalleryService() {
+    public DynamoBasedGalleryService() {
         AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         client.withRegion(Regions.US_WEST_1);
         items = new ArrayList<>();

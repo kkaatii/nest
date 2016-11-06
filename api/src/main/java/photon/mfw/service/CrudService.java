@@ -1,13 +1,13 @@
-package photon.service;
+package photon.mfw.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import photon.model.mfw.*;
+import photon.mfw.model.*;
 
 import java.util.*;
 
 @Service
-public class MfwCrudService {
+public class CrudService {
 
     private final CatalogMapper catalogMapper;
     private final ViewLogMapper viewLogMapper;
@@ -17,7 +17,7 @@ public class MfwCrudService {
     private static final int MAX_VIEW_COUNT = 255;
 
     @Autowired
-    public MfwCrudService(CatalogMapper catalogMapper, ViewLogMapper viewLogMapper, FavoriteLogMapper favMapper, UserMapper userMapper) {
+    public CrudService(CatalogMapper catalogMapper, ViewLogMapper viewLogMapper, FavoriteLogMapper favMapper, UserMapper userMapper) {
         this.catalogMapper = catalogMapper;
         this.viewLogMapper = viewLogMapper;
         this.favMapper = favMapper;
@@ -34,7 +34,7 @@ public class MfwCrudService {
 
     public void delete(Integer articleId) {
         try {
-            Dynamo.helper().deleteItem(articleId);
+            DynamoService.helper().deleteItem(articleId);
             catalogMapper.delete(articleId);
         } catch (Exception e) {
             System.err.print("Cannot remove item #" + articleId + " from DynamoDB");

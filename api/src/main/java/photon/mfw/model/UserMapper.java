@@ -1,4 +1,4 @@
-package photon.model.mfw;
+package photon.mfw.model;
 
 import org.apache.ibatis.annotations.Param;
 

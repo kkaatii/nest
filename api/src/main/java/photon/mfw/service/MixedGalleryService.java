@@ -1,18 +1,17 @@
-package photon.service;
+package photon.mfw.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import photon.model.mfw.Panel;
-import photon.model.mfw.Catalog;
-import photon.model.mfw.Dynamo;
+import photon.mfw.model.Panel;
+import photon.mfw.model.Catalog;
 import photon.util.EQueue;
 
 import java.util.*;
 
 @Service
-public class MixedMfwGalleryService implements MfwGalleryService {
+public class MixedGalleryService implements GalleryService {
 
-    private MfwCrudService mfwCrud;
+    private CrudService mfwCrud;
     private final Map<Integer, EQueue<Catalog>> displayQueues;
     private Map<Integer, EQueue<Catalog>> cacheQueues;
 
@@ -20,7 +19,7 @@ public class MixedMfwGalleryService implements MfwGalleryService {
     private static final int DEFAULT_VIEW_THRESHOLD = 32;
 
     @Autowired
-    public MixedMfwGalleryService(MfwCrudService mfwCrud) {
+    public MixedGalleryService(CrudService mfwCrud) {
         this.mfwCrud = mfwCrud;
         displayQueues = new HashMap<>();
         cacheQueues = new HashMap<>();
@@ -69,6 +68,6 @@ public class MixedMfwGalleryService implements MfwGalleryService {
     }
 
     private Panel[] batchGetFromDynamo(Integer[] articleIds) {
-        return Dynamo.helper().batchGetAsJson(articleIds).stream().map(Panel::new).toArray(Panel[]::new);
+        return DynamoService.helper().batchGetAsJson(articleIds).stream().map(Panel::new).toArray(Panel[]::new);
     }
 }

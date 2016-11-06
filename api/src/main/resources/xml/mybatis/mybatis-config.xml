@@ -7,10 +7,10 @@
     <properties resource="mybatis.properties" />
 
     <typeAliases>
-        <typeAlias alias="Catalog" type="photon.model.mfw.Catalog"/>
-        <typeAlias alias="ViewLog" type="photon.model.mfw.ViewLog"/>
-        <typeAlias alias="User" type="photon.model.mfw.User"/>
-        <typeAlias alias="FavoriteLog" type="photon.model.mfw.FavoriteLog"/>
+        <typeAlias alias="Catalog" type="photon.mfw.model.Catalog"/>
+        <typeAlias alias="ViewLog" type="photon.mfw.model.ViewLog"/>
+        <typeAlias alias="User" type="photon.mfw.model.User"/>
+        <typeAlias alias="FavoriteLog" type="photon.mfw.model.FavoriteLog"/>
     </typeAliases>
 
     <environments default="prod">

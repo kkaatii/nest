@@ -2,20 +2,20 @@ package photon.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import photon.model.mfw.Panel;
-import photon.model.mfw.Catalog;
-import photon.service.MfwCrudService;
-import photon.service.MfwGalleryService;
+import photon.mfw.model.Panel;
+import photon.mfw.model.Catalog;
+import photon.mfw.service.CrudService;
+import photon.mfw.service.GalleryService;
 
 @RestController
 @RequestMapping("/api/mfw")
 public class MfwApiController {
 
-    private MfwCrudService crud;
-    private MfwGalleryService gallery;
+    private CrudService crud;
+    private GalleryService gallery;
 
     @Autowired
-    public MfwApiController(MfwCrudService crud, MfwGalleryService gallery) {
+    public MfwApiController(CrudService crud, GalleryService gallery) {
         this.crud = crud;
         this.gallery = gallery;
     }
