@@ -2,41 +2,41 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="photon.model.ViewLogMapper">
+<mapper namespace="photon.model.mfw.ViewLogMapper">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="viewLogId">
-        INSERT INTO viewlog (article_id, user_id)
+        INSERT INTO mfw.viewlog (article_id, user_id)
             SELECT
                 #{articleId},
                 #{userId}
             FROM dual
             WHERE NOT EXISTS(SELECT 1
-                             FROM viewlog
+                             FROM mfw.viewlog
                              WHERE article_id = #{articleId} AND user_id = #{userId})
     </insert>
 
     <insert id="init">
-        INSERT INTO viewlog (article_id, user_id)
+        INSERT INTO mfw.viewlog (article_id, user_id)
             SELECT
                 #{articleId},
                 user_id
-            FROM `user`
+            FROM mfw.user
     </insert>
 
     <update id="increment">
-        UPDATE viewlog
+        UPDATE mfw.viewlog
         SET `count` = `count` + 1
         WHERE article_id = #{articleId} AND user_id = #{userId}
     </update>
 
     <update id="incrementTo">
-        UPDATE viewlog
+        UPDATE mfw.viewlog
         SET `count` = #{count}
         WHERE article_id = #{articleId} AND user_id = #{userId}
     </update>
 
     <update id="batchIncrement">
-        UPDATE viewlog
+        UPDATE mfw.viewlog
         SET `count` = `count` + 1
         WHERE user_id = #{userId} AND article_id in (
         <foreach item="articleId" index="index" collection="articleIds" separator=",">
@@ -46,7 +46,7 @@
     </update>
 
     <select id="randomCollection" resultType="int" statementType="CALLABLE">
-        {call get_rands(#{userId}, #{size}, #{threshold})}
+        {call mfw.get_rands(#{userId}, #{size}, #{threshold})}
     </select>
 
 </mapper>

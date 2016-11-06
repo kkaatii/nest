@@ -1,4 +1,4 @@
-package photon.model;
+package photon.model.mfw;
 
 // TODO write xml mapper
 

@@ -2,7 +2,7 @@ package photon.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import photon.model.*;
+import photon.model.mfw.*;
 
 import java.util.*;
 

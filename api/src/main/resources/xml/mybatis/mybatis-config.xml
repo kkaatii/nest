@@ -7,10 +7,10 @@
     <properties resource="mybatis.properties" />
 
     <typeAliases>
-        <typeAlias alias="Catalog" type="photon.model.Catalog"/>
-        <typeAlias alias="ViewLog" type="photon.model.ViewLog"/>
-        <typeAlias alias="User" type="photon.model.User"/>
-        <typeAlias alias="FavoriteLog" type="photon.model.FavoriteLog"/>
+        <typeAlias alias="Catalog" type="photon.model.mfw.Catalog"/>
+        <typeAlias alias="ViewLog" type="photon.model.mfw.ViewLog"/>
+        <typeAlias alias="User" type="photon.model.mfw.User"/>
+        <typeAlias alias="FavoriteLog" type="photon.model.mfw.FavoriteLog"/>
     </typeAliases>
 
     <environments default="prod">
@@ -27,7 +27,7 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="org.h2.Driver"/>
-                <property name="url" value="jdbc:h2:tcp://localhost/~/test/mfw;mode=MySQL"/>
+                <property name="url" value="jdbc:h2:tcp://localhost/~/test;mode=MySQL"/>
                 <property name="username" value="sa"/>
                 <property name="password" value=""/>
             </dataSource>
@@ -35,9 +35,9 @@
     </environments>
 
     <mappers>
-        <mapper resource="xml/mybatis/mappers/CatalogMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/ViewLogMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/UserMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/FavoriteLogMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/mfw/CatalogMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/mfw/ViewLogMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/mfw/UserMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/mfw/FavoriteLogMapper.xml"/>
     </mappers>
 </configuration>

@@ -2,24 +2,24 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="photon.model.UserMapper">
+<mapper namespace="photon.model.mfw.UserMapper">
     <insert id="init" useGeneratedKeys="true" keyProperty="viewLogId">
-        INSERT INTO viewlog (article_id, user_id)
+        INSERT INTO mfw.viewlog (article_id, user_id)
             SELECT
                 article_id,
                 #{userId}
-            FROM `viewlog`
+            FROM mfw.viewlog
             WHERE user_id = 0
     </insert>
     <insert id="insert" useGeneratedKeys="true" keyProperty="userId">
-        INSERT INTO `user` (user_id, `name`)
+        INSERT INTO mfw.user (user_id, `name`)
         VALUES (#{userId}, #{name})
         ON DUPLICATE KEY UPDATE `name` = #{name}
     </insert>
 
     <select id="find" resultType="int">
         SELECT user_id
-        FROM `user`
+        FROM mfw.user
         WHERE `name` = #{name}
     </select>
 </mapper>

@@ -1,4 +1,4 @@
-package photon.model;
+package photon.model.mfw;
 
 public class User {
     public static final Integer DEFAULT_USER_ID = 0;

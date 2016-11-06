@@ -1,8 +1,8 @@
 package photon.service;
 
-import photon.gallery.Panel;
+import photon.model.mfw.Panel;
 
-public interface GalleryService {
+public interface MfwGalleryService {
 
     void init(Integer userId);
 

@@ -5,15 +5,14 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
-import org.springframework.stereotype.Service;
-import photon.gallery.Panel;
+import photon.model.mfw.Panel;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class PureDynamoDBGalleryService implements GalleryService {
+public class DynamoMfwGalleryService implements MfwGalleryService {
 
     private Table table;
     private List<Item> items;
@@ -24,7 +23,7 @@ public class PureDynamoDBGalleryService implements GalleryService {
     private static String TABLE_NAME = "mfw-gallery";
     private static String INDEX_NAME = "CreatedIndex";
 
-    public PureDynamoDBGalleryService() {
+    public DynamoMfwGalleryService() {
         AmazonDynamoDBClient client = new AmazonDynamoDBClient();
         client.withRegion(Regions.US_WEST_1);
         items = new ArrayList<>();

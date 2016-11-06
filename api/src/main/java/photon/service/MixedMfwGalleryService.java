@@ -2,15 +2,15 @@ package photon.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import photon.gallery.Panel;
-import photon.model.Catalog;
-import photon.model.Dynamo;
+import photon.model.mfw.Panel;
+import photon.model.mfw.Catalog;
+import photon.model.mfw.Dynamo;
 import photon.util.EQueue;
 
 import java.util.*;
 
 @Service
-public class MixedGalleryService implements GalleryService {
+public class MixedMfwGalleryService implements MfwGalleryService {
 
     private MfwCrudService mfwCrud;
     private final Map<Integer, EQueue<Catalog>> displayQueues;
@@ -20,7 +20,7 @@ public class MixedGalleryService implements GalleryService {
     private static final int DEFAULT_VIEW_THRESHOLD = 32;
 
     @Autowired
-    public MixedGalleryService(MfwCrudService mfwCrud) {
+    public MixedMfwGalleryService(MfwCrudService mfwCrud) {
         this.mfwCrud = mfwCrud;
         displayQueues = new HashMap<>();
         cacheQueues = new HashMap<>();

@@ -1,4 +1,4 @@
-package photon.gallery;
+package photon.model.mfw;
 
 /**
  * Created by dan on 07/10/2016.

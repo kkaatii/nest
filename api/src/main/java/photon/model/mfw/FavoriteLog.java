@@ -1,4 +1,4 @@
-package photon.model;
+package photon.model.mfw;
 
 public class FavoriteLog {
     private Integer articleId;

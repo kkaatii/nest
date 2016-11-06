@@ -1,4 +1,4 @@
-package photon.model;
+package photon.model.mfw;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;

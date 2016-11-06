@@ -1,4 +1,4 @@
-package photon.model;
+package photon.model.mfw;
 
 public class ViewLog {
     private Integer viewLogId;
