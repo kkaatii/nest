@@ -14,7 +14,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-@MapperScan({"photon.mfw.model","photon.tube.model"})
+@MapperScan({"photon.mfw.model", "photon.tube.model"})
 public class BeanConfig {
 
     @Bean
@@ -28,7 +28,7 @@ public class BeanConfig {
     public SqlSessionTemplate sessionTemplate() throws Exception {
         return new SqlSessionTemplate(sqlSessionFactory());
     }
-
+/*
     @Bean
     public FilterRegistrationBean corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -43,4 +43,5 @@ public class BeanConfig {
         bean.setOrder(0);
         return bean;
     }
+    */
 }

@@ -4,13 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
-    <properties resource="mybatis.properties" />
+    <properties resource="mybatis.properties"/>
 
     <typeAliases>
         <typeAlias alias="Catalog" type="photon.mfw.model.Catalog"/>
         <typeAlias alias="ViewLog" type="photon.mfw.model.ViewLog"/>
         <typeAlias alias="User" type="photon.mfw.model.User"/>
         <typeAlias alias="FavoriteLog" type="photon.mfw.model.FavoriteLog"/>
+        <typeAlias alias="Node" type="photon.tube.model.Node"/>
+        <typeAlias alias="Point" type="photon.tube.model.Point"/>
+        <typeAlias alias="Arrow" type="photon.tube.model.Arrow"/>
     </typeAliases>
 
     <environments default="prod">
@@ -39,5 +42,7 @@
         <mapper resource="xml/mybatis/mappers/mfw/ViewLogMapper.xml"/>
         <mapper resource="xml/mybatis/mappers/mfw/UserMapper.xml"/>
         <mapper resource="xml/mybatis/mappers/mfw/FavoriteLogMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/tube/ArrowMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/tube/NodeMapper.xml"/>
     </mappers>
 </configuration>

@@ -23,8 +23,8 @@ CREATE TABLE `mfw`.`viewlog` (
 );
 
 CREATE TABLE `mfw`.`favlog` (
-  `article_id` INT UNSIGNED     NOT NULL,
-  `user_id`    INT UNSIGNED     NOT NULL,
+  `article_id` INT UNSIGNED NOT NULL,
+  `user_id`    INT UNSIGNED NOT NULL,
   PRIMARY KEY (`article_id`),
   FOREIGN KEY (`article_id`)
   REFERENCES `mfw`.`catalog` (`article_id`)

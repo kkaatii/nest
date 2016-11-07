@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="photon.tube.model.NodeMapper">
+
+    <resultMap type="point" id="pointRM">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="frame" column="frame"/>
+        <result property="type" column="type"/>
+        <result property="active" column="active"/>
+        <result property="digest" column="digest"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+    </resultMap>
+
+    <resultMap type="node" id="nodeRM">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="frame" column="frame"/>
+        <result property="type" column="type"/>
+        <result property="active" column="active"/>
+        <result property="digest" column="digest"/>
+        <result property="content" column="content"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+    </resultMap>
+
+    <select id="preselectOne" resultMap="pointRM">
+        SELECT
+            id,
+            name,
+            frame,
+            type,
+            active,
+            digest,
+            created,
+            updated
+        FROM tube.node
+        WHERE id = #{id}
+    </select>
+
+    <select id="preselectMany" resultMap="pointRM">
+        SELECT
+        id,
+        name,
+        frame,
+        type,
+        active,
+        digest,
+        created,
+        updated
+        FROM tube.node
+        WHERE id IN (
+        <foreach item="id" index="index" collection="ids" separator=",">
+            #{id}
+        </foreach>
+        )
+    </select>
+
+    <select id="selectOne" resultMap="nodeRM">
+        SELECT
+            id,
+            name,
+            frame,
+            type,
+            active,
+            digest,
+            content,
+            created,
+            updated
+        FROM tube.node
+        WHERE id = #{id}
+    </select>
+
+    <select id="preselectInactive" resultMap="pointRM">
+        SELECT
+            id,
+            name,
+            frame,
+            type,
+            active,
+            digest,
+            created,
+            updated
+        FROM tube.node
+        WHERE active = FALSE
+    </select>
+
+    <select id="preselectMap" resultMap="pointRM">
+        SELECT
+            id,
+            name,
+            frame,
+            type,
+            active,
+            digest,
+            created,
+            updated
+        FROM tube.node
+        WHERE id IN (
+        <foreach item="id" index="index" collection="ids" separator=",">
+            #{id}
+        </foreach>
+        )
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tube.node (id, name, frame, type, digest, active, content, created, updated)
+        VALUES (#{id}, #{name}, #{frame}, #{type}, #{digest}, #{active}, #{content}, #{created}, #{updated})
+        ON DUPLICATE KEY UPDATE
+            name    = values(name),
+            frame   = values(frame),
+            type    = values(type),
+            digest  = values(digest),
+            content = values(content),
+            created = values(created),
+            updated = values(updated)
+    </insert>
+
+    <update id="setActive">
+        UPDATE tube.node
+        SET
+            active = #{active}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tube.node
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
