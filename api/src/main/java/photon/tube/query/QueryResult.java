@@ -2,20 +2,20 @@ package photon.tube.query;
 
 public class QueryResult {
     private Query query;
-    private GraphInfo info;
-    private Section slice;
+    private GraphInfo graphInfo;
+    private Section section;
 
     public QueryResult(Query query) {
         this.query = query;
     }
 
-    public QueryResult withInfo(GraphInfo graphInfo) {
-        this.info = graphInfo;
+    public QueryResult withGraphInfo(GraphInfo graphInfo) {
+        this.graphInfo = graphInfo;
         return this;
     }
 
-    public QueryResult withSlice(Section g) {
-        this.slice = g;
+    public QueryResult withSection(Section section) {
+        this.section = section;
         return this;
     }
 
@@ -23,11 +23,11 @@ public class QueryResult {
         return query;
     }
 
-    public GraphInfo getInfo() {
-        return info;
+    public GraphInfo getGraphInfo() {
+        return graphInfo;
     }
 
-    public Section getSlice() {
-        return slice;
+    public Section getSection() {
+        return section;
     }
 }

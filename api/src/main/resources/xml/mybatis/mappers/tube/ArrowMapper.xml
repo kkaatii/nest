@@ -19,14 +19,20 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tube.arrow (origin, target, type)
-        VALUES (#{origin}, #{target}, #{type})
+        INSERT INTO tube.arrow (origin, target, type, active)
+        VALUES (#{origin}, #{target}, #{type}, #{active})
     </insert>
 
     <select id="selectByOrigin" resultMap="arrowResultMap">
         SELECT *
         FROM tube.arrow
         WHERE origin = #{origin} AND active
+    </select>
+
+    <select id="selectBetween" resultMap="arrowResultMap">
+        SELECT *
+        FROM tube.arrow
+        WHERE origin = #{origin} AND target = #{target} AND active
     </select>
 
     <select id="selectActive" resultMap="arrowResultMap">
@@ -67,11 +73,19 @@
         WHERE origin = #{id} OR target = #{id}
     </update>
 
+    <!-- <update id="reactivateByNode">
+         UPDATE tube.arrow a, tube.node n
+         SET a.active = n.active
+         WHERE (a.origin = #{id} AND a.target = n.id) OR
+               (a.target = #{id} AND a.origin = n.id)
+     </update>-->
+
     <update id="reactivateByNode">
-        UPDATE tube.arrow, tube.node
-        SET tube.arrow.active = TRUE
-        WHERE (tube.arrow.origin = #{id} AND tube.arrow.target = tube.node.id AND tube.node.active) OR
-              (tube.arrow.target = #{id} AND tube.arrow.origin = tube.node.id AND tube.node.active)
+        UPDATE tube.arrow a
+        SET a.active = (SELECT n.active
+                        FROM tube.node n
+                        WHERE (a.origin = #{id} AND n.id = a.target) OR (a.target = #{id} AND n.id = a.origin))
+        WHERE a.origin = #{id} OR a.target = #{id}
     </update>
 
 </mapper>

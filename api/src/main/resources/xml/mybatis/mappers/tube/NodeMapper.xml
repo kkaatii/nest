@@ -7,6 +7,7 @@
     <resultMap type="point" id="pointRM">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
+        <result property="ownerId" column="owner_id"/>
         <result property="frame" column="frame"/>
         <result property="type" column="type"/>
         <result property="active" column="active"/>
@@ -18,6 +19,7 @@
     <resultMap type="node" id="nodeRM">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
+        <result property="ownerId" column="owner_id"/>
         <result property="frame" column="frame"/>
         <result property="type" column="type"/>
         <result property="active" column="active"/>
@@ -27,30 +29,28 @@
         <result property="updated" column="updated"/>
     </resultMap>
 
-    <select id="preselectOne" resultMap="pointRM">
-        SELECT
-            id,
-            name,
-            frame,
-            type,
-            active,
-            digest,
-            created,
-            updated
-        FROM tube.node
-        WHERE id = #{id}
-    </select>
-
-    <select id="preselectMany" resultMap="pointRM">
-        SELECT
+    <sql id="pointColumns">
         id,
-        name,
+        `name`,
+        owner_id,
         frame,
         type,
         active,
         digest,
         created,
         updated
+    </sql>
+
+    <select id="preselectOne" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE id = #{id}
+    </select>
+
+    <select id="preselectMany" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
         FROM tube.node
         WHERE id IN (
         <foreach item="id" index="index" collection="ids" separator=",">
@@ -61,43 +61,22 @@
 
     <select id="selectOne" resultMap="nodeRM">
         SELECT
-            id,
-            name,
-            frame,
-            type,
-            active,
-            digest,
-            content,
-            created,
-            updated
+        <include refid="pointColumns"/>,
+        content
         FROM tube.node
         WHERE id = #{id}
     </select>
 
     <select id="preselectInactive" resultMap="pointRM">
         SELECT
-            id,
-            name,
-            frame,
-            type,
-            active,
-            digest,
-            created,
-            updated
+        <include refid="pointColumns"/>
         FROM tube.node
         WHERE active = FALSE
     </select>
 
     <select id="preselectMap" resultMap="pointRM">
         SELECT
-            id,
-            name,
-            frame,
-            type,
-            active,
-            digest,
-            created,
-            updated
+        <include refid="pointColumns"/>
         FROM tube.node
         WHERE id IN (
         <foreach item="id" index="index" collection="ids" separator=",">
@@ -107,15 +86,13 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tube.node (id, name, frame, type, digest, active, content, created, updated)
-        VALUES (#{id}, #{name}, #{frame}, #{type}, #{digest}, #{active}, #{content}, #{created}, #{updated})
+        INSERT INTO tube.node (id, `name`, owner_id, frame, type, digest, active, content, created, updated)
+        VALUES (#{id}, #{name}, #{ownerId}, #{frame}, #{type}, #{digest}, #{active}, #{content}, #{created}, #{updated})
         ON DUPLICATE KEY UPDATE
             name    = values(name),
             frame   = values(frame),
-            type    = values(type),
             digest  = values(digest),
             content = values(content),
-            created = values(created),
             updated = values(updated)
     </insert>
 

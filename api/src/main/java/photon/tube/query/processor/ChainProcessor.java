@@ -29,20 +29,20 @@ public class ChainProcessor implements Processor {
     @Override
     public GraphContainer process(Object... args) throws ArgumentClassMismatchException {
         try {
-            int[] origins = (int[]) args[0];
+            Integer[] origins = (Integer[]) args[0];
             ArrowType at = (ArrowType) args[1];
 
             EQueue<Integer> queue = new EQueue<>();
             Set<Arrow> arrowSet = new HashSet<>();
             Map<Integer, Integer> nodeIdToDepth = new HashMap<>();
-            for (int origin : origins) {
+            for (Integer origin : origins) {
                 nodeIdToDepth.put(origin, INIT_DEPTH);
                 queue.enqueue(origin);
             }
             while (!queue.isEmpty()) {
                 int newOrigin = queue.dequeue();
                 int originDepth = nodeIdToDepth.get(newOrigin);
-                List<Arrow> arrows = crudService.getAllArrowsOriginatingFrom(newOrigin, at);
+                List<Arrow> arrows = crudService.getAllArrowsStartingFrom(newOrigin, at);
                 for (Arrow a : arrows) {
                     int candidate = a.getTarget();
                     Integer candidateDepth = nodeIdToDepth.get(candidate);

@@ -1,8 +1,6 @@
 package photon.tube.model;
 
-/**
- * Created by Dun Liu on 5/21/2016.
- */
+// TODO to redesign as a more versatile class
 public enum ArrowType {
     PARENT_OF, CHILD_OF,
     TAGGED_BY, TAGGING,

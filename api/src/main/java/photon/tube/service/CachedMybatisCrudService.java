@@ -9,7 +9,6 @@ import photon.tube.query.KeywordIndexer;
 import java.util.List;
 import java.util.Map;
 
-@Service
 public class CachedMybatisCrudService implements CrudService {
 
     private final ArrowCacheCatalog catalog = new ArrowCacheCatalog();
@@ -62,13 +61,13 @@ public class CachedMybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<Point> getPoints(Iterable<Integer> nodeIdSet) {
-        return nodeMapper.preselectMany(nodeIdSet);
+    public List<Point> getPoints(Iterable<Integer> ids) {
+        return nodeMapper.preselectMany(ids);
     }
 
     @Override
-    public Map<Integer, Point> getPointMap(Iterable<Integer> nodeIdSet) {
-        return nodeMapper.preselectMap(nodeIdSet);
+    public Map<Integer, Point> getPointMap(Iterable<Integer> ids) {
+        return nodeMapper.preselectMap(ids);
     }
 
     //TODO add cache change
@@ -79,9 +78,9 @@ public class CachedMybatisCrudService implements CrudService {
     }
 
     @Override
-    public void activateNode(Integer id, boolean active) {
-        nodeMapper.setActive(id, active);
-        if (active) {
+    public void activateNode(Integer id, boolean toBeActive) {
+        nodeMapper.setActive(id, toBeActive);
+        if (toBeActive) {
             arrowMapper.reactivateByNode(id);
         } else {
             arrowMapper.deactivateByNode(id);
@@ -104,7 +103,7 @@ public class CachedMybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<Arrow> getAllArrowsOriginatingFrom(Integer origin, ArrowType at) {
+    public List<Arrow> getAllArrowsStartingFrom(Integer origin, ArrowType at) {
         if (!catalog.contains(origin))
             precache(origin, arrowMapper.selectByOrigin(origin));
         return catalog.arrowsByType(origin, at);

@@ -31,12 +31,12 @@ public class SiblingProcessor implements Processor {
             Set<Integer> nodeIdSet = new HashSet<>();
             for (int origin : origins) {
                 gc.add(crudService.getPoint(origin));
-                List<Arrow> bridgeArrows = crudService.getAllArrowsOriginatingFrom(origin, at);
+                List<Arrow> bridgeArrows = crudService.getAllArrowsStartingFrom(origin, at);
                 if (bridgeArrows.isEmpty())
                     continue;
                 for (Arrow a : bridgeArrows) {
                     int bridgeNodeId = a.getTarget();
-                    al.addAll(crudService.getAllArrowsOriginatingFrom(bridgeNodeId, at.reverse()));
+                    al.addAll(crudService.getAllArrowsStartingFrom(bridgeNodeId, at.reverse()));
                     nodeIdSet.add(a.getTarget());
                 }
                 for (Arrow a : al) {

@@ -27,16 +27,16 @@ public class TubeApiController {
                              @PathVariable Integer[] ids,
                              @RequestParam(defaultValue = "UNSPECIFIED") ArrowType arrowType,
                              @RequestParam(defaultValue = "false") boolean reversed,
-                             @RequestParam(defaultValue = DO_NOT_SECTION) String sliceMode,
+                             @RequestParam(defaultValue = DO_NOT_SECTION) String sectionMode,
                              @RequestParam(defaultValue = "0") int leftLimit,
                              @RequestParam(defaultValue = "-1") int rightLimit,
                              @RequestParam(defaultValue = "true") boolean leftInclusive,
-                             @RequestParam(defaultValue = "true") boolean rightInclusive) {
+                             @RequestParam(defaultValue = "false") boolean rightInclusive) {
         //if (qid.length == 0) return new QueryResult(null, GraphSlice.BLANK);
         Query query = new QueryBuilder()
                 .type(graphView)
                 .args(new Object[]{ ids, reversed ? arrowType.reverse() : arrowType })
-                .sliceConfig(new SectionConfig(sliceMode, leftLimit, rightLimit, leftInclusive, rightInclusive))
+                .sectionConfig(new SectionConfig(sectionMode, leftLimit, rightLimit, leftInclusive, rightInclusive))
                 .build();
         return qs.resultOf(query);
     }

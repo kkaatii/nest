@@ -16,7 +16,7 @@
         <typeAlias alias="Arrow" type="photon.tube.model.Arrow"/>
     </typeAliases>
 
-    <environments default="prod">
+    <environments default="dev">
         <environment id="prod">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">

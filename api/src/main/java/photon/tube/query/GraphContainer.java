@@ -119,12 +119,12 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
         return sectionByRank(left, right, true, true);
     }
 
-    public GraphContainer sectionByRank(int left, int right, boolean lPointInside, boolean rPointInside) {
+    public GraphContainer sectionByRank(int left, int right, boolean leftInclusive, boolean rightInclusive) {
         if (!organized)
             organize();
-        if (left > right)
+        if (right > 0 && left > right)
             return emptyInstance();
-        // In case there of no point but arrows, return all arrows and extensions if leftLimit is 0
+        // In case there of no point but arrows, return all arrows if leftLimit is 0
         if (size() == 0)
             return (left == 0) ? this : emptyInstance();
         right = (right >= size()) ? size() - 1 : right;
@@ -145,7 +145,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
                 });
 
         for (int r = left; r <= right; r++) {
-            if (!((r == left && !lPointInside) || (r == right && !rPointInside)))
+            if (!((r == left && !leftInclusive) || (r == right && !rightInclusive)))
                 includedPoints.add(_entries.get(rankToIndex[r]));
             toIncludeArrows.accept(r);
         }
@@ -161,7 +161,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
     public GraphContainer sectionByDepth(int left, int right, boolean leftInclusive, boolean rightInclusive) {
         if (!organized)
             organize();
-        if (left > right)
+        if (right > 0 && left > right)
             return emptyInstance();
         if (size() == 0)
             return (left == minDepth()) ? this : emptyInstance();
@@ -225,13 +225,13 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
 
         private static class ImmutableException extends UnsupportedOperationException {
             ImmutableException() {
-                super("You cannot add elements to a sliced graph container!");
+                super("Cannot add elements to a section container!");
             }
         }
 
         private static class NotOrganizableException extends UnsupportedOperationException {
             NotOrganizableException() {
-                super("You cannot organize/slice a sliced graph container!");
+                super("Cannot organize/section a section container!");
             }
         }
 
@@ -251,7 +251,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
         }
 
         @Override
-        public GraphContainer sectionByRank(int left, int right, boolean lPointInside, boolean rPointInside) {
+        public GraphContainer sectionByRank(int left, int right, boolean leftInclusive, boolean rightInclusive) {
             throw new NotOrganizableException();
         }
 

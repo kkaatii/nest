@@ -19,9 +19,9 @@ public interface CrudService {
 
     Point getPoint(Integer id);
 
-    List<Point> getPoints(Iterable<Integer> nodeIdSet);
+    List<Point> getPoints(Iterable<Integer> ids);
 
-    Map<Integer, Point> getPointMap(Iterable<Integer> nodeIdSet);
+    Map<Integer, Point> getPointMap(Iterable<Integer> ids);
 
     // Delete a node by its qid
     void deleteNode(Integer id);
@@ -33,9 +33,9 @@ public interface CrudService {
 
     List<Arrow> getAllArrowsBetween(Integer origin, Integer target);
 
-    Arrow getArrow(Integer origin, ArrowType arrowType, Integer target);
+    Arrow getArrow(Integer origin, ArrowType at, Integer target);
 
-    List<Arrow> getAllArrowsOriginatingFrom(Integer origin, ArrowType at);
+    List<Arrow> getAllArrowsStartingFrom(Integer origin, ArrowType at);
 
     // Erase the arrow between two nodes
     void deleteArrow(Arrow a);

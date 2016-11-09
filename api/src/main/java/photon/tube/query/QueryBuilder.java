@@ -15,7 +15,7 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder sliceConfig(SectionConfig sectionConfig) {
+    public QueryBuilder sectionConfig(SectionConfig sectionConfig) {
         this.sectionConfig = sectionConfig;
         return this;
     }

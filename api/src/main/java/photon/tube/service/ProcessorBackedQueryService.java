@@ -38,8 +38,8 @@ public class ProcessorBackedQueryService implements QueryService {
             GraphContainer gc = gcStore.computeIfAbsent(query,
                     k -> getProcessor(query.type).process(query.args));
             return new QueryResult(query)
-                    .withInfo(gc.info())
-                    .withSlice(query.sectionConfig.applyOn(gc));
+                    .withGraphInfo(gc.info())
+                    .withSection(query.sectionConfig.applyOn(gc));
         } catch (Exception e) {
             throw new FailedQueryException(e);
         }
@@ -58,7 +58,7 @@ public class ProcessorBackedQueryService implements QueryService {
     }
 
     private static String completeProcessorName(String name) {
-        return String.format("graviton.query.processor.%sProcessor", WordUtils.capitalizeFully(name));
+        return String.format("photon.tube.query.processor.%sProcessor", WordUtils.capitalizeFully(name));
     }
 
 }

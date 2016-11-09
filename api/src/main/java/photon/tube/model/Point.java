@@ -1,33 +1,39 @@
 package photon.tube.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class Point {
 
     private Integer id;
-
     private String name;
+    private Integer ownerId;
     private String frame;
     private boolean active;
     private NodeType type;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date created;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private Date updated;
     private String digest;
 
     Point() {
     }
 
-    public Point(int id) {
+    public Point(Integer id) {
         this.id = id;
     }
 
     public Point(Node node) {
         id = node.getId();
         name = node.getName();
+        ownerId = node.getOwnerId();
+        frame = node.getFrame();
+        active = node.isActive();
+        type = node.getType();
         created = node.getCreated();
         updated = node.getUpdated();
-        type = node.getType();
-        active = node.isActive();
         digest = node.getDigest();
     }
 
@@ -37,6 +43,10 @@ public class Point {
 
     public String getName() {
         return name;
+    }
+
+    public Integer getOwnerId() {
+        return ownerId;
     }
 
     public String getFrame() {
@@ -63,7 +73,7 @@ public class Point {
         return digest;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

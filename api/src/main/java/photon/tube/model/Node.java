@@ -9,6 +9,7 @@ public class Node {
 
     private Integer id;
     private String name;
+    private Integer ownerId;
     private String frame;
     private boolean active;
     private NodeType type;
@@ -35,7 +36,8 @@ public class Node {
         this.name = name;
         this.active = true;
         this.type = type;
-        setContent(content);
+        this.content = content;
+        doDigest();
         this.created = new Date();
         this.updated = this.created;
     }
@@ -55,6 +57,14 @@ public class Node {
     public void setName(String name) {
         this.name = name;
         stampUpdate();
+    }
+
+    public Integer getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Integer ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getFrame() {
