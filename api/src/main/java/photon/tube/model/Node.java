@@ -11,18 +11,16 @@ public class Node {
     private String name;
     private Integer ownerId;
     private String frame;
-    private boolean active;
+    private boolean active = true;
     private NodeType type;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Date created;
+    private Date created = new Date();
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private Date updated;
+    private Date updated = created;
     private String digest;
     private String content;
 
-    public Node() {
-        this(NodeType.ARTICLE, "Unnamed article", "");
-    }
+    public Node() {}
 
     public Node(String name) {
         this(NodeType.ARTICLE, name, "");
@@ -34,12 +32,9 @@ public class Node {
 
     public Node(NodeType type, String name, String content) {
         this.name = name;
-        this.active = true;
         this.type = type;
         this.content = content;
         doDigest();
-        this.created = new Date();
-        this.updated = this.created;
     }
 
     public Integer getId() {

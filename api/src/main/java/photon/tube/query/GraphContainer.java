@@ -10,7 +10,7 @@ import java.util.function.IntConsumer;
 import java.util.stream.IntStream;
 
 /**
- * The core data object for describing a resultOf. Controllers get <tt>GraphContainer</tt> from <tt>QueryService</tt> and send it to
+ * The core data object for describing a graph. Controllers get <tt>GraphContainer</tt> from <tt>QueryService</tt> and send it to
  * the client side. <p>
  * Supports the following features: <p>
  * + Containing all essential elements: <tt>Point</tt>s, <tt>Arrow</tt>s and <tt>Extension</tt>s <p>
@@ -44,7 +44,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
      *
      * @param points     points to be contained
      * @param arrows     arrows to be contained
-     * @return an <i>"immutable"</i> resultOf as if it is just a applyOn of another resultOf
+     * @return an <i>"immutable"</i> <tt>GraphContainer</tt> as if it is just a section of another graph
      */
     public static GraphContainer fixateWith(final List<Point> points,
                                             final List<Arrow> arrows) {

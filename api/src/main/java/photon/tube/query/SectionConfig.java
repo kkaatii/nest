@@ -19,14 +19,14 @@ public class SectionConfig {
         this.rightInclusive = rightInclusive;
     }
     
-    public Section applyOn(GraphContainer container) {
+    public GraphContainer applyOn(GraphContainer container) {
         switch (sectionMode) {
             case DO_NOT_SECTION:
-                return container.export();
+                return container;
             case BY_RANK:
-                return container.sectionByRank(leftLimit, rightLimit, leftInclusive, rightInclusive).export();
+                return container.sectionByRank(leftLimit, rightLimit, leftInclusive, rightInclusive);
             case BY_DEPTH:
-                return container.sectionByDepth(leftLimit, rightLimit, leftInclusive, rightInclusive).export();
+                return container.sectionByDepth(leftLimit, rightLimit, leftInclusive, rightInclusive);
             default:
                 throw new RuntimeException("Unsupported section mode \"" + sectionMode + "\"!");
         }

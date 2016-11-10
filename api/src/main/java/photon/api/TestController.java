@@ -13,22 +13,26 @@ import java.util.*;
 public class TestController {
 
     private final CrudService cs;
-    private final QueryService qs;
 
     @Autowired
-    public TestController(CrudService cs, QueryService qs) {
+    public TestController(CrudService cs) {
         this.cs = cs;
-        this.qs = qs;
     }
 
-    @RequestMapping(value = "/node-create", method = RequestMethod.POST)
-    public Node create() {
+    @RequestMapping(value = "/node-batch-create", method = RequestMethod.POST)
+    public Node batchCreate() {
         Node n = null;
         for (int i = 0; i < 30; i++) {
             n = new Node("#" + i + "Hello, World!");
             n.setOwnerId(1);
             cs.putNode(n);
         }
+        return n;
+    }
+
+    @RequestMapping(value = "/node-create", method = RequestMethod.POST)
+    public Node create(@RequestBody Node n) {
+        cs.putNode(n);
         return n;
     }
 

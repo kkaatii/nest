@@ -37,9 +37,11 @@ public class ProcessorBackedQueryService implements QueryService {
         try {
             GraphContainer gc = gcStore.computeIfAbsent(query,
                     k -> getProcessor(query.type).process(query.args));
+            GraphContainer sectionContainer = query.sectionConfig.applyOn(gc);
             return new QueryResult(query)
                     .withGraphInfo(gc.info())
-                    .withSection(query.sectionConfig.applyOn(gc));
+                    .withSectionInfo(sectionContainer.info())
+                    .withSection(sectionContainer.export());
         } catch (Exception e) {
             throw new FailedQueryException(e);
         }
