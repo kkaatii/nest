@@ -14,7 +14,11 @@ public interface NodeMapper {
 
     Node selectOne(Integer id);
 
+    String selectFrame(Integer id);
+
     void insert(Node node);
+
+    void update(Node node);
 
     void delete(Integer id);
 

@@ -4,6 +4,7 @@ public class QueryBuilder {
     private String type;
     private Object[] args;
     private SectionConfig sectionConfig;
+    private Integer ownerId;
 
     public QueryBuilder type(String type) {
         this.type = type;
@@ -20,7 +21,12 @@ public class QueryBuilder {
         return this;
     }
 
+    public QueryBuilder ownerId(Integer ownerId) {
+        this.ownerId = ownerId;
+        return this;
+    }
+
     public Query build() {
-        return new Query(type, args, sectionConfig);
+        return new Query(ownerId, type, args, sectionConfig);
     }
 }

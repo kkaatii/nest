@@ -18,11 +18,22 @@ CREATE TABLE `tube`.`owner_auth` (
     ON UPDATE CASCADE
 );
 
+CREATE TABLE `tube`.`frame_access` (
+  `owner_id` INT UNSIGNED NOT NULL,
+  `frame`    VARCHAR(30)  NOT NULL,
+  `access`   TINYINT(3)   NOT NULL,
+  PRIMARY KEY (`owner_id`, `frame`),
+  FOREIGN KEY (`owner_id`)
+  REFERENCES `tube`.`owner` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
 CREATE TABLE `tube`.`node` (
   `id`       INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name`     VARCHAR(100) NULL,
   `owner_id` INT UNSIGNED NOT NULL,
-  `frame`    VARCHAR(50)  NULL,
+  `frame`    VARCHAR(30)  NOT NULL,
   `active`   BOOL         NOT NULL,
   `type`     VARCHAR(30)  NOT NULL,
   `created`  DATETIME     NULL,
@@ -37,11 +48,12 @@ CREATE TABLE `tube`.`node` (
 );
 
 CREATE TABLE `tube`.`arrow` (
-  `id`     INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `origin` INT UNSIGNED NOT NULL,
-  `target` INT UNSIGNED NOT NULL,
-  `active` BOOL         NOT NULL,
-  `type`   VARCHAR(50)  NOT NULL,
+  `id`           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `origin`       INT UNSIGNED NOT NULL,
+  `target`       INT UNSIGNED NOT NULL,
+  `target_frame` VARCHAR(30)  NOT NULL,
+  `active`       BOOL         NOT NULL,
+  `type`         VARCHAR(50)  NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`origin`)
   REFERENCES `tube`.`node` (`id`)

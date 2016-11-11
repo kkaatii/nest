@@ -67,6 +67,12 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectFrame" resultType="string">
+        SELECT frame
+        FROM tube.node
+        WHERE id = #{id}
+    </select>
+
     <select id="preselectInactive" resultMap="pointRM">
         SELECT
         <include refid="pointColumns"/>
@@ -86,15 +92,20 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tube.node (id, `name`, owner_id, frame, type, digest, active, content, created, updated)
-        VALUES (#{id}, #{name}, #{ownerId}, #{frame}, #{type}, #{digest}, #{active}, #{content}, #{created}, #{updated})
-        ON DUPLICATE KEY UPDATE
-            name    = values(name),
-            frame   = values(frame),
-            digest  = values(digest),
-            content = values(content),
-            updated = values(updated)
+        INSERT INTO tube.node (`name`, owner_id, frame, type, digest, active, content, created, updated)
+        VALUES (#{name}, #{ownerId}, #{frame}, #{type}, #{digest}, #{active}, #{content}, #{created}, #{updated})
     </insert>
+
+    <update id="update">
+        UPDATE tube.node
+        SET
+            `name`  = #{name},
+            frame   = #{frame},
+            digest  = #{digest},
+            content = #{content},
+            updated = #{updated}
+        WHERE id = #{id} AND owner_id = #{ownerId}
+    </update>
 
     <update id="setActive">
         UPDATE tube.node

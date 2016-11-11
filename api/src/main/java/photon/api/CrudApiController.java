@@ -37,8 +37,8 @@ public class CrudApiController {
     }
 
     @RequestMapping(value = "/node-update", method = RequestMethod.POST)
-    public Node update(@RequestBody Node n) {
-        return create(n);
+    public boolean update(@RequestBody Node n) {
+        return cs.updateNode(n);
     }
 
     @RequestMapping(value = "/node-activate", method = RequestMethod.POST)
@@ -68,16 +68,12 @@ public class CrudApiController {
     }
 
     @RequestMapping(value="/arrow-create", method=RequestMethod.POST)
-    public void createArrow(@RequestParam Integer[] aid) {
-        for (int i = 0; i < aid.length-1; i++) {
-            for (int j = i+1; j < aid.length; j++) {
-                cs.putArrow(new Arrow(aid[i], ArrowType.PARENT_OF, aid[j]));
-            }
-        }
+    public void createArrow(@RequestParam Integer[] aid, @RequestParam ArrowType at) {
+        cs.putArrow(new Arrow(aid[0], at, aid[1]));
     }
 
     @RequestMapping("/arrows-between")
-    public List<Arrow> arrowsBetween(@RequestParam Integer f, @RequestParam Integer t) {
+    public List<FrameArrow> arrowsBetween(@RequestParam Integer f, @RequestParam Integer t) {
         return cs.getAllArrowsBetween(f, t);
     }
 

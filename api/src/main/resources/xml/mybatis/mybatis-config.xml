@@ -14,6 +14,7 @@
         <typeAlias alias="Node" type="photon.tube.model.Node"/>
         <typeAlias alias="Point" type="photon.tube.model.Point"/>
         <typeAlias alias="Arrow" type="photon.tube.model.Arrow"/>
+        <typeAlias alias="FrameArrow" type="photon.tube.model.FrameArrow"/>
         <typeAlias alias="Owner" type="photon.tube.model.Owner"/>
     </typeAliases>
 

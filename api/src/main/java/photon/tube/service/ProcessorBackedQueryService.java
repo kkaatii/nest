@@ -25,18 +25,20 @@ public class ProcessorBackedQueryService implements QueryService {
     private final Map<String, Processor> procMap = new HashMap<>();
     private final Map<Query, GraphContainer> gcStore = new HashMap<>();
 
-    private CrudService crudService;
+    private final CrudService crudService;
+    private final OafService oafService;
 
     @Autowired
-    public ProcessorBackedQueryService(CrudService crudService) {
+    public ProcessorBackedQueryService(CrudService crudService, OafService oafService) {
         this.crudService = crudService;
+        this.oafService = oafService;
     }
 
     @Override
     public QueryResult resultOf(Query query) {
         try {
             GraphContainer gc = gcStore.computeIfAbsent(query,
-                    k -> getProcessor(query.type).process(query.args));
+                    k -> getProcessor(query.type).process(query.ownerId, query.args));
             GraphContainer sectionContainer = query.sectionConfig.applyOn(gc);
             return new QueryResult(query)
                     .withGraphInfo(gc.info())
@@ -51,8 +53,8 @@ public class ProcessorBackedQueryService implements QueryService {
         return procMap.computeIfAbsent(procName, k -> {
             try {
                 Class<?> clazz = Class.forName(completeProcName(procName));
-                Constructor<?> ctor = clazz.getConstructor(CrudService.class);
-                return (Processor) ctor.newInstance(crudService);
+                Constructor<?> ctor = clazz.getConstructor(CrudService.class, OafService.class);
+                return (Processor) ctor.newInstance(crudService, oafService);
             } catch (Exception e) {
                 throw new ProcessorNotFoundException(e);
             }

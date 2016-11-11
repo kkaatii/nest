@@ -2,6 +2,7 @@ package photon.tube.model.cache;
 
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
+import photon.tube.model.FrameArrow;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,7 +11,7 @@ import static photon.util.Util.ensureList;
 
 class Neighborhood {
 	
-	private Map<ArrowType, List<Arrow>> arrowMap = new HashMap<>();
+	private Map<ArrowType, List<FrameArrow>> arrowMap = new HashMap<>();
 	private int origin;
 	
 	Neighborhood(int origin) {
@@ -21,9 +22,9 @@ class Neighborhood {
 		return origin;
 	}
 	
-	void addArrow(Arrow arrow) {
+	void addArrow(FrameArrow arrow) {
 		ArrowType type = arrow.getType();
-		List<Arrow> list = arrowMap.get(type);
+		List<FrameArrow> list = arrowMap.get(type);
 		if (list != null) list.add(arrow);
 		else {
 			list = new ArrayList<>();
@@ -34,24 +35,24 @@ class Neighborhood {
 	
 	Set<Integer> neighborIdSet() {
 		Set<Integer> set = new HashSet<>();
-		for (List<Arrow> arrows : arrowMap.values()) {
+		for (List<FrameArrow> arrows : arrowMap.values()) {
 			set.addAll(arrows.stream().map(Arrow::getTarget).collect(Collectors.toList()));
 		}
 		return set;
 	}
 	
-	List<Arrow> arrowsByType(ArrowType type) {
+	List<FrameArrow> arrowsByType(ArrowType type) {
 		if (type == ArrowType.ANY) {
-			List<Arrow> arrows = new ArrayList<>();
+			List<FrameArrow> arrows = new ArrayList<>();
 			arrowMap.values().forEach(arrows::addAll);
 			return arrows;
 		}
 		return ensureList(arrowMap.get(type));
 	}
 	
-	List<Arrow> arrowsByTarget(int target) {
-		List<Arrow> arrows = new ArrayList<>();
-		for (List<Arrow> l : arrowMap.values()) {
+	List<FrameArrow> arrowsByTarget(int target) {
+		List<FrameArrow> arrows = new ArrayList<>();
+		for (List<FrameArrow> l : arrowMap.values()) {
 			arrows.addAll(l.stream().filter(a -> a.getTarget() == target).collect(Collectors.toList()));
 		}
 		return arrows;
@@ -66,8 +67,8 @@ class Neighborhood {
     }
 	
 	void cleanNeighborById(int target) {
-		for (List<Arrow> al : arrowMap.values()) {
-			for (Iterator<Arrow> iter = al.iterator() ; iter.hasNext() ; )
+		for (List<FrameArrow> al : arrowMap.values()) {
+			for (Iterator<FrameArrow> iter = al.iterator() ; iter.hasNext() ; )
 				if (iter.next().getTarget() == target) iter.remove();
 		}
 	}
@@ -81,9 +82,9 @@ class Neighborhood {
 	}
 	
 	void remove(Arrow a) {
-		List<Arrow> list = arrowMap.get(a.getType());
+		List<FrameArrow> list = arrowMap.get(a.getType());
 		if (list != null) {
-			Iterator<Arrow> iter = list.iterator();
+			Iterator<FrameArrow> iter = list.iterator();
 			while (iter.hasNext()) {
 				if (iter.next().similarTo(a)) iter.remove();
 			}
@@ -94,8 +95,8 @@ class Neighborhood {
 	public String toString() {
 		StringBuilder str = new StringBuilder(origin);
 		str.append(": ");
-		Collection<List<Arrow>> alc = arrowMap.values();
-		for (List<Arrow> al : alc) {
+		Collection<List<FrameArrow>> alc = arrowMap.values();
+		for (List<FrameArrow> al : alc) {
 			for (Arrow a : al) {
 				str.append(a.toString());
 				str.append(", ");

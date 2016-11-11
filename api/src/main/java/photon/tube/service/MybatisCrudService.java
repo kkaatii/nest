@@ -28,8 +28,24 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
+    public boolean updateNode(Node n) {
+        n.doDigest();
+        try {
+            nodeMapper.update(n);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
     public Node getNode(Integer id) {
         return nodeMapper.selectOne(id);
+    }
+
+    @Override
+    public String getNodeFrame(Integer id) {
+        return nodeMapper.selectFrame(id);
     }
 
     @Override
@@ -64,18 +80,18 @@ public class MybatisCrudService implements CrudService {
 
     @Override
     public void putArrow(Arrow a) {
-        arrowMapper.insert(a);
-        arrowMapper.insert(a.reverse());
+        arrowMapper.insertWithTargetFrame(a, nodeMapper.selectFrame(a.getTarget()));
+        arrowMapper.insertWithTargetFrame(a.reverse(), nodeMapper.selectFrame(a.getOrigin()));
     }
 
     @Override
-    public List<Arrow> getAllArrowsBetween(Integer origin, Integer target) {
+    public List<FrameArrow> getAllArrowsBetween(Integer origin, Integer target) {
         return arrowMapper.selectBetween(origin, target);
     }
 
     @Override
     public Arrow getArrow(Integer origin, ArrowType at, Integer target) {
-        List<Arrow> candidates = arrowMapper.selectBetween(origin, target);
+        List<FrameArrow> candidates = arrowMapper.selectBetween(origin, target);
         if (candidates != null) {
             for (Arrow arrow : candidates) {
                 if (arrow.getType().equals(at)) return arrow;
@@ -85,7 +101,7 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<Arrow> getAllArrowsStartingFrom(Integer origin, ArrowType at) {
+    public List<FrameArrow> getAllArrowsStartingFrom(Integer origin, ArrowType at) {
         return arrowMapper.selectByOrigin(origin).stream().filter(arrow -> arrow.getType().equals(at)).collect(Collectors.toList());
     }
 

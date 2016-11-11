@@ -2,6 +2,7 @@ package photon.tube.model.cache;
 
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
+import photon.tube.model.FrameArrow;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,11 +65,11 @@ public class ArrowCacheCatalog {
 		return value.toString();
 	}
 
-	public void recordArrow(Arrow arrow) {
+	public void recordArrow(FrameArrow arrow) {
 		neighborhoodOf(arrow.getOrigin()).addArrow(arrow);
 	}
 
-    public void cache(Integer origin, List<Arrow> arrows) {
+    public void cache(Integer origin, List<FrameArrow> arrows) {
         if (arrows == null) {
             neighborhoodOf(origin);
         } else {
@@ -76,15 +77,15 @@ public class ArrowCacheCatalog {
         }
     }
 
-	public void recordArrow(List<Arrow> arrows) {
-		for (Arrow a : arrows)
+	public void recordArrow(List<FrameArrow> arrows) {
+		for (FrameArrow a : arrows)
 			recordArrow(a);
 	}
 	
-	public void recordArrowsAndReverse(List<Arrow> arrows) {
-        for (Arrow a : arrows) {
+	public void recordArrowsAndReverse(List<FrameArrow> arrows) {
+        for (FrameArrow a : arrows) {
             recordArrow(a);
-            recordArrow(a.reverse());
+            // TODO fix recordArrow(a.reverse());
         }
 	}
 	
@@ -103,11 +104,11 @@ public class ArrowCacheCatalog {
 		return neighborhood;
 	}
 
-    public List<Arrow> arrowsByType(Integer origin, ArrowType arrowType) {
+    public List<FrameArrow> arrowsByType(Integer origin, ArrowType arrowType) {
         return neighborhoodOf(origin).arrowsByType(arrowType);
     }
 
-    public List<Arrow> arrowsBetween(Integer origin, Integer target) {
+    public List<FrameArrow> arrowsBetween(Integer origin, Integer target) {
         return neighborhoodOf(origin).arrowsByTarget(target);
     }
 

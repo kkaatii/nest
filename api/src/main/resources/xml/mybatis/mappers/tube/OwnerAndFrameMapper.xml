@@ -26,7 +26,7 @@
             nickname,
             id
         FROM tube.owner o LEFT JOIN tube.owner_auth oa
-        ON oa.auth_id = #{authId}
+                ON oa.auth_id = #{authId}
         WHERE o.id = oa.owner_id
     </select>
 
@@ -39,5 +39,11 @@
         DELETE FROM tube.owner
         WHERE auth_id = #{authId} AND id = #{id}
     </delete>
+
+    <select id="selectAccess" resultType="int">
+        SELECT access
+        FROM tube.frame_access
+        WHERE owner_id = #{ownerId} AND frame = #{frame}
+    </select>
 
 </mapper>

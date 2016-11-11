@@ -6,15 +6,17 @@ import java.util.List;
 import java.util.Set;
 
 public interface ArrowMapper {
-    Arrow selectOne(Integer id);
+    FrameArrow selectOne(Integer id);
 
     void insert(Arrow a);
 
-    List<Arrow> selectByOrigin(Integer origin);
+    void insertWithTargetFrame(@Param("arrow") Arrow arrow, @Param("targetFrame") String targetFrame);
 
-    List<Arrow> selectBetween(@Param("origin") Integer origin, @Param("target") Integer target);
+    List<FrameArrow> selectByOrigin(Integer origin);
 
-    List<Arrow> selectActive();
+    List<FrameArrow> selectBetween(@Param("origin") Integer origin, @Param("target") Integer target);
+
+    List<FrameArrow> selectActive();
 
     List<Integer> originIdSet();
 

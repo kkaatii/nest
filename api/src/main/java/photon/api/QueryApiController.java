@@ -33,6 +33,7 @@ public class QueryApiController {
                              @RequestParam(defaultValue = "false") boolean rightInclusive) {
         //if (qid.length == 0) return new QueryResult(null, GraphSlice.BLANK);
         Query query = new QueryBuilder()
+                .ownerId(2)
                 .type(graphView)
                 .args(new Object[]{ ids, reversed ? arrowType.reverse() : arrowType })
                 .sectionConfig(new SectionConfig(sectionMode, leftLimit, rightLimit, leftInclusive, rightInclusive))

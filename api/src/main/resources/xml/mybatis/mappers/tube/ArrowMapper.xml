@@ -4,38 +4,51 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="photon.tube.model.ArrowMapper">
 
-    <resultMap type="arrow" id="arrowResultMap">
+    <resultMap type="framearrow" id="framearrowRM">
         <id property="id" column="id"/>
         <result property="origin" column="origin"/>
         <result property="target" column="target"/>
         <result property="active" column="active"/>
         <result property="type" column="type"/>
+        <result property="targetFrame" column="target_frame"/>
     </resultMap>
 
-    <select id="selectOne" resultMap="arrowResultMap">
+    <select id="selectOne" resultMap="framearrowRM">
         SELECT *
         FROM tube.arrow
         WHERE id = #{id}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tube.arrow (origin, target, type, active)
-        VALUES (#{origin}, #{target}, #{type}, #{active})
+        INSERT INTO tube.arrow (origin, target, type, active, target_frame)
+            SELECT
+                #{origin},
+                #{target},
+                #{type},
+                #{active},
+                frame
+            FROM tube.node n
+            WHERE n.id = #{target}
     </insert>
 
-    <select id="selectByOrigin" resultMap="arrowResultMap">
+    <insert id="insertWithTargetFrame" useGeneratedKeys="true" keyProperty="arrow.id">
+        INSERT INTO tube.arrow (origin, target, type, active, target_frame)
+        VALUES (#{arrow.origin}, #{arrow.target}, #{arrow.type}, #{arrow.active}, #{targetFrame})
+    </insert>
+
+    <select id="selectByOrigin" resultMap="framearrowRM">
         SELECT *
         FROM tube.arrow
         WHERE origin = #{origin} AND active
     </select>
 
-    <select id="selectBetween" resultMap="arrowResultMap">
+    <select id="selectBetween" resultMap="framearrowRM">
         SELECT *
         FROM tube.arrow
         WHERE origin = #{origin} AND target = #{target} AND active
     </select>
 
-    <select id="selectActive" resultMap="arrowResultMap">
+    <select id="selectActive" resultMap="framearrowRM">
         SELECT *
         FROM tube.arrow
         WHERE active
