@@ -14,7 +14,7 @@ public interface ViewLogMapper {
 
     void insert(ViewLog log);
 
-    void init(@Param("articleId") Integer articleId);
+    void initViewLog(@Param("articleId") Integer articleId);
 
     Collection<Integer> randomCollection(@Param("userId") Integer userId, @Param("size") int size, @Param("threshold") int viewThreshold);
 }

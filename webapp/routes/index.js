@@ -38,7 +38,7 @@ router.get('/callback',
 router.get('/mfw',
   auth,
   function (req, res) {
-    if (typeof req.user !== 'undefined') request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'name', req.user.name));
+    if (typeof req.user !== 'undefined') request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'oid', req.user.tube.id));
     res.render('mfw', {server: REMOTE_API_SERVER});
   });
 
@@ -47,7 +47,7 @@ router.get('/tube', auth, function (req, res) {
 });
 
 router.get('/api/*', auth, function (req, res) {
-  request({url: appendParameter(LOCAL_API_SERVER + req.url, 'name', req.user.name), method: req.method},
+  request({url: appendParameter(LOCAL_API_SERVER + req.url, 'oid', req.user.tube.id), method: req.method},
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
         res.send(data);

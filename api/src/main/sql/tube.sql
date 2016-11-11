@@ -5,7 +5,8 @@ CREATE SCHEMA `tube`
 CREATE TABLE `tube`.`owner` (
   `id`       INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nickname` VARCHAR(50)  NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE (`nickname`)
 );
 
 CREATE TABLE `tube`.`owner_auth` (

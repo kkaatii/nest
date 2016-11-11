@@ -26,14 +26,14 @@ public class MfwApiController {
     }
 
     @RequestMapping(value = "/star", method = RequestMethod.POST)
-    public boolean star(@RequestParam Integer articleId, @RequestParam String name) {
-        crud.markFavorite(articleId, name, true);
+    public boolean star(@RequestParam Integer articleId, @RequestParam Integer oid) {
+        crud.markFavorite(articleId, oid, true);
         return true;
     }
 
     @RequestMapping(value = "/noshow", method = RequestMethod.POST)
-    public boolean noshow(@RequestParam Integer articleId, @RequestParam String name) {
-        crud.noshow(articleId, name);
+    public boolean noshow(@RequestParam Integer articleId, @RequestParam Integer oid) {
+        crud.noshow(articleId, oid);
         return true;
     }
 
@@ -43,12 +43,10 @@ public class MfwApiController {
     }
 
     @RequestMapping("/init")
-    public Integer init(@RequestParam(required = false) String name) {
-        if (name != null) {
-            Integer id = crud.findUserId(name);
-            if (id == null) return null;
-            new Thread(() -> gallery.init(id)).start();
-            return id;
+    public Integer init(@RequestParam(required = false) Integer oid) {
+        if (oid != null) {
+            new Thread(() -> gallery.init(oid)).start();
+            return oid;
         }
         return 0;
     }

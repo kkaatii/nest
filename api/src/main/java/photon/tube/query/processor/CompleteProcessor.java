@@ -14,8 +14,6 @@ import java.util.List;
 
 import static photon.util.Util.ensureList;
 
-// TODO add verification for node access
-
 public class CompleteProcessor implements Processor {
 
     private final CrudService crudService;

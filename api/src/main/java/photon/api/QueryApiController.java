@@ -21,6 +21,7 @@ public class QueryApiController {
         this.qs = qs;
     }
 
+    // TODO change query controller
     @RequestMapping(value = "/{graphView}/{ids}", method = RequestMethod.GET)
     public QueryResult query(@PathVariable String graphView,
                              @PathVariable Integer[] ids,
