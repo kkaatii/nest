@@ -15,8 +15,6 @@ import java.util.*;
 
 import static photon.tube.query.GraphContainer.INIT_DEPTH;
 
-// TODO add verification for node access at each step
-
 public class ChainProcessor implements Processor {
 
     private final CrudService crudService;

@@ -16,8 +16,7 @@ module.exports = authEnabled ? function (req, res, next) {
 
 // TODO split mfw auth and tube auth
 function validUser(user) {
-  if (user.tube !== null)
-    return true;
+  return user.tube !== null;/*
   switch (user.nickname) {
     case "finn199411":
       user.name = "finn199411";
@@ -28,5 +27,5 @@ function validUser(user) {
       return true;
     default:
       return false;
-  }
+  }*/
 }
