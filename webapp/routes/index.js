@@ -20,6 +20,7 @@ router.get('/', auth, function (req, res) {
 });
 
 router.get('/login', function (req, res) {
+  env.RETURN_TO = req.query.returnTo;
   res.render('login', {env: env});
 });
 
@@ -31,7 +32,7 @@ router.get('/logout', function (req, res) {
 router.get('/callback',
   passport.authenticate('auth0', {failureRedirect: '/url-if-something-fails'}),
   function (req, res) {
-    res.redirect(req.session.returnTo || '/mfw');
+    res.redirect(req.session.returnTo || req.query.returnTo );
   });
 
 router.get('/mfw',
@@ -58,7 +59,7 @@ router.get('/api/*', auth, function (req, res) {
 router.post('/api/*', auth, function (req, res) {
   if (req.headers['content-type'].startsWith('application/json')) {
     var body = req.body;
-    body['ownerId'] = 1;
+    body['ownerId'] = req.user.tube.id;
     var options = {
       url: LOCAL_API_SERVER + req.url,
       json: true,

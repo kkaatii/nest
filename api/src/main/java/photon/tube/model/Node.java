@@ -20,7 +20,7 @@ public class Node {
     private String digest;
     private String content;
 
-    public Node() {}
+    protected Node() {}
 
     public Node(String name) {
         this(NodeType.ARTICLE, name, "");

@@ -3,10 +3,19 @@ CREATE SCHEMA `tube`
   DEFAULT COLLATE utf8_bin;
 
 CREATE TABLE `tube`.`owner` (
-  `auth_id`  VARCHAR(50)  NOT NULL,
-  `nickname` VARCHAR(50)  NOT NULL,
   `id`       INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`auth_id`)
+  `nickname` VARCHAR(50)  NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `tube`.`owner_auth` (
+  `auth_id`  VARCHAR(50)  NOT NULL,
+  `owner_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`auth_id`),
+  FOREIGN KEY (`owner_id`)
+  REFERENCES `tube`.`owner` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 CREATE TABLE `tube`.`node` (

@@ -33,11 +33,11 @@ passport.use(strategy);
 // you can use this section to keep a smaller payload
 passport.serializeUser(function (user, done) {
   request({
-    url: process.env.LOCAL_API_SERVER + '/api/q/user?aid=' + user.id,
+    url: process.env.LOCAL_API_SERVER + '/api/oaf/user?aid=' + user.id,
     method: 'get'
   }, function (error, response, data) {
     if (!error && response.statusCode == 200) {
-      user['tube_id'] = JSON.parse(data);
+      user['tube'] = JSON.parse(data);
       done(null, user);
     }
   });

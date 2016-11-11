@@ -4,26 +4,30 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="photon.tube.model.OwnerAndFrameMapper">
 
+    <resultMap type="owner" id="ownerRM">
+        <id property="authId" column="auth_id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="id" column="id"/>
+    </resultMap>
+
     <insert id="addOwner" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tube.owner (auth_id, nickname)
-        VALUES (#{authId}, #{nickname})
+        INSERT INTO tube.owner (nickname)
+        VALUES (#{nickname})
     </insert>
 
     <insert id="addAlias">
-        INSERT INTO tube.owner (auth_id, nickname, id)
-            SELECT
-                #{authId},
-                nickname,
-                id
-            FROM tube.owner
-            WHERE id = #{id}
-            LIMIT 1
+        INSERT INTO tube.owner_auth (auth_id, owner_id)
+        VALUES (#{authId}, #{id})
     </insert>
 
-    <select id="getIdByAuthId" resultType="int">
-        SELECT id
-        FROM tube.owner
-        WHERE auth_id = #{authId}
+    <select id="selectByAuthId" resultMap="ownerRM">
+        SELECT
+            auth_id,
+            nickname,
+            id
+        FROM tube.owner o LEFT JOIN tube.owner_auth oa
+        ON oa.auth_id = #{authId}
+        WHERE o.id = oa.owner_id
     </select>
 
     <delete id="deleteOwnerById">

@@ -8,6 +8,10 @@ public class Owner {
     private Integer id;
     private String nickname;
 
+    protected Owner() {
+
+    }
+
     public Owner(String authId, String nickname) {
         this.authId = authId;
         this.nickname = nickname;

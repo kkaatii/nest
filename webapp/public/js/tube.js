@@ -5,15 +5,27 @@ const FrameSelect = React.createClass({
 
   render: function () {
     let self = this;
-    let frameOptions = function (text) {
-      if (text.startsWith('\<'))
-        return <li key={text}><a href="#" onClick={self.props.display(text)}>{text}</a></li>;
-      else if (text.startsWith('#'))
-        return <li key={text} className="dropdown-header" style={{fontWeight: "bold"}}>{text.substring(1)}</li>;
-      else return <li key={text}><a href="#" onClick={self.props.display(text)}>{'  ' + text}</a></li>;
-    };
+    let h = [];
+    let options = this.props.options;
+    let lastHeader = '';
+    for (let i = 0; i < options.length; i++) {
+      let option = options[i].split('#');
+      if (option[1] && option[1] !== lastHeader) {
+        lastHeader = option[1];
+        h.push(<li className="dropdown-header" style={{fontWeight:"bold", color: "#8ad"}}>{option[1]}</li>);
+      }
+      h.push(<li key={i}><a href="#" onClick={self.props.display(i)}>{option[0]}</a></li>);
+    }
+    /*
+     let frameOptions = function (text) {
+     /*if (text.startsWith('\<'))
+     return <li key={text}><a href="#" onClick={self.props.display(text)}>{text}</a></li>;
+     /*else if (text.startsWith('#'))
+     return <li key={text} className="dropdown-header" style={{fontWeight: "bold"}}>{text.substring(1)}</li>;
+     else return <li key={text}><a href="#" onClick={self.props.display(text)}>{'  ' + text}</a></li>;
+     };*/
     return <ul aria-labelledby="node-frame-select"
-               className="dropdown-menu">{this.props.options.map(frameOptions)}</ul>;
+               className="dropdown-menu">{h}</ul>;
   }
 });
 
@@ -23,8 +35,8 @@ const Body = React.createClass({
       editor: {
         name: "",
         content: "",
-        frameoptions: ["\<None\>", "#dun", "BeTrue"],
-        frame: "\<None\>"
+        frameoptions: ["\<Private\>", "BeTrue#Dun", "Ohters#Dun", "Nonsense#John Doe"],
+        frame: "\<Private\>"
       }
     }
   },
@@ -36,7 +48,7 @@ const Body = React.createClass({
       height: 300,
       setup: function (ed) {
         ed.on('init', function () {
-          this.getDoc().body.style.fontSize= '14px';
+          this.getDoc().body.style.fontSize = '14px';
         });
       },
       init_instance_callback: function (ed) {
@@ -62,10 +74,17 @@ const Body = React.createClass({
   handleEditorSubmit: function (e) {
     console.log(this.state.editor.content);
     e.preventDefault();
+    let frameMap = (frame) => {
+      switch (frame) {
+        case "\<Private\>":
+          return null;
+        default:
+          return frame;
+      }
+    };
     let node = {
       name: this.state.editor.name,
-      // TODO frame
-      frame: this.state.editor.frame,
+      frame: frameMap(this.state.editor.frame),
       content: this.state.editor.content,
       type: 'ARTICLE'
     };
@@ -80,11 +99,11 @@ const Body = React.createClass({
     xhr.send(JSON.stringify(node));
   },
 
-  changeDropdownDisplay: function (text) {
+  changeDropdownDisplay: function (i) {
     let state = this.state;
     let self = this;
     return function () {
-      state.editor.frame = text;
+      state.editor.frame = state.editor.frameoptions[i];
       self.setState(state);
     }
   },
@@ -96,7 +115,7 @@ const Body = React.createClass({
           <form className="form-horizontal" onSubmit={this.handleEditorSubmit}>
             <div className="form-group">
               <div className="col-lg-10 upper-margin">
-                <label htmlFor="node-name">Name</label>
+                <label htmlFor="node-name">Title</label>
                 <input type="text" className="form-control" id="node-name" placeholder="Article"
                        onChange={this.handleNameChange} value={this.state.editor.name}/>
               </div>
@@ -106,7 +125,7 @@ const Body = React.createClass({
                   <button type="button" className="btn btn-default btn-block dropdown-toggle"
                           data-toggle="dropdown"
                           aria-haspopup="true" aria-expanded="false"
-                          id="node-frame-select" style={{textAlign: "left"}}>{this.state.editor.frame}
+                          id="node-frame-select" style={{textAlign: "left"}}>{this.state.editor.frame.split('#')[0]}
                     <span className="caret" style={{
                       position: "absolute",
                       top: "50%",
@@ -125,7 +144,7 @@ const Body = React.createClass({
             </div>
             <div className="btn-toolbar">
               <button className="btn btn-primary" type="submit">Submit</button>
-              <button className="btn btn-default" type="button">Save draft</button>
+              <button className="btn btn-default" type="button" disabled="true">Save draft</button>
               <button className="btn btn-danger pull-right" type="button">Discard</button>
             </div>
           </form>

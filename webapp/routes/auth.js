@@ -1,6 +1,4 @@
 'use strict';
-var request = require('request');
-
 
 var authEnabled = JSON.parse(process.env.ENABLE_AUTH);
 var LOCAL_API_SERVER = process.env.LOCAL_API_SERVER;
@@ -10,7 +8,7 @@ module.exports = authEnabled ? function (req, res, next) {
     next();
   else {
     req.logout();
-    res.redirect('/login');
+    res.redirect('/login?returnTo=' + encodeURI(req.originalUrl));
   }
 } : function (req, res, next) {
   next();
@@ -18,7 +16,7 @@ module.exports = authEnabled ? function (req, res, next) {
 
 // TODO split mfw auth and tube auth
 function validUser(user) {
-  if (typeof user.tube_id !== 'undefined')
+  if (user.tube !== null)
     return true;
   switch (user.nickname) {
     case "finn199411":

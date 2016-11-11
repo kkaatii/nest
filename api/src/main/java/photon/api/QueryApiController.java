@@ -15,17 +15,10 @@ import photon.tube.service.QueryService;
 public class QueryApiController {
 
     private final QueryService qs;
-    private final OwnerAndFrameMapper oafMapper;
 
     @Autowired
-    public QueryApiController(QueryService qs, OwnerAndFrameMapper oafMapper) {
+    public QueryApiController(QueryService qs) {
         this.qs = qs;
-        this.oafMapper = oafMapper;
-    }
-
-    @RequestMapping("/user")
-    public Integer userId(@RequestParam String aid) {
-        return oafMapper.getIdByAuthId(aid);
     }
 
     @RequestMapping(value = "/{graphView}/{ids}", method = RequestMethod.GET)
