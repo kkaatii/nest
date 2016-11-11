@@ -28,7 +28,7 @@ public class CrudService {
         if (catalogMapper.select(catalog.getArticleId()) != null) return null;
         catalogMapper.insert(catalog);
         //viewLogMapper.insert(new ViewLog(catalog.getArticleId(), User.DEFAULT_USER_ID));
-        viewLogMapper.init(catalog.getArticleId());
+        viewLogMapper.initViewLog(catalog.getArticleId());
         return catalog;
     }
 
@@ -41,8 +41,7 @@ public class CrudService {
         }
     }
 
-    public void markFavorite(Integer articleId, String name, boolean favorite) {
-        Integer userId = userMapper.find(name);
+    public void markFavorite(Integer articleId, Integer userId, boolean favorite) {
         favMapper.insert(new FavoriteLog(articleId, userId));
         viewLogMapper.incrementTo(articleId, userId, MAX_VIEW_COUNT);
     }
@@ -65,8 +64,8 @@ public class CrudService {
         viewLogMapper.batchIncrement(articleIds, userId);
     }
 
-    public void noshow(Integer articleId, String name) {
-        viewLogMapper.incrementTo(articleId, userMapper.find(name), MAX_VIEW_COUNT);
+    public void noshow(Integer articleId, Integer userId) {
+        viewLogMapper.incrementTo(articleId, userId, MAX_VIEW_COUNT);
     }
 
     public Integer findUserId(String name) {

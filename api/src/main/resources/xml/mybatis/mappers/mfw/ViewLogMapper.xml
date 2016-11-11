@@ -15,7 +15,7 @@
                              WHERE article_id = #{articleId} AND user_id = #{userId})
     </insert>
 
-    <insert id="init">
+    <insert id="initViewLog">
         INSERT INTO mfw.viewlog (article_id, user_id)
             SELECT
                 #{articleId},
