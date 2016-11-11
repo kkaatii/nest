@@ -38,8 +38,8 @@ public class MfwApiController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public Panel[] getPanels(@RequestParam(required = false) String name, @RequestParam(defaultValue = "4") int batchSize) {
-        return gallery.nextBatch(crud.findUserId(name), batchSize);
+    public Panel[] getPanels(@RequestParam(required = false) Integer oid, @RequestParam(defaultValue = "4") int batchSize) {
+        return gallery.nextBatch(oid, batchSize);
     }
 
     @RequestMapping("/init")

@@ -12,7 +12,7 @@ const FrameSelect = React.createClass({
       let option = options[i].split('#');
       if (option[1] && option[1] !== lastHeader) {
         lastHeader = option[1];
-        h.push(<li className="dropdown-header" style={{fontWeight:"bold", color: "#8ad"}}>{option[1]}</li>);
+        h.push(<li key={-i} className="dropdown-header" style={{fontWeight:"bold", color: "#8ad"}}>{option[1]}</li>);
       }
       h.push(<li key={i}><a href="#" onClick={self.props.display(i)}>{option[0]}</a></li>);
     }

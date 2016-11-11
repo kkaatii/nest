@@ -27,7 +27,7 @@ var ArticleList = React.createClass({
         }
       };
       for (let i = 0; i < item.displayedPos.length; i++)
-        h.push(<div className="row" title={item.content.Destination}><a
+        h.push(<div className="row" title={item.content.Destination} key={item.content.ArticleId * 10 + i +1}><a
           href={self.complementURL(item.content.ArticleId)}
           target="_blank"><img
           src={item.content.ImageUrls[item.displayedPos[i]]} className="img-responsive"
@@ -39,7 +39,7 @@ var ArticleList = React.createClass({
           marginBottom: "0.72em",
           paddingLeft: "20%",
           paddingRight: "20%"
-        }}>
+        }} key={item.content.ArticleId * 100}>
           <span
             className={"pull-left glyphicon glyphicon-star" + (self.state.starred[item.content.ArticleId] ? "" : "-empty") }
             aria-hidden="true" onClick={self.star(item.content.ArticleId)} style={glyphStyle.star}/>
@@ -51,8 +51,8 @@ var ArticleList = React.createClass({
       return <div className="col-md-6 col-xs-12" key={item.content.ArticleId}>{h}</div>;
     };
     var createPair = function (panelpair) {
-      return <div className="col-md-6 col-xs-6">
-        <div className="row">{createItem(panelpair[0])}{createItem(panelpair[1])}</div>
+      return <div className="col-md-6 col-xs-6" key={panelpair[2]}>
+        <div className="row" key={-panelpair[2]}>{createItem(panelpair[0])}{createItem(panelpair[1])}</div>
       </div>;
     };
 
@@ -128,12 +128,14 @@ var Body = React.createClass({
           panelpairs[i][0] = {content: content, displayedPos: self.randomPos(content.ImageUrls.length, 4)};
           content = JSON.parse(panels_raw[2 * i + 1].content);
           panelpairs[i][1] = {content: content, displayedPos: self.randomPos(content.ImageUrls.length, 4)};
+          panelpairs[i][2] = i;
         }
         if (batchSize > i * 2) {
           panelpairs[i] = [];
           content = JSON.parse(panels_raw[2 * i].content);
           panelpairs[i][0] = {content: content, displayedPos: self.randomPos(content.ImageUrls.length, 4)};
           panelpairs[i][1] = null;
+          panelpairs[i][2] = i;
         }
         self.setState({panels: panelpairs, refreshing: false});
       }
