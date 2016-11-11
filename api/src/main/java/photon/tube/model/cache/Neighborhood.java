@@ -41,7 +41,7 @@ class Neighborhood {
 	}
 	
 	List<Arrow> arrowsByType(ArrowType type) {
-		if (type == ArrowType.UNSPECIFIED) {
+		if (type == ArrowType.ANY) {
 			List<Arrow> arrows = new ArrayList<>();
 			arrowMap.values().forEach(arrows::addAll);
 			return arrows;

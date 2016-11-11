@@ -2,7 +2,7 @@ package photon.tube.query.processor;
 
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
-import photon.tube.query.ArgumentClassMismatchException;
+import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
 
@@ -20,16 +20,16 @@ public class CompleteProcessor implements Processor {
     }
 
     @Override
-    public GraphContainer process(Object... args) throws ArgumentClassMismatchException {
+    public GraphContainer process(Object... args) throws QueryArgumentClassMismatchException {
         try {
-            int[] ids = (int[]) args[0];
+            Integer[] ids = (Integer[]) args[0];
             ArrowType arrowType = (ArrowType) args[1];
 
             List<Arrow> arrows = new ArrayList<>();
             Arrow tmp;
             for (int i = 0; i < ids.length; i++) {
                 for (int j = i + 1; j < ids.length; j++) {
-                    if (arrowType == ArrowType.UNSPECIFIED)
+                    if (arrowType == ArrowType.ANY)
                         arrows.addAll(crudService.getAllArrowsBetween(ids[i], ids[j]));
                     else if ((tmp = crudService.getArrow(ids[i], arrowType, ids[j])) != null)
                         arrows.add(tmp);
@@ -40,7 +40,7 @@ public class CompleteProcessor implements Processor {
             return GraphContainer.fixateWith(ensureList(null), arrows);
 
         } catch (ClassCastException e) {
-            throw new ArgumentClassMismatchException();
+            throw new QueryArgumentClassMismatchException();
         }
     }
 }

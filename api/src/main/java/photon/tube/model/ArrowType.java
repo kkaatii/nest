@@ -7,13 +7,13 @@ public enum ArrowType {
     KEYWORD_OF, HAVING_KEYWORD,
     TYPE, DEPENDED_BY,
 
-    UNSPECIFIED, PAIRED, ;
+    ANY, PAIRED, ;
 
     public ArrowType reverse() {
         int ord = ordinal();
         switch (this) {
-            case UNSPECIFIED:
-                return UNSPECIFIED;
+            case ANY:
+                return ANY;
             case PAIRED:
                 return PAIRED;
             default:

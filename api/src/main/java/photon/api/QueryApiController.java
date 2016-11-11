@@ -3,31 +3,37 @@ package photon.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import photon.tube.model.ArrowType;
+import photon.tube.model.OwnerAndFrameMapper;
 import photon.tube.query.Query;
 import photon.tube.query.QueryBuilder;
 import photon.tube.query.QueryResult;
 import photon.tube.query.SectionConfig;
 import photon.tube.service.QueryService;
 
-import static photon.tube.query.SectionConfig.DO_NOT_SECTION;
-
 @RestController
 @RequestMapping("/api/q")
-public class TubeApiController {
+public class QueryApiController {
 
     private final QueryService qs;
+    private final OwnerAndFrameMapper oafMapper;
 
     @Autowired
-    public TubeApiController(QueryService qs) {
+    public QueryApiController(QueryService qs, OwnerAndFrameMapper oafMapper) {
         this.qs = qs;
+        this.oafMapper = oafMapper;
+    }
+
+    @RequestMapping("/user")
+    public Integer userId(@RequestParam String aid) {
+        return oafMapper.getIdByAuthId(aid);
     }
 
     @RequestMapping(value = "/{graphView}/{ids}", method = RequestMethod.GET)
     public QueryResult query(@PathVariable String graphView,
                              @PathVariable Integer[] ids,
-                             @RequestParam(defaultValue = "UNSPECIFIED") ArrowType arrowType,
+                             @RequestParam(defaultValue = "ANY") ArrowType arrowType,
                              @RequestParam(defaultValue = "false") boolean reversed,
-                             @RequestParam(defaultValue = DO_NOT_SECTION) String sectionMode,
+                             @RequestParam(defaultValue = SectionConfig.DO_NOT_SECTION) String sectionMode,
                              @RequestParam(defaultValue = "0") int leftLimit,
                              @RequestParam(defaultValue = "-1") int rightLimit,
                              @RequestParam(defaultValue = "true") boolean leftInclusive,

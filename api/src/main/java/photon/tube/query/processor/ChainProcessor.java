@@ -4,7 +4,7 @@ package photon.tube.query.processor;
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
 import photon.tube.model.Point;
-import photon.tube.query.ArgumentClassMismatchException;
+import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
 import photon.util.EQueue;
@@ -16,8 +16,6 @@ import static photon.tube.query.GraphContainer.INIT_DEPTH;
 /**
  * Created by Dun Liu on 5/28/2016.
  */
-
-// TODO need reexamine correctness of the code
 public class ChainProcessor implements Processor {
 
     private CrudService crudService;
@@ -27,7 +25,7 @@ public class ChainProcessor implements Processor {
     }
 
     @Override
-    public GraphContainer process(Object... args) throws ArgumentClassMismatchException {
+    public GraphContainer process(Object... args) throws QueryArgumentClassMismatchException {
         try {
             Integer[] origins = (Integer[]) args[0];
             ArrowType at = (ArrowType) args[1];
@@ -61,7 +59,7 @@ public class ChainProcessor implements Processor {
             return gc.organize();
 
         } catch (ClassCastException e) {
-            throw new ArgumentClassMismatchException();
+            throw new QueryArgumentClassMismatchException();
         }
     }
 }

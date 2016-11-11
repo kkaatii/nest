@@ -2,7 +2,7 @@ package photon.tube.query.processor;
 
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
-import photon.tube.query.ArgumentClassMismatchException;
+import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
 
@@ -20,10 +20,10 @@ public class SiblingProcessor implements Processor {
     }
 
     @Override
-    public GraphContainer process(Object... args) throws ArgumentClassMismatchException {
+    public GraphContainer process(Object... args) throws QueryArgumentClassMismatchException {
         try {
-            int[] origins = (int[]) args[0];
-            if (origins.length == 0) return GraphContainer.emptyInstance();
+            Integer[] origins = (Integer[]) args[0];
+            if (origins.length == 0) return GraphContainer.emptyContainer();
             ArrowType at = (ArrowType) args[1];
 
             GraphContainer gc = new GraphContainer();
@@ -52,7 +52,7 @@ public class SiblingProcessor implements Processor {
             return gc.organize();
 
         } catch (ClassCastException e) {
-            throw new ArgumentClassMismatchException();
+            throw new QueryArgumentClassMismatchException();
         }
     }
 }

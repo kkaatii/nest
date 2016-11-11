@@ -42,8 +42,8 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
     /**
      * Be careful when using this method, as the returned <tt>GraphContainer</tt> can no longer be modified.
      *
-     * @param points     points to be contained
-     * @param arrows     arrows to be contained
+     * @param points points to be contained
+     * @param arrows arrows to be contained
      * @return an <i>"immutable"</i> <tt>GraphContainer</tt> as if it is just a section of another graph
      */
     public static GraphContainer fixateWith(final List<Point> points,
@@ -51,7 +51,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
         return new SectionContainer(points, arrows);
     }
 
-    public static GraphContainer emptyInstance() {
+    public static GraphContainer emptyContainer() {
         return EMPTY_GRAPH_CONTAINER;
     }
 
@@ -123,14 +123,13 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
         if (!organized)
             organize();
         if (right > 0 && left > right)
-            return emptyInstance();
+            return emptyContainer();
         // In case there of no point but arrows, return all arrows if leftLimit is 0
         if (size() == 0)
-            return (left == 0) ? this : emptyInstance();
+            return (left == 0) ? this : emptyContainer();
         right = (right >= size()) ? size() - 1 : right;
 
-        List<Point> includedPoints = new ArrayList<>();
-        List<Arrow> includedArrows = new ArrayList<>();
+        GraphContainer result = new GraphContainer();
 
         IntConsumer toIncludeArrows = (rankToArrowIndexes == null) ?
                 r -> {
@@ -140,17 +139,18 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
                     Integer originRank = nodeIdToRank.get(a.getOrigin());
                     Integer targetRank = nodeIdToRank.get(a.getTarget());
                     if (originRank >= left && targetRank >= left) {
-                        includedArrows.add(a);
+                        result.addArrow(a);
                     }
                 });
 
         for (int r = left; r <= right; r++) {
             if (!((r == left && !leftInclusive) || (r == right && !rightInclusive)))
-                includedPoints.add(_entries.get(rankToIndex[r]));
+                result.add(_entries.get(rankToIndex[r]), rankToDepth[r]);
             toIncludeArrows.accept(r);
         }
+        result.organized = true;
 
-        return fixateWith(includedPoints, includedArrows);
+        return result;
     }
 
     @Override
@@ -162,37 +162,36 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
         if (!organized)
             organize();
         if (right > 0 && left > right)
-            return emptyInstance();
+            return emptyContainer();
         if (size() == 0)
-            return (left == minDepth()) ? this : emptyInstance();
+            return (left == minDepth()) ? this : emptyContainer();
 
-        List<Point> includedPoints = new ArrayList<>();
-        List<Arrow> includedArrows = new ArrayList<>();
+        GraphContainer result = new GraphContainer();
         IntConsumer toIncludeArrows = (depthToArrowIndexes == null) ?
                 depth -> {
                 } :
                 depth -> depthToArrowIndexes.get(depth).forEach(ai -> {
                     Arrow a = _arrows.get(ai);
-                    includedArrows.add(a);
+                    result.addArrow(a);
                 });
         BiConsumer<Integer, List<Integer>> toInclude = (left == right) ?
                 (depth, indexes) -> {
                     if (depth == left && leftInclusive && rightInclusive)
-                        indexes.forEach(i -> includedPoints.add(_entries.get(i)));
+                        indexes.forEach(i -> result.add(_entries.get(i), depth));
                 } :
                 (depth, indexes) -> {
                     if (depth >= left && depth < right) {
                         if (leftInclusive || depth != left)
-                            indexes.forEach(i -> includedPoints.add(_entries.get(i)));
+                            indexes.forEach(i -> result.add(_entries.get(i), depth));
                         toIncludeArrows.accept(depth);
                     } else if (depth == right && rightInclusive)
-                        indexes.forEach(i -> includedPoints.add(_entries.get(i)));
+                        indexes.forEach(i -> result.add(_entries.get(i), depth));
                 };
 
         depthToIndexes.forEach(toInclude);
+        result.organized = true;
 
-
-        return fixateWith(includedPoints, includedArrows);
+        return result;
     }
 
     public Section export() {

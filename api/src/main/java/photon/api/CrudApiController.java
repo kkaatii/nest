@@ -9,13 +9,13 @@ import photon.tube.service.QueryService;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/q/test")
-public class TestController {
+@RequestMapping("/api/tube")
+public class CrudApiController {
 
     private final CrudService cs;
 
     @Autowired
-    public TestController(CrudService cs) {
+    public CrudApiController(CrudService cs) {
         this.cs = cs;
     }
 
@@ -37,51 +37,41 @@ public class TestController {
     }
 
     @RequestMapping(value = "/node-update", method = RequestMethod.POST)
-    public Node update(@RequestParam Integer id) {
-        Node n = new Node(NodeType.TAG, new Date().toString());
-        n.setId(id);
-        n.setOwnerId(1);
-        cs.putNode(n);
-        return n;
+    public Node update(@RequestBody Node n) {
+        return create(n);
     }
 
-    @RequestMapping(value = "/node-deactivate", method = RequestMethod.POST)
-    public String deactivate(@RequestParam Integer id) {
-        cs.activateNode(id, false);
-        return cs.getNode(id).isActive() ? "Failure" : "Success";
-    }
-
-    @RequestMapping(value = "/node-reactivate", method = RequestMethod.POST)
-    public String reactivate(@RequestParam Integer id) {
-        cs.activateNode(id, true);
-        return cs.getNode(id).isActive() ? "Success" : "Failure";
+    @RequestMapping(value = "/node-activate", method = RequestMethod.POST)
+    public String activate(@RequestParam Integer nid, @RequestParam boolean a) {
+        cs.activateNode(nid, a);
+        return cs.getNode(nid).isActive() == a ? "Success" : "Failure";
     }
 
     @RequestMapping("/node-get")
-    public Node get(@RequestParam Integer id) {
-        return cs.getNode(id);
+    public Node get(@RequestParam Integer nid) {
+        return cs.getNode(nid);
     }
 
     @RequestMapping("/point-get")
-    public Point getPoint(@RequestParam Integer id) {
-        return cs.getPoint(id);
+    public Point getPoint(@RequestParam Integer pid) {
+        return cs.getPoint(pid);
     }
 
     @RequestMapping("/point-get-multiple")
-    public List<Point> getPoints(@RequestParam Integer[] ids) {
-        return cs.getPoints(Arrays.asList(ids));
+    public List<Point> getPoints(@RequestParam Integer[] pid) {
+        return cs.getPoints(Arrays.asList(pid));
     }
 
     @RequestMapping("/point-map-get")
-    public Map<Integer, Point> getPointMap(@RequestParam Integer[] ids) {
-        return cs.getPointMap(Arrays.asList(ids));
+    public Map<Integer, Point> getPointMap(@RequestParam Integer[] pid) {
+        return cs.getPointMap(Arrays.asList(pid));
     }
 
     @RequestMapping(value="/arrow-create", method=RequestMethod.POST)
-    public void createArrow(@RequestParam Integer[] ids) {
-        for (int i = 0; i < ids.length-1; i++) {
-            for (int j = i+1; j < ids.length; j++) {
-                cs.putArrow(new Arrow(ids[i], ArrowType.PARENT_OF, ids[j]));
+    public void createArrow(@RequestParam Integer[] aid) {
+        for (int i = 0; i < aid.length-1; i++) {
+            for (int j = i+1; j < aid.length; j++) {
+                cs.putArrow(new Arrow(aid[i], ArrowType.PARENT_OF, aid[j]));
             }
         }
     }

@@ -26,7 +26,7 @@ var ArticleList = React.createClass({
           color: self.state.noshowed[item.content.ArticleId] ? "#bd0000" : "#666666"
         }
       };
-      for (var i = 0; i < item.displayedPos.length; i++)
+      for (let i = 0; i < item.displayedPos.length; i++)
         h.push(<div className="row" title={item.content.Destination}><a
           href={self.complementURL(item.content.ArticleId)}
           target="_blank"><img
@@ -65,10 +65,10 @@ var ArticleList = React.createClass({
   noshow: function (articleId) {
     var self = this;
     return function () {
-      var xhr = new XMLHttpRequest();
+      let xhr = new XMLHttpRequest();
       xhr.open('POST', MFW_API_URL + '/noshow?articleId=' + articleId, true);
       xhr.send();
-      var noshowed = self.state.noshowed;
+      let noshowed = self.state.noshowed;
       noshowed[articleId] = true;
       self.setState({noshowed: noshowed});
     }
@@ -76,10 +76,10 @@ var ArticleList = React.createClass({
   star: function (articleId) {
     var self = this;
     return function () {
-      var xhr = new XMLHttpRequest();
+      let xhr = new XMLHttpRequest();
       xhr.open('POST', MFW_API_URL + '/star?articleId=' + articleId, true);
       xhr.send();
-      var starred = self.state.starred;
+      let starred = self.state.starred;
       starred[articleId] = true;
       self.setState({starred: starred});
     }
@@ -146,7 +146,7 @@ var Body = React.createClass({
     while (arr.length < displayedCount) {
       var r = Math.floor(Math.random() * size);
       var found = false;
-      for (var i = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         if (arr[i] == r) {
           found = true;
           break

@@ -6,6 +6,7 @@ package photon.tube.model;
 public interface OwnerAndFrameMapper {
     void addOwner(Owner o);
     void addAlias(Owner o);
+    Integer getIdByAuthId(String authId);
     void deleteOwnerById(Integer id);
     void deleteAlias(Owner o);
 }

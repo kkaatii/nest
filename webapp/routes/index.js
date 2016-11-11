@@ -11,12 +11,11 @@ var env = {
 
 var LOCAL_API_SERVER = process.env.LOCAL_API_SERVER;
 var REMOTE_API_SERVER = process.env.REMOTE_API_SERVER;
-var authEnabled = JSON.parse(process.env.ENABLE_AUTH);
 
 var auth = require('./auth');
 
 /* GET home page. */
-router.get('/', function (req, res) {
+router.get('/', auth, function (req, res) {
   res.render('index', {env: env});
 });
 
@@ -38,11 +37,15 @@ router.get('/callback',
 router.get('/mfw',
   auth,
   function (req, res) {
-    if (authEnabled) request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'name', req.user.name));
+    if (typeof req.user !== 'undefined') request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'name', req.user.name));
     res.render('mfw', {server: REMOTE_API_SERVER});
   });
 
-router.all('/api/*', auth, function (req, res) {
+router.get('/tube', auth, function (req, res) {
+  res.render('tube', {server: REMOTE_API_SERVER});
+});
+
+router.get('/api/*', auth, function (req, res) {
   request({url: appendParameter(LOCAL_API_SERVER + req.url, 'name', req.user.name), method: req.method},
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
@@ -50,6 +53,24 @@ router.all('/api/*', auth, function (req, res) {
       }
     }
   );
+});
+
+router.post('/api/*', auth, function (req, res) {
+  if (req.headers['content-type'].startsWith('application/json')) {
+    var body = req.body;
+    body['ownerId'] = 1;
+    var options = {
+      url: LOCAL_API_SERVER + req.url,
+      json: true,
+      body: body,
+      method: 'post'
+    };
+    request(options, function (error, response, data) {
+      if (!error && response.statusCode == 200) {
+        res.send(data);
+      }
+    });
+  }
 });
 
 function appendParameter(url, paramname, paramvalue) {

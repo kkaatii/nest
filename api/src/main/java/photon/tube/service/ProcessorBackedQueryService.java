@@ -47,10 +47,10 @@ public class ProcessorBackedQueryService implements QueryService {
         }
     }
 
-    private Processor getProcessor(String name) {
-        return procMap.computeIfAbsent(name, k -> {
+    private Processor getProcessor(String procName) {
+        return procMap.computeIfAbsent(procName, k -> {
             try {
-                Class<?> clazz = Class.forName(completeProcessorName(name));
+                Class<?> clazz = Class.forName(completeProcName(procName));
                 Constructor<?> ctor = clazz.getConstructor(CrudService.class);
                 return (Processor) ctor.newInstance(crudService);
             } catch (Exception e) {
@@ -59,7 +59,7 @@ public class ProcessorBackedQueryService implements QueryService {
         });
     }
 
-    private static String completeProcessorName(String name) {
+    private static String completeProcName(String name) {
         return String.format("photon.tube.query.processor.%sProcessor", WordUtils.capitalizeFully(name));
     }
 

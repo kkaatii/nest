@@ -44,10 +44,12 @@ public class MfwApiController {
 
     @RequestMapping("/init")
     public Integer init(@RequestParam(required = false) String name) {
-        Integer id = crud.findUserId(name);
-        if (id == null) return null;
-        new Thread(() -> gallery.init(id)).start();
-        return id;
+        if (name != null) {
+            Integer id = crud.findUserId(name);
+            if (id == null) return null;
+            new Thread(() -> gallery.init(id)).start();
+            return id;
+        }
+        return 0;
     }
-
 }

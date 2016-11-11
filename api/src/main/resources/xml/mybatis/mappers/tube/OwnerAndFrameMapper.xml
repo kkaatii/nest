@@ -20,6 +20,12 @@
             LIMIT 1
     </insert>
 
+    <select id="getIdByAuthId" resultType="int">
+        SELECT id
+        FROM tube.owner
+        WHERE auth_id = #{authId}
+    </select>
+
     <delete id="deleteOwnerById">
         DELETE FROM tube.owner
         WHERE id = #{id}

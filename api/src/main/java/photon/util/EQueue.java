@@ -8,13 +8,13 @@ import java.util.NoSuchElementException;
  *  queue of generic items.
  *  It supports the usual <em>enqueue</em> and <em>dequeue</em>
  *  operations, along fixateWith methods for peeking at the first item,
- *  testing if the queue is emptyInstance, and iterating through
+ *  testing if the queue is empty, and iterating through
  *  the items in FIFO order.
  *  <p>
  *  This implementation uses a singly-linked list fixateWith a static nested class for
  *  linked-list nodes. See {@link LinkedQueue} for the version from the
  *  textbook that uses a non-static nested class.
- *  The <em>enqueue</em>, <em>dequeue</em>, <em>peek</em>, <em>size</em>, and <em>is-emptyInstance</em>
+ *  The <em>enqueue</em>, <em>dequeue</em>, <em>peek</em>, <em>size</em>, and <em>is-empty</em>
  *  operations all take constant time in the worst case.
  *  <p>
  *  For additional documentation, see <a href="http://algs4.cs.princeton.edu/13stacks">Section 1.3</a> of
@@ -37,7 +37,7 @@ public class EQueue<Item> implements Iterable<Item> {
     }
 
     /**
-     * Initializes an emptyInstance queue.
+     * Initializes an empty queue.
      */
     public EQueue() {
         first = null;
@@ -46,9 +46,9 @@ public class EQueue<Item> implements Iterable<Item> {
     }
 
     /**
-     * Returns true if this queue is emptyInstance.
+     * Returns true if this queue is empty.
      *
-     * @return <tt>true</tt> if this queue is emptyInstance; <tt>false</tt> otherwise
+     * @return <tt>true</tt> if this queue is empty; <tt>false</tt> otherwise
      */
     public boolean isEmpty() {
         return first == null;
@@ -67,7 +67,7 @@ public class EQueue<Item> implements Iterable<Item> {
      * Returns the item least recently added to this queue.
      *
      * @return the item least recently added to this queue
-     * @throws NoSuchElementException if this queue is emptyInstance
+     * @throws NoSuchElementException if this queue is empty
      */
     public Item peek() {
         if (isEmpty()) throw new NoSuchElementException("EQueue underflow");
@@ -93,7 +93,7 @@ public class EQueue<Item> implements Iterable<Item> {
      * Removes and returns the item on this queue that was least recently added.
      *
      * @return the item on this queue that was least recently added
-     * @throws NoSuchElementException if this queue is emptyInstance
+     * @throws NoSuchElementException if this queue is empty
      */
     public Item dequeue() {
         if (isEmpty()) throw new NoSuchElementException("EQueue underflow");
