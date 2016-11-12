@@ -12,6 +12,7 @@ block content
     .container
       for article in articles
         .row
-          h1= article.name
-          .node-owner= article.frame.split('@')[1]
-          .node-content!= article.digest
+          .col-lg-12
+            h1= article.name
+            .node-owner= article.frame.split('@')[1]
+            .node-digest= article.digest

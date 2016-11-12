@@ -1,5 +1,7 @@
 package photon.util;
 
+import org.jsoup.Jsoup;
+
 import java.util.*;
 
 public class Util {
@@ -38,5 +40,9 @@ public class Util {
         }
 
         return min;
+    }
+
+    public static String html2text(String html) {
+        return Jsoup.parse(html).text();
     }
 }
