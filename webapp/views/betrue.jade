@@ -2,9 +2,13 @@ extends layout
 
 block head
   title= 'BeTrue'
-  link(rel='stylesheet', href='/css/tube.css')
+  link(rel='stylesheet', href='/css/betrue.css')
   script(src='https://code.jquery.com/jquery-3.1.1.min.js', integrity='sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=', crossorigin='anonymous')
   script(src='/js/bootstrap.min.js')
+  script(src='https://use.typekit.net/gzh8ndx.js')
+  script.
+    try { Typekit.load({async: true}); } catch (e) {}
+
 
 block content
   #api(style="display:none;", server= '#{server}')
@@ -14,5 +18,9 @@ block content
         .row
           .col-lg-12
             h1= article.name
-            .node-owner= article.frame.split('@')[1]
             .node-digest= article.digest
+            .row
+              .col-lg-1
+                .node-owner= 'by ' + article.frame.split('@')[1]
+              .col-lg-2
+                .node-created= new Date(article.created).toDateString()

@@ -101,7 +101,7 @@ router.post('/api/*', auth, function (req, res) {
   if (req.headers['content-type'].startsWith('application/json')) {
     var body = req.body;
     body['ownerId'] = req.user.tube.id;
-    body.frame = body.frame === null ? '#' + req.user.tube.nickname : body.frame;
+    body.frame = body.frame === null ? '@' + req.user.tube.nickname : body.frame;
     var options = {
       url: LOCAL_API_SERVER + cleanseUrl(req.url),
       json: true,

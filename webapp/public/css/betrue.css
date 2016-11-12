@@ -1,0 +1,24 @@
+.upper-margin {
+    margin-top: 0.5em;
+}
+
+body {
+    font-family: "source-han-sans-simplified-c", sans-serif;
+    font-style: normal;
+    font-weight: 300;
+}
+
+h1 {
+    font-family: serif;
+    font-weight: 200;
+}
+
+.node-owner {
+    color: #666;
+    font-weight: 200;
+}
+
+.node-created {
+    color: #666;
+    font-weight: 200;
+}

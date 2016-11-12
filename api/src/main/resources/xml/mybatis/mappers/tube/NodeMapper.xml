@@ -78,6 +78,7 @@
         <include refid="pointColumns"/>
         FROM tube.node
         WHERE frame = #{frame} AND active
+        ORDER BY created DESC
     </select>
 
     <select id="preselectInactive" resultMap="pointRM">
