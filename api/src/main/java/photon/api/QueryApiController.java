@@ -2,10 +2,8 @@ package photon.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import photon.tube.model.ArrowType;
 import photon.tube.model.Owner;
-import photon.tube.model.OwnerAndFrameMapper;
 import photon.tube.query.Query;
 import photon.tube.query.QueryBuilder;
 import photon.tube.query.QueryResult;
@@ -38,7 +36,7 @@ public class QueryApiController {
                              @RequestParam(defaultValue = "false") boolean rightInclusive) {
         //if (qid.length == 0) return new QueryResult(null, GraphSlice.BLANK);
         Query query = new QueryBuilder()
-                .ownerId(new Owner(oid, on))
+                .owner(new Owner(oid, on))
                 .type(graphView)
                 .args(new Object[]{ ids, reversed ? arrowType.reverse() : arrowType })
                 .sectionConfig(new SectionConfig(sectionMode, leftLimit, rightLimit, leftInclusive, rightInclusive))

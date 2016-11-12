@@ -23,7 +23,7 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder ownerId(Owner ownerId) {
+    public QueryBuilder owner(Owner owner) {
         this.owner = owner;
         return this;
     }

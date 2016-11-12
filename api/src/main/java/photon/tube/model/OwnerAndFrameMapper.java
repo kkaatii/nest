@@ -7,9 +7,9 @@ import org.apache.ibatis.annotations.Param;
  */
 public interface OwnerAndFrameMapper {
     void addOwner(Owner o);
-    void addAlias(Owner o);
     Owner selectByAuthId(String authId);
     void deleteOwnerById(Integer id);
-    void deleteAlias(Owner o);
+    void addAlias(@Param("ownerId") Integer ownerId, @Param("authId") String authId);
+    void deleteAlias(@Param("ownerId") Integer ownerId, @Param("authId") String authId);
     Integer selectAccess(@Param("ownerId") Integer ownerId, @Param("frame") String frame);
 }

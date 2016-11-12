@@ -16,7 +16,7 @@
 
     <insert id="addAlias">
         INSERT INTO tube.owner_auth (auth_id, owner_id)
-        VALUES (#{authId}, #{id})
+        VALUES (#{authId}, #{ownerId})
     </insert>
 
     <select id="selectByAuthId" resultMap="ownerRM">
@@ -34,8 +34,8 @@
     </delete>
 
     <delete id="deleteAlias">
-        DELETE FROM tube.owner
-        WHERE auth_id = #{authId} AND id = #{id}
+        DELETE FROM tube.owner_auth
+        WHERE auth_id = #{authId} AND owner_id = #{ownerId}
     </delete>
 
     <select id="selectAccess" resultType="int">
