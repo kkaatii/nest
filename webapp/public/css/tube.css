@@ -1,3 +1,15 @@
 .upper-margin {
     margin-top: 0.5em;
 }
+
+@media (min-width: 1200px) {
+    .container{
+        max-width: 870px;
+    }
+}
+
+body {
+    font-family: "source-han-sans-simplified-c", sans-serif;
+    font-style: normal;
+    font-weight: 300;
+}

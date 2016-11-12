@@ -8,19 +8,22 @@ block head
       Typekit.load({async: true});
     } catch (e) {
     }
+  link(rel='stylesheet', href='/css/tube.css')
   link(rel='stylesheet', href='/css/betrue.css')
 
 block content
   #api(style="display:none;", server= '#{server}')
   #root
+    .container.upper-margin
+      img(src='/img/betrue-logo.svg' height=40)
+    hr(style="margin:0.25em 0 -0.5em 0; width: 100%;")
     .container
+      .row.upper-margin
+        .col-lg-12
       for article in articles
         .row
           .col-lg-12
-            h1= article.name
+            h3= article.name
             .node-digest= article.digest
-            .row
-              .col-lg-1
-                .node-owner= 'by ' + article.frame.split('@')[1]
-              .col-lg-2
-                .node-created= new Date(article.created).toDateString()
+            .footnote
+              #footnote= 'by ' + article.frame.split('@')[1] + ', ' + new Date(article.created).toDateString()

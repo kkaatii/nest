@@ -106,12 +106,12 @@ const Body = React.createClass({
         <div className="container">
           <form className="form-horizontal" onSubmit={this.handleEditorSubmit}>
             <div className="form-group">
-              <div className="col-lg-10 upper-margin">
+              <div className="col-lg-9 upper-margin">
                 <label htmlFor="node-name">Title</label>
                 <input type="text" className="form-control" id="node-name" placeholder="Article"
                        onChange={this.handleNameChange} value={this.state.editor.name}/>
               </div>
-              <div className="col-lg-2 upper-margin">
+              <div className="col-lg-3 upper-margin">
                 <label htmlFor="node-frame">Frame</label>
                 <div className="dropdown">
                   <button type="button" className="btn btn-default btn-block dropdown-toggle"
