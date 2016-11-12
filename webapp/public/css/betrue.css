@@ -1,6 +1,26 @@
+.upper-margin {
+    margin-top: 0.5em;
+}
+
+@media (min-width: 1200px) {
+    .container{
+        max-width: 870px;
+    }
+}
+
+body {
+    font-family: "source-han-sans-simplified-c", sans-serif;
+    font-style: normal;
+    font-weight: 300;
+}
+
 h3 {
     font-weight: 100;
     color: sienna;
+}
+
+hr {
+    margin:0.25em 0 -0.5em 0;
 }
 
 .footnote {
