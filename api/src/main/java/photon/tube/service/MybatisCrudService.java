@@ -110,4 +110,9 @@ public class MybatisCrudService implements CrudService {
         arrowMapper.deleteSimilar(a);
         arrowMapper.deleteSimilar(a.reverse());
     }
+
+    @Override
+    public List<Point> getAllFromFrame(String f) {
+        return nodeMapper.preselectFromFrame(f);
+    }
 }

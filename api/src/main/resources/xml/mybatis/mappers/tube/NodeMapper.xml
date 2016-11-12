@@ -73,6 +73,13 @@
         WHERE id = #{id}
     </select>
 
+    <select id="preselectFromFrame" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE frame = #{frame}
+    </select>
+
     <select id="preselectInactive" resultMap="pointRM">
         SELECT
         <include refid="pointColumns"/>

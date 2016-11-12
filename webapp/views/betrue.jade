@@ -1,0 +1,17 @@
+extends layout
+
+block head
+  title= 'BeTrue'
+  link(rel='stylesheet', href='/css/tube.css')
+  script(src='https://code.jquery.com/jquery-3.1.1.min.js', integrity='sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=', crossorigin='anonymous')
+  script(src='/js/bootstrap.min.js')
+
+block content
+  #api(style="display:none;", server= '#{server}')
+  #root
+    .container
+      for article in articles
+        .row
+          h1= article.name
+          .node-owner= article.frame.split('@')[1]
+          .node-content!= article.digest

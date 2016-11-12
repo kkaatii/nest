@@ -14,6 +14,38 @@ var REMOTE_API_SERVER = process.env.REMOTE_API_SERVER;
 
 var auth = require('./auth');
 
+function cleanseUrl(url) {
+  var urlparts = url.split('?');
+  if (urlparts.length >= 2) {
+
+    var prefix1 = 'oid=';
+    var prefix2 = 'on=';
+    var pars = urlparts[1].split(/[&;]/g);
+
+    //reverse iteration as may be destructive
+    for (var i = pars.length; i-- > 0;) {
+      //idiom for string.startsWith
+      if ((pars[i].lastIndexOf(prefix1, 0) !== -1) || (pars[i].lastIndexOf(prefix2, 0) !== -1)) {
+        pars.splice(i, 1);
+      }
+    }
+
+    url = urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
+    return url;
+  } else {
+    return url;
+  }
+}
+
+function appendParameter(url, params) {
+  var matched = url.match(/.+\?.+/);
+  if (matched !== null) url += '&' + params[0] + '=' + params[1];
+  else url += '?' + params[0] + '=' + params[1];
+  for (var i = 1; i < params.length / 2; i++)
+    url += '&' + params[i * 2] + params [i * 2 + 1];
+  return url;
+}
+
 /* GET home page. */
 router.get('/', auth, function (req, res) {
   res.render('index', {env: env});
@@ -38,7 +70,10 @@ router.get('/callback',
 router.get('/mfw',
   auth,
   function (req, res) {
-    if (typeof req.user !== 'undefined') request.get(appendParameter(LOCAL_API_SERVER + '/api/mfw/init', 'oid', req.user.tube.id, 'on', req.user.tube.nickname));
+    if (typeof req.user !== 'undefined') request.get(appendParameter(
+      LOCAL_API_SERVER + '/api/mfw/init',
+      ['oid', req.user.tube.id, 'on', req.user.tube.nickname]
+    ));
     res.render('mfw', {server: REMOTE_API_SERVER});
   });
 
@@ -47,7 +82,13 @@ router.get('/tube', auth, function (req, res) {
 });
 
 router.get('/api/*', auth, function (req, res) {
-  request({url: appendParameter(LOCAL_API_SERVER + req.url, 'oid', req.user.tube.id, 'on', req.user.tube.nickname), method: req.method},
+  request({
+      url: appendParameter(
+        LOCAL_API_SERVER + cleanseUrl(req.url),
+        ['oid', req.user.tube.id, 'on', req.user.tube.nickname]
+      ),
+      method: req.method
+    },
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
         res.send(data);
@@ -62,7 +103,7 @@ router.post('/api/*', auth, function (req, res) {
     body['ownerId'] = req.user.tube.id;
     body.frame = body.frame === null ? '#' + req.user.tube.nickname : body.frame;
     var options = {
-      url: LOCAL_API_SERVER + req.url,
+      url: LOCAL_API_SERVER + cleanseUrl(req.url),
       json: true,
       body: body,
       method: 'post'
@@ -75,13 +116,19 @@ router.post('/api/*', auth, function (req, res) {
   }
 });
 
-function appendParameter(url, ...params) {
-  var matched = url.match(/.+\?.+/);
-  if (matched !== null) url += '&' + params[0] + '=' + params[1];
-  else url += '?' + params[0] + '=' + params[1];
-  for (var i = 1; i < params.length / 2; i++)
-    url += '&' + params[i * 2] + params [i * 2 + 1];
-  return url;
-}
+router.get('/betrue', function (req, res) {
+  request({
+    url: appendParameter(
+      LOCAL_API_SERVER + '/api/tube/point-get-frame',
+      ['f', 'BeTrue@Dun']
+    ),
+    method: 'get'
+  }, function (error, response, data) {
+    if (!error && response.statusCode == 200){
+      data = JSON.parse(data);
+      res.render('betrue', {articles: data})
+    }
+  })
+});
 
 module.exports = router;

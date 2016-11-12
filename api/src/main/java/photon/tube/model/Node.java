@@ -5,7 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 public class Node {
-    private static final int DIGEST_LENGTH = 32;
+    private static final int DIGEST_LENGTH = 200;
 
     private Integer id;
     private String name;
@@ -20,7 +20,8 @@ public class Node {
     private String digest;
     private String content;
 
-    protected Node() {}
+    protected Node() {
+    }
 
     public Node(String name) {
         this(NodeType.ARTICLE, name, "");
@@ -109,7 +110,8 @@ public class Node {
             digest = null;
             return;
         }
-        digest = (content.length() > DIGEST_LENGTH) ? content.substring(0, DIGEST_LENGTH - 3) + "..." : content;
+        String strippedText = content.substring(0, content.length() > DIGEST_LENGTH * 2 ? DIGEST_LENGTH * 2 : content.length()).replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+        digest = (strippedText.length() > DIGEST_LENGTH) ? strippedText.substring(1, DIGEST_LENGTH - 3) + "..." : strippedText.substring(1);
     }
 
     private void stampUpdate() {

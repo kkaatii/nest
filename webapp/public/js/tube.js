@@ -9,21 +9,13 @@ const FrameSelect = React.createClass({
     let options = this.props.options;
     let lastHeader = '';
     for (let i = 0; i < options.length; i++) {
-      let option = options[i].split('#');
+      let option = options[i].split('@');
       if (option[1] && option[1] !== lastHeader) {
         lastHeader = option[1];
         h.push(<li key={-i} className="dropdown-header" style={{fontWeight:"bold", color: "#8ad"}}>{option[1]}</li>);
       }
       h.push(<li key={i}><a href="#" onClick={self.props.display(i)}>{option[0]}</a></li>);
     }
-    /*
-     let frameOptions = function (text) {
-     /*if (text.startsWith('\<'))
-     return <li key={text}><a href="#" onClick={self.props.display(text)}>{text}</a></li>;
-     /*else if (text.startsWith('#'))
-     return <li key={text} className="dropdown-header" style={{fontWeight: "bold"}}>{text.substring(1)}</li>;
-     else return <li key={text}><a href="#" onClick={self.props.display(text)}>{'  ' + text}</a></li>;
-     };*/
     return <ul aria-labelledby="node-frame-select"
                className="dropdown-menu">{h}</ul>;
   }
@@ -35,7 +27,7 @@ const Body = React.createClass({
       editor: {
         name: "",
         content: "",
-        frameoptions: ["\<Private\>", "BeTrue#Dun", "Ohters#Dun", "Nonsense#John Doe"],
+        frameoptions: ["\<Private\>", "BeTrue@Dun", "Ohters@Dun", "Nonsense@John Doe"],
         frame: "\<Private\>"
       }
     }
@@ -125,7 +117,7 @@ const Body = React.createClass({
                   <button type="button" className="btn btn-default btn-block dropdown-toggle"
                           data-toggle="dropdown"
                           aria-haspopup="true" aria-expanded="false"
-                          id="node-frame-select" style={{textAlign: "left"}}>{this.state.editor.frame.split('#')[0]}
+                          id="node-frame-select" style={{textAlign: "left"}}>{this.state.editor.frame.split('@')[0]}
                     <span className="caret" style={{
                       position: "absolute",
                       top: "50%",

@@ -18,7 +18,7 @@
         <typeAlias alias="Owner" type="photon.tube.model.Owner"/>
     </typeAliases>
 
-    <environments default="prod">
+    <environments default="dev">
         <environment id="prod">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">

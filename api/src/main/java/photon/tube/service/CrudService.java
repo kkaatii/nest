@@ -45,4 +45,6 @@ public interface CrudService {
 
     // Erase the arrow between two nodes
     void deleteArrow(Arrow a);
+
+    List<Point> getAllFromFrame(String f);
 }

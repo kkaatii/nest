@@ -17,7 +17,7 @@ public class DefaultOafService implements OafService {
 
     @Override
     public boolean authorizedRead(Owner owner, String frame) {
-        return hasAccess(READ_ACCESS, owner, frame);
+        return hasAccess(READ_ACCESS, owner, frame) || (oafMapper.selectAccess(GUEST_ID, frame) != null);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class DefaultOafService implements OafService {
     }
 
     private boolean hasAccess(int access, Owner owner, String frame) {
-        if (frame.split("#")[1].equals(owner.getNickname()))
+        if (frame.split("@")[1].equals(owner.getNickname()))
             return true;
         else {
             Integer a = oafMapper.selectAccess(owner.getId(), frame);

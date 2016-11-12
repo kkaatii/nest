@@ -16,6 +16,8 @@ public interface NodeMapper {
 
     String selectFrame(Integer id);
 
+    List<Point> preselectFromFrame(String frame);
+
     void insert(Node node);
 
     void update(Node node);

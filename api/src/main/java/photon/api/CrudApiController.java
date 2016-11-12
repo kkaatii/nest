@@ -47,9 +47,9 @@ public class CrudApiController {
         return cs.getNode(nid).isActive() == a ? "Success" : "Failure";
     }
 
-    @RequestMapping("/node-get")
-    public Node get(@RequestParam Integer nid) {
-        return cs.getNode(nid);
+    @RequestMapping("/point-get-frame")
+    public List<Point> get(@RequestParam String f) {
+        return cs.getAllFromFrame(f);
     }
 
     @RequestMapping("/point-get")
