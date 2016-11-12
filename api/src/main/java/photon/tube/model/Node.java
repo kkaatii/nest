@@ -110,7 +110,7 @@ public class Node {
             digest = null;
             return;
         }
-        String strippedText = content.substring(0, content.length() > DIGEST_LENGTH * 2 ? DIGEST_LENGTH * 2 : content.length()).replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
+        String strippedText = content.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", " ");
         digest = (strippedText.length() > DIGEST_LENGTH) ? strippedText.substring(1, DIGEST_LENGTH - 3) + "..." : strippedText.substring(1);
     }
 

@@ -77,14 +77,14 @@
         SELECT
         <include refid="pointColumns"/>
         FROM tube.node
-        WHERE frame = #{frame}
+        WHERE frame = #{frame} AND active
     </select>
 
     <select id="preselectInactive" resultMap="pointRM">
         SELECT
         <include refid="pointColumns"/>
         FROM tube.node
-        WHERE active = FALSE
+        WHERE NOT active
     </select>
 
     <select id="preselectMap" resultMap="pointRM">
