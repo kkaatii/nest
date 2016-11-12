@@ -2,6 +2,7 @@ package photon.tube.query.processor;
 
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
+import photon.tube.model.Owner;
 import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
@@ -25,7 +26,7 @@ public class CompleteProcessor implements Processor {
     }
 
     @Override
-    public GraphContainer process(Integer ownerId, Object... args) throws QueryArgumentClassMismatchException {
+    public GraphContainer process(Owner owner, Object... args) throws QueryArgumentClassMismatchException {
         try {
             Integer[] ids = (Integer[]) args[0];
             int length = ids.length;
@@ -36,9 +37,9 @@ public class CompleteProcessor implements Processor {
             Arrow tmp;
             boolean[] accesses = new boolean[length];
             for (int i = 0; i < length; i++) {
-                accesses[i] = oafService.authorizedRead(ownerId, crudService.getNodeFrame(ids[i]));
+                accesses[i] = oafService.authorizedRead(owner, crudService.getNodeFrame(ids[i]));
             }
-            if (!oafService.authorizedRead(ownerId, crudService.getNodeFrame(ids[0])))
+            if (!oafService.authorizedRead(owner, crudService.getNodeFrame(ids[0])))
                 return GraphContainer.emptyContainer();
             for (int i = 0; i < length; i++) {
                 if (!accesses[i]) continue;

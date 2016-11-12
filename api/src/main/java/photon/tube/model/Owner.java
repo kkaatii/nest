@@ -4,7 +4,6 @@ package photon.tube.model;
  * Created by Dun Liu on 11/9/2016.
  */
 public class Owner {
-    private String authId;
     private Integer id;
     private String nickname;
 
@@ -12,14 +11,9 @@ public class Owner {
 
     }
 
-    public Owner(String authId, String nickname) {
-        this.authId = authId;
-        this.nickname = nickname;
-    }
-
-    public Owner(String authId, Integer id) {
-        this.authId = authId;
+    public Owner(Integer id, String nickname) {
         this.id = id;
+        this.nickname = nickname;
     }
 
     public Integer getId() {
@@ -38,11 +32,4 @@ public class Owner {
         this.nickname = nickname;
     }
 
-    public String getAuthId() {
-        return authId;
-    }
-
-    public void setAuthId(String authId) {
-        this.authId = authId;
-    }
 }

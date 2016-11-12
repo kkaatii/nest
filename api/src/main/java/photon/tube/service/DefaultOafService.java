@@ -1,12 +1,11 @@
 package photon.tube.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.stereotype.Service;
+import photon.tube.model.Owner;
 import photon.tube.model.OwnerAndFrameMapper;
 
-/**
- * Created by Dun Liu on 11/11/2016.
- */
 @Service
 public class DefaultOafService implements OafService {
     private final OwnerAndFrameMapper oafMapper;
@@ -17,22 +16,26 @@ public class DefaultOafService implements OafService {
     }
 
     @Override
-    public boolean authorizedRead(Integer ownerId, String frame) {
-        return (READ_ACCESS & access(ownerId, frame)) != 0;
+    public boolean authorizedRead(Owner owner, String frame) {
+        return hasAccess(READ_ACCESS, owner, frame);
     }
 
     @Override
-    public boolean authorizedDelete(Integer ownerId, String frame) {
-        return (DELETE_ACCESS & access(ownerId, frame)) != 0;
+    public boolean authorizedDelete(Owner owner, String frame) {
+        return hasAccess(DELETE_ACCESS, owner, frame);
     }
 
     @Override
-    public boolean authorizedCreate(Integer ownerId, String frame) {
-        return (CREATE_ACCESS & access(ownerId, frame)) != 0;
+    public boolean authorizedCreate(Owner owner, String frame) {
+        return hasAccess(CREATE_ACCESS, owner, frame);
     }
 
-    private int access(Integer ownerId, String frame) {
-        Integer a = oafMapper.selectAccess(ownerId, frame);
-        return (a == null) ? 0 : a;
+    private boolean hasAccess(int access, Owner owner, String frame) {
+        if (frame.split("#")[1].equals(owner.getNickname()))
+            return true;
+        else {
+            Integer a = oafMapper.selectAccess(owner.getId(), frame);
+            return (access & ((a == null) ? 0 : a)) != 0;
+        }
     }
 }

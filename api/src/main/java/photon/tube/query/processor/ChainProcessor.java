@@ -1,10 +1,7 @@
 package photon.tube.query.processor;
 
 
-import photon.tube.model.Arrow;
-import photon.tube.model.ArrowType;
-import photon.tube.model.FrameArrow;
-import photon.tube.model.Point;
+import photon.tube.model.*;
 import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
@@ -26,7 +23,7 @@ public class ChainProcessor implements Processor {
     }
 
     @Override
-    public GraphContainer process(Integer ownerId, Object... args) throws QueryArgumentClassMismatchException {
+    public GraphContainer process(Owner owner, Object... args) throws QueryArgumentClassMismatchException {
         try {
             Integer[] origins = (Integer[]) args[0];
             ArrowType at = (ArrowType) args[1];
@@ -43,7 +40,7 @@ public class ChainProcessor implements Processor {
                 int originDepth = nodeIdToDepth.get(newOrigin);
                 List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(newOrigin, at);
                 for (FrameArrow a : arrows) {
-                    if (!oafService.authorizedRead(ownerId, a.getTargetFrame())) continue;
+                    if (!oafService.authorizedRead(owner, a.getTargetFrame())) continue;
                     int candidate = a.getTarget();
                     Integer candidateDepth = nodeIdToDepth.get(candidate);
                     if (candidateDepth == null) {

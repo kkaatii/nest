@@ -5,9 +5,8 @@
 <mapper namespace="photon.tube.model.OwnerAndFrameMapper">
 
     <resultMap type="owner" id="ownerRM">
-        <id property="authId" column="auth_id"/>
+        <id property="id" column="id"/>
         <result property="nickname" column="nickname"/>
-        <result property="id" column="id"/>
     </resultMap>
 
     <insert id="addOwner" useGeneratedKeys="true" keyProperty="id">
@@ -22,7 +21,6 @@
 
     <select id="selectByAuthId" resultMap="ownerRM">
         SELECT
-            auth_id,
             nickname,
             id
         FROM tube.owner o LEFT JOIN tube.owner_auth oa

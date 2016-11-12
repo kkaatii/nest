@@ -38,7 +38,7 @@ public class ProcessorBackedQueryService implements QueryService {
     public QueryResult resultOf(Query query) {
         try {
             GraphContainer gc = gcStore.computeIfAbsent(query,
-                    k -> getProcessor(query.type).process(query.ownerId, query.args));
+                    k -> getProcessor(query.type).process(query.owner, query.args));
             GraphContainer sectionContainer = query.sectionConfig.applyOn(gc);
             return new QueryResult(query)
                     .withGraphInfo(gc.info())

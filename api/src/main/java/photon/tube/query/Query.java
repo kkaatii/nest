@@ -1,18 +1,20 @@
 package photon.tube.query;
 
+import photon.tube.model.Owner;
+
 import java.util.Arrays;
 
 /**
  * Created by Dun Liu on 5/27/2016.
  */
 public class Query {
-    public Integer ownerId;
+    public Owner owner;
     public String type;
     public Object[] args;
     public SectionConfig sectionConfig;
 
-    Query(Integer ownerId, String type, Object[] args, SectionConfig sectionConfig) {
-        this.ownerId = ownerId;
+    Query(Owner owner, String type, Object[] args, SectionConfig sectionConfig) {
+        this.owner = owner;
         this.type = type;
         this.args = args;
         this.sectionConfig = sectionConfig;
@@ -26,7 +28,7 @@ public class Query {
         Query query = (Query) o;
 
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(args, query.args) && type.equals(query.type) && ownerId.equals(query.ownerId);
+        return Arrays.equals(args, query.args) && type.equals(query.type) && owner.equals(query.owner);
 
     }
 
@@ -34,7 +36,7 @@ public class Query {
     public int hashCode() {
         int result = Arrays.hashCode(args);
         result = 31 * result + type.hashCode();
-        result = 31 * result + ownerId;
+        result = 31 * result + owner.hashCode();
         return result;
     }
 }

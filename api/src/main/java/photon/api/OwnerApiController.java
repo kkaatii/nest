@@ -26,8 +26,7 @@ public class OwnerApiController {
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
     public Owner user(@RequestParam String aid) {
-        Owner o = oafMapper.selectByAuthId(aid);
-        return o;
+        return oafMapper.selectByAuthId(aid);
     }
 
 }

@@ -1,10 +1,12 @@
 package photon.tube.query;
 
+import photon.tube.model.Owner;
+
 public class QueryBuilder {
     private String type;
     private Object[] args;
     private SectionConfig sectionConfig;
-    private Integer ownerId;
+    private Owner owner;
 
     public QueryBuilder type(String type) {
         this.type = type;
@@ -21,12 +23,12 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder ownerId(Integer ownerId) {
-        this.ownerId = ownerId;
+    public QueryBuilder ownerId(Owner ownerId) {
+        this.owner = owner;
         return this;
     }
 
     public Query build() {
-        return new Query(ownerId, type, args, sectionConfig);
+        return new Query(owner, type, args, sectionConfig);
     }
 }
