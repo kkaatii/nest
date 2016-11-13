@@ -102,9 +102,8 @@ const Body = React.createClass({
 
   render: function () {
     return (
-      <div>
         <div className="container">
-          <form className="form-horizontal" onSubmit={this.handleEditorSubmit}>
+          <form className="form-horizontal" onSubmit={this.handleEditorSubmit} style={{marginTop: 20}}>
             <div className="form-group">
               <div className="col-lg-9 upper-margin">
                 <label htmlFor="node-name">Title</label>
@@ -141,12 +140,11 @@ const Body = React.createClass({
             </div>
           </form>
         </div>
-      </div>
     )
   }
 });
 
 ReactDOM.render(
   <Body />,
-  document.getElementById("root")
+  document.getElementById("content-root")
 );
