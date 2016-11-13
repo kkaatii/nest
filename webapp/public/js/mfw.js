@@ -117,7 +117,7 @@ var Body = React.createClass({
     xhr.open('GET', MFW_API_URL + '/?batchSize=' + batchSize, true);
     xhr.onload = function () {
       if (xhr.status === 200) {
-        if (xhr.responseText.startsWith('<')) window.location = REMOTE_SERVER + '/login';
+        if (xhr.responseText.startsWith('<')) window.location = REMOTE_SERVER + '/login?returnTo=/mfw';
         var panels_raw, panelpairs = [];
         panels_raw = JSON.parse(xhr.responseText);
         console.log(panels_raw);
