@@ -1,8 +1,26 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.upper-margin {
+  margin-top: 0.5em;
+}
+
+@media (min-width: 1200px) {
+  .container{
+    max-width: 870px;
+  }
+}
+
+.container-fluid {
+  margin-left: 1em;
+  margin-right: 1em;
 }
 
 a {
   color: #00B7FF;
+}
+
+hr {
+  margin:0.4em 0 -0.4em 0;
 }

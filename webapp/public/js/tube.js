@@ -12,7 +12,7 @@ const FrameSelect = React.createClass({
       let option = options[i].split('@');
       if (option[1] && option[1] !== lastHeader) {
         lastHeader = option[1];
-        h.push(<li key={-i} className="dropdown-header" style={{fontWeight:"bold", color: "#8ad"}}>{option[1]}</li>);
+        h.push(<li key={-i} className="dropdown-header" style={{fontWeight: "bold", color: "#8ad"}}>{option[1]}</li>);
       }
       h.push(<li key={i}><a href="#" onClick={self.props.display(i)}>{option[0]}</a></li>);
     }
@@ -102,6 +102,11 @@ const Body = React.createClass({
 
   render: function () {
     return (
+      <div>
+        <div className="container upper-margin">
+          <a href="/"><img src="/img/logo.png" height={40}/></a>
+        </div>
+        <hr/>
         <div className="container">
           <form className="form-horizontal" onSubmit={this.handleEditorSubmit} style={{marginTop: 20}}>
             <div className="form-group">
@@ -140,11 +145,12 @@ const Body = React.createClass({
             </div>
           </form>
         </div>
+      </div>
     )
   }
 });
 
 ReactDOM.render(
   <Body />,
-  document.getElementById("content-root")
+  document.getElementById("root")
 );

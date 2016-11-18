@@ -163,7 +163,7 @@ var Body = React.createClass({
     return (
       <div>
         <nav className="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
-          <div className="container-fluid" style={{marginLeft: "1em", marginRight: "1em"}}>
+          <div className="container-fluid">
             <div className="text-center">
               <button className="btn btn-danger navbar-btn" onClick={this.nextBatch}
                       disabled={this.state.refreshing} style={{width: "12em"}}>
