@@ -1,6 +1,5 @@
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -9,6 +8,14 @@ var dotenv = require('dotenv');
 var passport = require('passport');
 var Auth0Strategy = require('passport-auth0');
 var request = require('request');
+var compiler = require('webpack')(require('./webpack.config.js'));
+
+compiler.watch({
+  aggregateTimeout: 300,
+  poll: true
+}, function (err, stats) {
+
+});
 
 dotenv.load();
 
@@ -51,10 +58,8 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
-// uncomment after placing your favicon in /public
-// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -67,6 +72,10 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js')); // redirect bootstrap JS
+app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redirect JS jQuery
+app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); // redirect CSS bootstrap
+app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap/dist/fonts')); // redirect CSS bootstrap
 
 app.use('/', routes);
 app.use('/user', user);

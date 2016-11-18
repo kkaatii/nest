@@ -1,0 +1,13 @@
+extends layout
+
+block head
+  title= 'Artificy'
+  link(rel='stylesheet', href='/css/tube.css')
+  script(src='/js/jquery.min.js')
+  script(src='/js/bootstrap.min.js')
+  script(src='/js/tinymce/tinymce.min.js')
+
+block content
+  #api(style="display:none;", server= server)
+  #root
+  script(src='/js/tube.js')

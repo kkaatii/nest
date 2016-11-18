@@ -2,6 +2,7 @@ var express = require('express');
 var passport = require('passport');
 var request = require('request');
 var router = express.Router();
+var path=require('path');
 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
@@ -48,7 +49,7 @@ function appendParameter(url, params) {
 
 /* GET home page. */
 router.get('/', auth, function (req, res) {
-  res.render('index', {env: env});
+  res.render('tube', {server: REMOTE_API_SERVER});
 });
 
 router.get('/login', function (req, res) {
@@ -76,10 +77,6 @@ router.get('/mfw',
     ));
     res.render('mfw', {server: REMOTE_API_SERVER});
   });
-
-router.get('/tube', auth, function (req, res) {
-  res.render('tube', {server: REMOTE_API_SERVER});
-});
 
 router.get('/api/*', auth, function (req, res) {
   request({
@@ -120,7 +117,7 @@ router.get('/betrue', function (req, res) {
   request({
     url: appendParameter(
       LOCAL_API_SERVER + '/api/tube/point-get-frame',
-      ['f', 'BeTrue@Dun']
+      ['frame', 'BeTrue@Dun']
     ),
     method: 'get'
   }, function (error, response, data) {

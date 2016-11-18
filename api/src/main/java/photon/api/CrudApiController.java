@@ -48,8 +48,8 @@ public class CrudApiController {
     }
 
     @RequestMapping("/point-get-frame")
-    public List<Point> get(@RequestParam String f) {
-        return cs.getAllFromFrame(f);
+    public List<Point> get(@RequestParam String frame) {
+        return cs.getAllFromFrame(frame);
     }
 
     @RequestMapping("/point-get")
