@@ -5,6 +5,7 @@ var ProgressPlugin = require('webpack/lib/ProgressPlugin');
 
 var path = require('path');
 var fs = require('fs');
+var webpack = require('webpack');
 
 var appDirectory = fs.realpathSync(process.cwd());
 function resolveApp(relativePath) {
@@ -64,6 +65,10 @@ module.exports = {
   plugins: [
     new ProgressPlugin(function (percentage, msg) {
       console.log((percentage * 100) + '%', msg);
+    }),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery"
     }),
     function () {
       this.plugin("done", function (stats) {

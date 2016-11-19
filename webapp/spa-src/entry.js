@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import TinyMCE from 'react-tinymce';
+import 'bootstrap/dist/js/bootstrap.min';
 
 const REMOTE_SERVER = document.getElementById('api').getAttribute('server');
 const API_URL = REMOTE_SERVER + '/api';
@@ -34,7 +35,11 @@ class App extends React.Component {
         frameoptions: ["\<Private\>", "BeTrue@Dun", "Ohters@Dun", "Nonsense@John Doe"],
         frame: "\<Private\>"
       }
-    }
+    };
+    this.handleEditorChange = this.handleEditorChange.bind(this);
+    this.handleEditorSubmit = this.handleEditorSubmit.bind(this);
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.changeDropdownDisplay = this.changeDropdownDisplay.bind(this);
   }
 
   handleEditorChange(e) {
@@ -125,9 +130,9 @@ class App extends React.Component {
                   id='node-content'
                   content={this.state.editor.content}
                   config={{
-                    height: '20em',
-                    plugins: 'link image code',
-                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code'
+                    selector: '#node-content',
+                    height: '40rem',
+                    content_style: 'body.mce-content-body {font-size:14px}'
                   }}
                   onChange={this.handleEditorChange}
                 />
