@@ -1,0 +1,37 @@
+
+#node-editor {
+  border-radius: 5px;
+}
+
+.tube-nav {
+  position: relative;
+  background: white;
+  display: block;
+  z-index: 101;
+}
+
+.point-wrapper {
+  margin-top: 0.9em;
+  padding: 0.7em;
+  background-color: white;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.point-wrapper:hover, .point-wrapper:focus {
+  border: 1px solid #888;
+}
+
+.point-wrapper-a {
+  color: #000;
+  cursor: pointer;
+}
+
+.point-wrapper-a:hover, .point-wrapper-a:focus {
+  color: #000;
+  text-decoration: none;
+}
+
+h4 {
+  margin-top: 0;
+}

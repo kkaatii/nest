@@ -115,4 +115,9 @@ public class MybatisCrudService implements CrudService {
     public List<Point> getAllFromFrame(String f) {
         return nodeMapper.preselectFromFrame(f);
     }
+
+    @Override
+    public List<Point> getAllOwnedBy(Integer oid) {
+        return nodeMapper.preselectByOwner(oid);
+    }
 }

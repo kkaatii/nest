@@ -10,7 +10,7 @@ module.exports = authEnabled ? function (req, res, next) {
     res.redirect('/login?returnTo=' + encodeURI(req.originalUrl));
   }
 } : function (req, res, next) {
-  req.user = {tube: {id: 1, nickname: 'Guest'}};
+  req.user = {tube: {id: 2, nickname: 'DL'}};
   next();
 };
 

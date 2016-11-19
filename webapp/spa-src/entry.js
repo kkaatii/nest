@@ -1,27 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import TinyMCE from 'react-tinymce';
 import 'bootstrap/dist/js/bootstrap.min';
+require('../public/css/tube.css');
+
+import NodeEditor from './nodeeditor';
+import PointGraph from './pointgraph';
 
 const REMOTE_SERVER = document.getElementById('api').getAttribute('server');
-const API_URL = REMOTE_SERVER + '/api';
+const API_URL = REMOTE_SERVER + '/api/tube';
 
-class FrameSelect extends React.Component {
+class PageShader extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
   render() {
-    let self = this;
-    let h = [];
-    let options = this.props.options;
-    let lastHeader = '';
-    for (let i = 0; i < options.length; i++) {
-      let option = options[i].split('@');
-      if (option[1] && option[1] !== lastHeader) {
-        lastHeader = option[1];
-        h.push(<li key={-i} className="dropdown-header" style={{fontWeight: "bold", color: "#8ad"}}>{option[1]}</li>);
-      }
-      h.push(<li key={i}><a href="#" onClick={self.props.display(i)}>{option[0]}</a></li>);
-    }
-    return <ul aria-labelledby="node-frame-select"
-               className="dropdown-menu">{h}</ul>;
+    return this.props.displaying ? (<div style={{
+      backgroundColor: "#aaaaaa", opacity: 0.5, zIndex: 100,
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%'
+    }}/>) : null;
   }
 }
 
@@ -30,121 +31,85 @@ class App extends React.Component {
     super();
     this.state = {
       editor: {
-        name: "",
-        content: "",
-        frameoptions: ["\<Private\>", "BeTrue@Dun", "Ohters@Dun", "Nonsense@John Doe"],
-        frame: "\<Private\>"
-      }
+        editing: {
+          id: null,
+          name: "",
+          content: "",
+          frameoptions: ["\<Private\>", "BeTrue@Dun", "Ohters@Dun", "Nonsense@John Doe"],
+          frame: "\<Private\>",
+          updateMode: false
+        },
+        displaying: false
+      },
+      points: []
     };
-    this.handleEditorChange = this.handleEditorChange.bind(this);
-    this.handleEditorSubmit = this.handleEditorSubmit.bind(this);
-    this.handleNameChange = this.handleNameChange.bind(this);
-    this.changeDropdownDisplay = this.changeDropdownDisplay.bind(this);
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', API_URL + '/point-get-owner', true);
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        let state = this.state;
+        state['points'] = JSON.parse(xhr.responseText);
+        this.setState(state);
+      }
+    }.bind(this);
+    xhr.send();
+    this.toggleEditorDisplay = this.toggleEditorDisplay.bind(this);
+    this.chooseNodeForEdit = this.chooseNodeForEdit.bind(this);
   }
 
-  handleEditorChange(e) {
+  toggleEditorDisplay() {
     let state = this.state;
-    state.editor.content = e.target.getContent();
-    this.setState(state)
-  }
-
-  handleNameChange(e) {
-    let state = this.state;
-    state.editor.name = e.target.value;
+    state.editor.displaying = !state.editor.displaying;
     this.setState(state);
   }
 
-  handleEditorSubmit(e) {
-    console.log(this.state.editor.content);
-    e.preventDefault();
-    let frameMap = (frame) => {
-      switch (frame) {
-        case "\<Private\>":
-          return null;
-        default:
-          return frame;
-      }
-    };
-    let node = {
-      name: this.state.editor.name,
-      frame: frameMap(this.state.editor.frame),
-      content: this.state.editor.content,
-      type: 'ARTICLE'
-    };
+  chooseNodeForEdit(id) {
     let xhr = new XMLHttpRequest();
-    xhr.open('POST', API_URL + '/tube/node-create', true);
-    xhr.setRequestHeader('Content-type', 'application/json;charset=UTF-8');
+    xhr.open('GET', API_URL + '/node-get?nid=' + id, true);
     xhr.onload = function () {
       if (xhr.status === 200) {
-        console.log(xhr.responseText);
+        let node = JSON.parse(xhr.responseText);
+        let state = this.state;
+        state.editor.editing.id = node.id;
+        state.editor.editing.name = node.name;
+        state.editor.editing.content = node.content;
+        state.editor.editing.frame = node.frame.startsWith('@') ? "\<Private\>" : node.frame;
+        state.editor.editing.updateMode = true;
+        state.editor.displaying = true;
+        this.setState(state);
       }
-    };
-    xhr.send(JSON.stringify(node));
-  }
-
-  changeDropdownDisplay(i) {
-    let state = this.state;
-    let self = this;
-    return function () {
-      state.editor.frame = state.editor.frameoptions[i];
-      self.setState(state);
-    }
+    }.bind(this);
+    xhr.send();
   }
 
   render() {
+    let displayingStyle = (displaying) => {
+      if (displaying)
+        return {
+          position: 'fixed',
+          display: 'block',
+          zIndex: 101,
+          top:'3.5em',
+          left: '50%',
+          transform: 'translateX(-50%)'
+        };
+      else return {display: 'none'};
+    };
     return (
       <div>
-        <div className="container upper-margin">
-          <a href="/"><img src="/img/logo.png" height={40}/></a>
+        <div className="tube-nav">
+          <div className="container-fluid">
+            <a onClick={this.toggleEditorDisplay}><img src="/img/logo.png" height={40} className="upper-margin"/></a>
+          </div>
+          <hr className="nav-divider"/>
         </div>
-        <hr/>
-        <div className="container">
-          <form className="form-horizontal" onSubmit={this.handleEditorSubmit} style={{marginTop: 20}}>
-            <div className="form-group">
-              <div className="col-lg-9 upper-margin">
-                <label htmlFor="node-name">Title</label>
-                <input type="text" className="form-control" id="node-name" placeholder="Article"
-                       onChange={this.handleNameChange} value={this.state.editor.name}/>
-              </div>
-              <div className="col-lg-3 upper-margin">
-                <label htmlFor="node-frame">Frame</label>
-                <div className="dropdown">
-                  <button type="button" className="btn btn-default btn-block dropdown-toggle"
-                          data-toggle="dropdown"
-                          aria-haspopup="true" aria-expanded="false"
-                          id="node-frame-select" style={{textAlign: "left"}}>{this.state.editor.frame.split('@')[0]}
-                    <span className="caret" style={{
-                      position: "absolute",
-                      top: "50%",
-                      right: 8,
-                      transform: "translateY(-50%)"
-                    }}/></button>
-                  <FrameSelect options={this.state.editor.frameoptions} display={this.changeDropdownDisplay}/>
-                </div>
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="col-lg-12">
-                <label htmlFor="node-content">Content</label>
-                <TinyMCE
-                  id='node-content'
-                  content={this.state.editor.content}
-                  config={{
-                    selector: '#node-content',
-                    height: '40rem',
-                    content_style: 'body.mce-content-body {font-size:14px}'
-                  }}
-                  onChange={this.handleEditorChange}
-                />
-              </div>
-            </div>
-            <div className="btn-toolbar">
-              <button className="btn btn-primary" type="submit">Submit</button>
-              <button className="btn btn-default" type="button" disabled="true">Save draft</button>
-              <button className="btn btn-danger pull-right" type="button">Discard</button>
-            </div>
-          </form>
+
+        <PointGraph points={this.state.points} apiUrl={API_URL} chooseNodeForEdit={this.chooseNodeForEdit}/>
+
+        <div id="node-editor-wrapper" style={displayingStyle(this.state.editor.displaying)}>
+          <NodeEditor editing={this.state.editor.editing} apiUrl={API_URL}/>
         </div>
+        <PageShader displaying={this.state.editor.displaying}/>
       </div>
     )
   }

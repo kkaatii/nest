@@ -30,6 +30,11 @@ public class CrudApiController {
         return n;
     }
 
+    @RequestMapping(value = "/node-get")
+    public Node get(@RequestParam Integer nid) {
+        return cs.getNode(nid);
+    }
+
     @RequestMapping(value = "/node-create", method = RequestMethod.POST)
     public Node create(@RequestBody Node n) {
         cs.putNode(n);
@@ -48,8 +53,13 @@ public class CrudApiController {
     }
 
     @RequestMapping("/point-get-frame")
-    public List<Point> get(@RequestParam String frame) {
+    public List<Point> getFrame(@RequestParam String frame) {
         return cs.getAllFromFrame(frame);
+    }
+
+    @RequestMapping("/point-get-owner")
+    public List<Point> getOwner(@RequestParam Integer oid) {
+        return cs.getAllOwnedBy(oid);
     }
 
     @RequestMapping("/point-get")
@@ -67,7 +77,7 @@ public class CrudApiController {
         return cs.getPointMap(Arrays.asList(pid));
     }
 
-    @RequestMapping(value="/arrow-create", method=RequestMethod.POST)
+    @RequestMapping(value = "/arrow-create", method = RequestMethod.POST)
     public void createArrow(@RequestParam Integer[] aid, @RequestParam ArrowType at) {
         cs.putArrow(new Arrow(aid[0], at, aid[1]));
     }

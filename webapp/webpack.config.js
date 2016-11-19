@@ -35,6 +35,7 @@ module.exports = {
     pathinfo: true,
     filename: 'js/tube.js',
   },
+  externals: { 'tinymce':'tinymce' },
   module: {
     // First, run the linter.
     // It's important to do this before Babel processes the JS.
@@ -51,6 +52,11 @@ module.exports = {
         test: /\.(js|jsx)$/,
         include: paths.appSrc,
         loader: 'babel-loader'
+      },
+      {
+        test: /\.css$/,
+        include: paths.appPublic,
+        loader: 'style!css?importLoaders=1'
       }
     ]
   },

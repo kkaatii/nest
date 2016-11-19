@@ -43,7 +43,7 @@ function appendParameter(url, params) {
   if (matched !== null) url += '&' + params[0] + '=' + params[1];
   else url += '?' + params[0] + '=' + params[1];
   for (var i = 1; i < params.length / 2; i++)
-    url += '&' + params[i * 2] + params [i * 2 + 1];
+    url += '&' + params[i * 2] + '=' + params [i * 2 + 1];
   return url;
 }
 

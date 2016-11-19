@@ -47,4 +47,6 @@ public interface CrudService {
     void deleteArrow(Arrow a);
 
     List<Point> getAllFromFrame(String f);
+
+    List<Point> getAllOwnedBy(Integer oid);
 }

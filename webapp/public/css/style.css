@@ -21,6 +21,6 @@ a {
   color: #00B7FF;
 }
 
-hr {
-  margin:0.4em 0 -0.4em 0;
+hr.nav-divider {
+  margin:0.4em 0 0 0;
 }
