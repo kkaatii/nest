@@ -31,5 +31,8 @@ public interface NodeMapper {
     @MapKey("id")
     Map<Integer, Point> preselectMap(@Param("ids") Iterable<Integer> ids);
 
-    List<Point> preselectByOwner(Integer ownerId);
+    @MapKey("id")
+    Map<Integer, Point> preselectMapByOwner(Integer ownerId);
+
+    List<Point> preselectByOwner(Integer onwerId);
 }

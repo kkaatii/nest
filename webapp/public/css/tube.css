@@ -3,14 +3,8 @@
   border-radius: 5px;
 }
 
-.tube-nav {
-  position: relative;
-  background: white;
-  display: block;
-  z-index: 101;
-}
-
 .point-wrapper {
+  height: 10em;
   margin-top: 0.9em;
   padding: 0.7em;
   background-color: white;

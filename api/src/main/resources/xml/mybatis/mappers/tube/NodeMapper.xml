@@ -81,6 +81,14 @@
         ORDER BY created DESC
     </select>
 
+    <select id="preselectMapByOwner" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE owner_id = #{ownerId} AND active
+        ORDER BY updated DESC
+    </select>
+
     <select id="preselectByOwner" resultMap="pointRM">
         SELECT
         <include refid="pointColumns"/>

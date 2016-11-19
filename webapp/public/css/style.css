@@ -21,6 +21,17 @@ a {
   color: #00B7FF;
 }
 
+.tube-nav {
+  min-height: 50px;
+  position: fixed;
+  top:0;
+  left:0;
+  right:0;
+  background: white;
+  display: block;
+  z-index: 1030;
+}
+
 hr.nav-divider {
-  margin:0.4em 0 0 0;
+  margin:50px 0 0;
 }

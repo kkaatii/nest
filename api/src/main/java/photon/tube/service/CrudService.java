@@ -48,5 +48,7 @@ public interface CrudService {
 
     List<Point> getAllFromFrame(String f);
 
-    List<Point> getAllOwnedBy(Integer oid);
+    Map<Integer, Point> getPointMapOwnedBy(Integer oid);
+
+    List<Point> getPointsOwnedBy(Integer oid);
 }

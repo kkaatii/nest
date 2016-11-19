@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import photon.tube.model.*;
 import photon.tube.service.CrudService;
-import photon.tube.service.QueryService;
 
 import java.util.*;
 
@@ -57,9 +56,14 @@ public class CrudApiController {
         return cs.getAllFromFrame(frame);
     }
 
+    @RequestMapping("/pointmap-get-owner")
+    public Map<Integer, Point> getPointMapByOwner(@RequestParam Integer oid) {
+        return cs.getPointMapOwnedBy(oid);
+    }
+
     @RequestMapping("/point-get-owner")
-    public List<Point> getOwner(@RequestParam Integer oid) {
-        return cs.getAllOwnedBy(oid);
+    public List<Point> getPointByOwner(@RequestParam Integer oid) {
+        return cs.getPointsOwnedBy(oid);
     }
 
     @RequestMapping("/point-get")

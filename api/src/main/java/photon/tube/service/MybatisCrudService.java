@@ -117,7 +117,12 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<Point> getAllOwnedBy(Integer oid) {
+    public Map<Integer, Point> getPointMapOwnedBy(Integer oid) {
+        return nodeMapper.preselectMapByOwner(oid);
+    }
+
+    @Override
+    public List<Point> getPointsOwnedBy(Integer oid) {
         return nodeMapper.preselectByOwner(oid);
     }
 }

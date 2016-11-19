@@ -29,7 +29,7 @@ var paths = {
 };
 
 module.exports = {
-  entry: paths.appIndexJs,
+  entry: ['babel-polyfill', paths.appIndexJs],
   output: {
     path: 'public',
     pathinfo: true,
@@ -74,7 +74,9 @@ module.exports = {
     }),
     new webpack.ProvidePlugin({
       $: "jquery",
-      jQuery: "jquery"
+      jQuery: "jquery",
+      Promise: 'promise', // Thanks Aaron (https://gist.github.com/Couto/b29676dd1ab8714a818f#gistcomment-1584602)
+      fetch: 'imports?this=>global!exports?global.fetch!whatwg-fetch'
     }),
     function () {
       this.plugin("done", function (stats) {
