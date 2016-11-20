@@ -4,12 +4,14 @@
 }
 
 .point-wrapper {
+  position: relative;
   height: 10em;
   margin-top: 1em;
   padding: 0.7em;
   background-color: white;
   border-radius: 5px;
   border: 1px solid #ddd;
+  overflow: hidden;
 }
 
 .point-wrapper:hover, .point-wrapper:focus {
@@ -24,6 +26,11 @@
 .point-wrapper-a:hover, .point-wrapper-a:focus {
   color: #000;
   text-decoration: none;
+}
+
+.graph-wrapper {
+  position: absolute;
+  z-index: -1;
 }
 
 h4 {

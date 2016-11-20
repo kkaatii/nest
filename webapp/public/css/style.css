@@ -12,11 +12,6 @@ body {
   }
 }
 
-.container-fluid {
-  margin-left: 1em;
-  margin-right: 1em;
-}
-
 a {
   color: #00B7FF;
 }
@@ -32,6 +27,25 @@ a {
   z-index: 1030;
 }
 
+.nav-divider-wrapper {
+  position: relative;
+}
+
 hr.nav-divider {
+  position: fixed;
+  top:0;
+  left:0;
+  width: 100%;
   margin:50px 0 0;
+  z-index: 10;
+}
+
+hr.nav-divider-cover {
+  position: relative;
+  top:0;
+  left:0;
+  width: 100%;
+  margin:50px 0 0;
+  z-index: 11;
+  border-color: white;
 }

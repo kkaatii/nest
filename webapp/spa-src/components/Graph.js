@@ -12,11 +12,11 @@ class Graph extends React.Component {
   }
 
   renderSinglePoint(point) {
-    return <div key={`KEY${point.id}${point.digest}`} className="col-lg-4">
+    return <div key={`KEY${point.id}${point.digest}`} className="col-lg-3 col-md-4 col-sm-6">
       <a className="point-wrapper-a" onClick={this.displayEditorFor(point.id)}>
         <div className="point-wrapper">
           <h4>{point.name}</h4>
-          <div className="node-digest-text">{point.digest}</div>
+          <p className="point-digest-text">{point.digest}</p>
         </div>
       </a>
     </div>;
@@ -24,7 +24,7 @@ class Graph extends React.Component {
 
   render() {
     const {pointMap} = this.props.graph;
-    return <div className="container-fluid">
+    return <div className="container-fluid graph-wrapper">
       <div className="row">
           {Object.keys(pointMap).map(key => pointMap[key]).map(this.renderSinglePoint)}
       </div>

@@ -6,7 +6,7 @@ import {EditorActions, fetchAllPoints, createOrUpdateNode} from '../actions'
 
 const PageShader = ({displaying, hide}) => (displaying ?
   (<div style={{
-    backgroundColor: "#aaaaaa", opacity: 0.5, zIndex: 100,
+    backgroundColor: "#aaaaaa", opacity: 0.5, zIndex: 1,
     position: 'fixed',
     top: 0,
     left: 0,
@@ -94,28 +94,24 @@ class App extends React.Component {
     let displayingStyle = (displaying) => {
       if (displaying)
         return {
-          position: 'fixed',
+          position: 'relative',
           display: 'block',
-          zIndex: 101,
-          top: '51px',
-          left: '50%',
-          transform: 'translateX(-50%)'
+          zIndex: 2,
         };
       else return {display: 'none'};
     };
     return (
       <div>
-        <div className="tube-nav">
-          <div className="container-fluid">
+          <div className="container-fluid tube-nav">
             <a /*onClick={this.toggleEditorDisplay}*/>
               <img src="/img/logo.png" height={38} style={{margin: "6px 0 6px"}}/>
             </a>
-            <div className="btn btn-default pull-right" style={{marginTop:8}} onClick={this.newNodeForEdit}>New</div>
+            <div className="btn btn-default pull-right" style={{marginTop: 8}} onClick={this.newNodeForEdit}>New</div>
           </div>
+        <div className="nav-divider-wrapper">
+          <hr className="nav-divider"/>
+          <hr className="nav-divider-cover" style={{opacity: (this.state.displayingEditor ? 0 : 1)}}/>
         </div>
-
-        <hr className="nav-divider"/>
-
         <Graph graph={graph} chooseNodeForEdit={this.chooseNodeForEdit}/>
 
         <PageShader displaying={this.state.displayingEditor} hide={this.hideEditor}/>
