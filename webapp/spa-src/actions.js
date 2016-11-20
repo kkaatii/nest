@@ -98,7 +98,7 @@ function shouldFetchNode(point) {
 }
 
 function fetchNode(id) {
-  return dispatch => fetch(`${API_URL}/node-get?nid=${id}`)
+  return dispatch => fetch(`${API_URL}/node-get?nid=${id}`, {credentials: 'include'})
     .then(response => response.json())
     .then(reverseFrameMapForNode)
     .then(json => dispatch(batchActions([
@@ -108,7 +108,7 @@ function fetchNode(id) {
 }
 
 export function fetchAllPoints() {
-  return dispatch => fetch(`${API_URL}/point-get-owner`)
+  return dispatch => fetch(`${API_URL}/point-get-owner`, {credentials: 'include'})
     .then(response => response.json())
     .then(json => json.map(reverseFrameMapForNode))
     .then(json => dispatch(GraphActions.refreshMulti(json)));
@@ -126,6 +126,7 @@ export function createOrUpdateNode(mode) {
     let data = {...target, frame: frameMap(target.frame), type: 'ARTICLE'};
     dispatch(EditorActions.requestPost());
     return fetch(`${API_URL}/node-${mode}`, {
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
