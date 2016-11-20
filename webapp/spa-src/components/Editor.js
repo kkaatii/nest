@@ -29,7 +29,7 @@ const FrameDropdownMenu = (choices, display) => {
       lastHeader = choice[1];
       h.push(<li key={-i} className="dropdown-header" style={{fontWeight: "bold", color: "#8ad"}}>{choice[1]}</li>);
     }
-    h.push(<li key={i}><a href="#" onClick={display}>{choice[0]}</a></li>);
+    h.push(<li key={i}><a href="#" onClick={display(i)}>{choice[0]}</a></li>);
   }
   return <ul aria-labelledby="node-frame-select"
              className="dropdown-menu">{h}</ul>;
@@ -41,7 +41,7 @@ FrameDropdownMenu.propTypes = {
 };
 
 
-const Editor = ({target, frameChoices, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
+const Editor = ({fetching, target, frameChoices, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
   <div id="node-editor" className="container"
        style={{backgroundColor: 'white', marginTop: '1.2em', padding: '0.8em 1.5em 1.5em 1.5em'}}>
     <form className="form-horizontal" onSubmit={submitNode}>
@@ -84,7 +84,7 @@ const Editor = ({target, frameChoices, submitNode, handleNameChange, handleFrame
         </div>
       </div>
       <div className="btn-toolbar">
-        <button className="btn btn-primary" type="submit">Submit</button>
+        <button className="btn btn-primary" type="submit" disabled={fetching}>Submit</button>
         <button className="btn btn-default" type="button" disabled="true">Save draft</button>
         <button className="btn btn-danger pull-right" type="button">Discard</button>
       </div>
@@ -92,6 +92,7 @@ const Editor = ({target, frameChoices, submitNode, handleNameChange, handleFrame
   </div>;
 
 Editor.propTypes = {
+  fetching: PropTypes.bool.isRequired,
   target: PropTypes.shape({
     id: PropTypes.number,
     content: PropTypes.string.isRequired,

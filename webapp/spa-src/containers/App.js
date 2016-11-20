@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux'
 import Editor from '../components/Editor';
 import Graph from '../components/Graph';
-import {EditorActions, fetchAllPoints} from '../actions'
+import {EditorActions, fetchAllPoints, createOrUpdateNode, MOCK_TARGET} from '../actions'
 
 const PageShader = ({displaying, hide}) => (displaying ?
   (<div style={{
@@ -22,13 +22,17 @@ PageShader.propTypes = {
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      displayingEditor: false,
+      editorMode: 'create',
+    };
     this.toggleEditorDisplay = this.toggleEditorDisplay.bind(this);
     this.hideEditor = this.hideEditor.bind(this);
     this.chooseNodeForEdit = this.chooseNodeForEdit.bind(this);
     this.handleEditorContentChange = this.handleEditorContentChange.bind(this);
     this.handleEditorFrameChange = this.handleEditorFrameChange.bind(this);
     this.handleEditorNameChange = this.handleEditorNameChange.bind(this);
-    this.submitEditorNode = this.submitEditorNode.bind(this);
+    this.submitEditorNodeIn = this.submitEditorNodeIn.bind(this);
   };
 
   componentDidMount() {
@@ -37,33 +41,43 @@ class App extends React.Component {
 
   chooseNodeForEdit(id) {
     const {dispatch, graph} = this.props;
-    dispatch(EditorActions.setMode('update'));
-    dispatch(EditorActions.setTargetAndShow(graph.pointMap[id]));
+    this.setState({
+      displayingEditor: true,
+      editorMode: 'update',
+    });
+    dispatch(EditorActions.fetchAndSetTarget(graph.pointMap[id]));
   }
 
   toggleEditorDisplay() {
-    this.props.dispatch(EditorActions.setMode('create'));
-    this.props.dispatch(EditorActions.toggleDisplay());
+    this.setState({
+      displayingEditor: !this.state.displayingEditor,
+      editorMode: 'create',
+    })
   }
 
   hideEditor() {
-    this.props.dispatch(EditorActions.hide());
+    this.setState({
+      displayingEditor: false,
+    });
   }
 
-  handleEditorContentChange() {
-
+  handleEditorContentChange(e) {
+    this.props.dispatch(EditorActions.changeTargetContent(e.target.getContent()));
   }
 
-  handleEditorNameChange() {
-
+  handleEditorNameChange(e) {
+    this.props.dispatch(EditorActions.changeTargetName(e.target.value));
   }
 
-  handleEditorFrameChange() {
-
+  handleEditorFrameChange(i) {
+    this.props.dispatch(EditorActions.changeTargetFrame(i));
   }
 
-  submitEditorNode() {
-
+  submitEditorNodeIn(mode) {
+    return (e) => {
+      e.preventDefault();
+      this.props.dispatch(createOrUpdateNode(mode));
+    }
   }
 
   render() {
@@ -93,17 +107,18 @@ class App extends React.Component {
 
         <Graph graph={graph} chooseNodeForEdit={this.chooseNodeForEdit}/>
 
-        <div id="node-editor-wrapper" style={displayingStyle(editor.displaying)}>
+        <div id="node-editor-wrapper" style={displayingStyle(this.state.displayingEditor)}>
           <Editor
-            target={editor.target}
+            fetching={editor.fetching}
+            target={editor.target === null ? MOCK_TARGET : editor.target}
             frameChoices={editor.frameChoices}
             handleContentChange={this.handleEditorContentChange}
             handleFrameChange={this.handleEditorFrameChange}
             handleNameChange={this.handleEditorNameChange}
-            submitNode={this.submitEditorNode}
+            submitNode={this.submitEditorNodeIn(this.state.editorMode)}
           />
         </div>
-        <PageShader displaying={editor.displaying} hide={this.hideEditor}/>
+        <PageShader displaying={this.state.displayingEditor} hide={this.hideEditor}/>
       </div>
     )
   }

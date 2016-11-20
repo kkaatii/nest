@@ -5,19 +5,14 @@ import {render} from 'react-dom'
 import {Provider} from 'react-redux'
 import App from './containers/App'
 import configureStore from './configureStore'
-import 'bootstrap/dist/js/bootstrap.min';
 require('../public/css/tube.css');
 
 let store = configureStore({
   graph: {pointMap: {}},
   editor: {
+    fetching: false,
     frameChoices: ["\<Private\>", "BeTrue@Dun", "Ohters@Dun", "Nonsense@John Doe"],
-    displaying: false,
-    target: {
-      name: "",
-      content: "",
-      frame: "\<Private\>",
-    },
+    target: null,
   }
 });
 

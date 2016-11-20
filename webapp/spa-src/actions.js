@@ -26,39 +26,44 @@ export const GraphActions = {
 
 export const EditorActions = {
 
-  toggleDisplay: function () {
+  changeTargetFrame: function (frameNo) {
     return {
-      type: Editor.TOGGLE_EDITOR_DISPLAY,
+      type: Editor.CHANGE_TARGET_FRAME,
+      payload: {
+        frameNo: frameNo
+      }
     }
   },
-
-  setMode: function (mode) {
+  changeTargetName: function (name) {
     return {
-      type: Editor.SET_EDITOR_MODE,
+      type: Editor.CHANGE_TARGET_NAME,
       payload: {
-        editorMode: mode
+        name: name
+      }
+    }
+  },
+  changeTargetContent: function (content) {
+    return {
+      type: Editor.CHANGE_TARGET_CONTENT,
+      payload: {
+        content: content
       }
     }
   },
 
-  show: function () {
+  requestFetch: function () {
     return {
-      type: Editor.SHOW_EDITOR,
+      type: Editor.REQUEST_FETCH,
     }
   },
 
-  hide: function () {
-    return {
-      type: Editor.HIDE_EDITOR,
-    }
-  },
-
-  setTargetAndShow: function (target) {
+  fetchAndSetTarget: function (target) {
     return (dispatch) => {
       if (shouldFetchNode(target)) {
+        dispatch(EditorActions.requestFetch());
         return dispatch(fetchNode(target.id));
       } else {
-        return dispatch(batchActions([EditorActions.setTarget(target), EditorActions.show()]))
+        return dispatch(EditorActions.setTarget(target));
       }
     }
   },
@@ -83,9 +88,8 @@ function fetchNode(id) {
     .then(json => dispatch(batchActions([
       EditorActions.setTarget({
         ...json,
-        frame: json.frame.startsWith('@') ? "\<Private\>" : json.frame
+        frame: reverseFrameMap(json.frame)
       }),
-      EditorActions.show(),
       GraphActions.refreshOne(json)
     ])));
 }
@@ -94,4 +98,30 @@ export function fetchAllPoints() {
   return dispatch => fetch(`${API_URL}/point-get-owner`)
     .then(response => response.json())
     .then(json => dispatch(GraphActions.refreshMulti(json)));
+}
+
+const frameMap = (frame) => frame === "\<Private\>" ? null : frame;
+
+const reverseFrameMap = (frame) => frame.startsWith('@') ? "\<Private\>" : frame;
+
+export const MOCK_TARGET = {
+  id: null,
+  name: "",
+  content: "",
+  frame: "\<Private\>",
+};
+
+export function createOrUpdateNode(mode) {
+  return (dispatch, getState) => {
+    const target = getState().editor.target;
+    let data = {...target, frame: frameMap(target.frame), type: 'ARTICLE'};
+    return fetch(`${API_URL}/node-${mode}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: data,
+    }).then(response => console.log(response.json()));
+  }
 }
