@@ -12,7 +12,7 @@ const PageShader = ({displaying, hide}) => (displaying ?
     left: 0,
     width: '100%',
     height: '100%'
-  }} onClick={hide}/>)
+  }} /*onClick={hide}*//>)
   : null);
 
 PageShader.propTypes = {
@@ -97,7 +97,7 @@ class App extends React.Component {
           position: 'fixed',
           display: 'block',
           zIndex: 101,
-          top: '3.5em',
+          top: '51px',
           left: '50%',
           transform: 'translateX(-50%)'
         };
@@ -107,7 +107,7 @@ class App extends React.Component {
       <div>
         <div className="tube-nav">
           <div className="container-fluid">
-            <a onClick={this.toggleEditorDisplay}>
+            <a /*onClick={this.toggleEditorDisplay}*/>
               <img src="/img/logo.png" height={38} style={{margin: "6px 0 6px"}}/>
             </a>
             <div className="btn btn-default pull-right" style={{marginTop:8}} onClick={this.newNodeForEdit}>New</div>
@@ -123,6 +123,7 @@ class App extends React.Component {
           <Editor
             fetching={editor.fetching}
             target={editor.target}
+            hide={this.hideEditor}
             frameChoices={editor.frameChoices}
             handleContentChange={this.handleEditorContentChange}
             handleFrameChange={this.handleEditorFrameChange}

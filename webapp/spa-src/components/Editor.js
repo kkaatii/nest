@@ -41,9 +41,9 @@ FrameDropdownMenu.propTypes = {
 };
 
 
-const Editor = ({fetching, target, frameChoices, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
+const Editor = ({fetching, target, frameChoices, hide, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
   <div id="node-editor" className="container"
-       style={{backgroundColor: 'white', marginTop: '1.2em', padding: '0.8em 1.5em 1.5em 1.5em'}}>
+       style={{backgroundColor: 'white', marginTop: '1em', padding: '0.8em 1.5em 1.5em 1.5em'}}>
     <form className="form-horizontal" onSubmit={submitNode}>
       <div className="form-group">
         <div className="col-lg-9 upper-margin">
@@ -86,7 +86,7 @@ const Editor = ({fetching, target, frameChoices, submitNode, handleNameChange, h
       <div className="btn-toolbar">
         <button className="btn btn-primary" type="submit" disabled={fetching}>Submit</button>
         <button className="btn btn-default" type="button" disabled="true">Save draft</button>
-        <button className="btn btn-danger pull-right" type="button">Discard</button>
+        <button className="btn btn-danger pull-right" onClick={hide} type="button">Discard changes</button>
       </div>
     </form>
   </div>;
@@ -104,6 +104,7 @@ Editor.propTypes = {
     digest: PropTypes.string,
     active: PropTypes.bool
   }),
+  hide: PropTypes.func.isRequired,
   frameChoices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   submitNode: PropTypes.func.isRequired,
   handleNameChange: PropTypes.func.isRequired,
