@@ -3,17 +3,17 @@ import React, {PropTypes} from 'react';
 class Graph extends React.Component {
   constructor(props) {
     super(props);
-    this.displayEditorFor = this.displayEditorFor.bind(this);
+    this.displayViewerFor = this.displayViewerFor.bind(this);
     this.renderSinglePoint = this.renderSinglePoint.bind(this);
   }
 
-  displayEditorFor(id) {
-    return () => this.props.chooseNodeForEdit(id);
+  displayViewerFor(id) {
+    return () => this.props.chooseNodeForView(id);
   }
 
   renderSinglePoint(point) {
     return <div key={`KEY${point.id}${point.digest}`} className="col-lg-3 col-md-4 col-sm-6">
-      <a className="point-wrapper-a" onClick={this.displayEditorFor(point.id)}>
+      <a className="point-wrapper-a" onClick={this.displayViewerFor(point.id)}>
         <div className="point-wrapper">
           <h4>{point.name}</h4>
           <p className="point-digest-text">{point.digest}</p>
@@ -24,11 +24,13 @@ class Graph extends React.Component {
 
   render() {
     const {pointMap} = this.props.graph;
-    return <div className="container-fluid graph-wrapper">
-      <div className="row">
+    return (this.props.displaying ?
+      <div className="container-fluid graph">
+        <div className="row">
           {Object.keys(pointMap).map(key => pointMap[key]).map(this.renderSinglePoint)}
+        </div>
       </div>
-    </div>;
+      : null);
   }
 }
 
@@ -36,7 +38,8 @@ Graph.propTypes = {
   graph: PropTypes.shape({
     pointMap: PropTypes.object.isRequired,
   }),
-  chooseNodeForEdit: PropTypes.func.isRequired,
+  chooseNodeForView: PropTypes.func.isRequired,
+  displaying: PropTypes.bool.isRequired,
 };
 
 export default Graph;

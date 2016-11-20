@@ -7,6 +7,14 @@
   z-index: 2;
 }
 
+#node-viewer {
+  background-color: white;
+  padding-top: 0.8em;
+  position: relative;
+  z-index: 2;
+  height: 100%;
+}
+
 .point-wrapper {
   position: relative;
   height: 10.4rem;
@@ -46,7 +54,17 @@
 }
 
 .graph-wrapper {
+  display: block;
+  height: 100%;
+}
+
+.graph {
   position: absolute;
+}
+
+.viewer-button {
+  color: #ccc;
+  font-size: 18px;
 }
 
 h4 {
