@@ -24,7 +24,7 @@ a {
   right:0;
   background: white;
   display: block;
-  z-index: 1030;
+  z-index: 100;
 }
 
 .nav-divider-wrapper {
