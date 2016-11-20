@@ -1,4 +1,5 @@
 import {Editor} from './actionTypes'
+import {MOCK_TARGET} from '../constants'
 
 const editorTarget = (state = {}, action)=> {
   switch (action.type) {
@@ -16,9 +17,13 @@ const editorTarget = (state = {}, action)=> {
 const editor = (state = {}, action) => {
   switch (action.type) {
     case Editor.REQUEST_FETCH:
-      return {...state, fetching: true, target: null};
+      return {...state, fetching: true, target: MOCK_TARGET};
+    case Editor.REQUEST_POST:
+      return {...state, posting: action.payload.posting};
     case Editor.SET_TARGET:
       return {...state, target: action.payload.target, fetching: false};
+    case Editor.NEW_TARGET:
+      return {...state, target: MOCK_TARGET};
     case Editor.SET_FRAMECHOICES:
       return {...state, frameChoices: action.payload.frameChoices};
     case Editor.CHANGE_TARGET_FRAME:

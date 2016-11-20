@@ -41,7 +41,7 @@ public class CrudApiController {
     }
 
     @RequestMapping(value = "/node-update", method = RequestMethod.POST)
-    public boolean update(@RequestBody Node n) {
+    public Node update(@RequestBody Node n) {
         return cs.updateNode(n);
     }
 

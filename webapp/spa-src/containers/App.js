@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux'
 import Editor from '../components/Editor';
 import Graph from '../components/Graph';
-import {EditorActions, fetchAllPoints, createOrUpdateNode, MOCK_TARGET} from '../actions'
+import {EditorActions, fetchAllPoints, createOrUpdateNode} from '../actions'
 
 const PageShader = ({displaying, hide}) => (displaying ?
   (<div style={{
@@ -27,6 +27,7 @@ class App extends React.Component {
       editorMode: 'create',
     };
     this.toggleEditorDisplay = this.toggleEditorDisplay.bind(this);
+    this.newNodeForEdit = this.newNodeForEdit.bind(this);
     this.hideEditor = this.hideEditor.bind(this);
     this.chooseNodeForEdit = this.chooseNodeForEdit.bind(this);
     this.handleEditorContentChange = this.handleEditorContentChange.bind(this);
@@ -51,6 +52,13 @@ class App extends React.Component {
   toggleEditorDisplay() {
     this.setState({
       displayingEditor: !this.state.displayingEditor,
+    })
+  }
+
+  newNodeForEdit() {
+    this.props.dispatch(EditorActions.newNode());
+    this.setState({
+      displayingEditor: true,
       editorMode: 'create',
     })
   }
@@ -70,13 +78,14 @@ class App extends React.Component {
   }
 
   handleEditorFrameChange(i) {
-    this.props.dispatch(EditorActions.changeTargetFrame(i));
+    return () => this.props.dispatch(EditorActions.changeTargetFrame(i));
   }
 
   submitEditorNodeIn(mode) {
     return (e) => {
       e.preventDefault();
       this.props.dispatch(createOrUpdateNode(mode));
+      this.hideEditor();
     }
   }
 
@@ -98,8 +107,10 @@ class App extends React.Component {
       <div>
         <div className="tube-nav">
           <div className="container-fluid">
-            <a onClick={this.toggleEditorDisplay}><img src="/img/logo.png" height={38}
-                                                       style={{margin: "6px 0 6px"}}/></a>
+            <a onClick={this.toggleEditorDisplay}>
+              <img src="/img/logo.png" height={38} style={{margin: "6px 0 6px"}}/>
+            </a>
+            <div className="btn btn-default pull-right" style={{marginTop:8}} onClick={this.newNodeForEdit}>New</div>
           </div>
         </div>
 
@@ -107,10 +118,11 @@ class App extends React.Component {
 
         <Graph graph={graph} chooseNodeForEdit={this.chooseNodeForEdit}/>
 
+        <PageShader displaying={this.state.displayingEditor} hide={this.hideEditor}/>
         <div id="node-editor-wrapper" style={displayingStyle(this.state.displayingEditor)}>
           <Editor
             fetching={editor.fetching}
-            target={editor.target === null ? MOCK_TARGET : editor.target}
+            target={editor.target}
             frameChoices={editor.frameChoices}
             handleContentChange={this.handleEditorContentChange}
             handleFrameChange={this.handleEditorFrameChange}
@@ -118,7 +130,6 @@ class App extends React.Component {
             submitNode={this.submitEditorNodeIn(this.state.editorMode)}
           />
         </div>
-        <PageShader displaying={this.state.displayingEditor} hide={this.hideEditor}/>
       </div>
     )
   }

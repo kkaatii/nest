@@ -20,7 +20,7 @@ class MyTinyMCE extends TinyMCE {
   }
 }
 
-const FrameDropdownMenu = (choices, display) => {
+const FrameDropdownMenu = ({choices, display}) => {
   let h = [];
   let lastHeader = '';
   for (let i = 0; i < choices.length; i++) {

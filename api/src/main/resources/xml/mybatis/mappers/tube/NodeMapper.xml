@@ -140,7 +140,7 @@
 
     <delete id="delete">
         DELETE FROM tube.node
-        WHERE id = #{id}
+        WHERE id = #{id} AND owner_id = #{ownerId}
     </delete>
 
 </mapper>

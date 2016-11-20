@@ -5,20 +5,20 @@ const REMOTE_SERVER = document.getElementById('api').getAttribute('server');
 const API_URL = REMOTE_SERVER + '/api/tube';
 
 export const GraphActions = {
-  refreshMulti: function (json) {
+  refreshMulti: function (nodes) {
     return {
       type: Graph.REFRESH_MULTI,
       payload: {
-        nodes: json
+        nodes: nodes
       }
     }
   },
 
-  refreshOne: function (json) {
+  refreshOne: function (node) {
     return {
       type: Graph.REFRESH_ONE,
       payload: {
-        node: json
+        node: node
       }
     }
   }
@@ -57,6 +57,15 @@ export const EditorActions = {
     }
   },
 
+  requestPost: function (posting = true) {
+    return {
+      type: Editor.REQUEST_POST,
+      payload: {
+        posting: posting
+      }
+    }
+  },
+
   fetchAndSetTarget: function (target) {
     return (dispatch) => {
       if (shouldFetchNode(target)) {
@@ -75,7 +84,13 @@ export const EditorActions = {
         target: target
       }
     }
-  }
+  },
+
+  newNode: function () {
+    return {
+      type: Editor.NEW_TARGET
+    }
+  },
 };
 
 function shouldFetchNode(point) {
@@ -85,18 +100,17 @@ function shouldFetchNode(point) {
 function fetchNode(id) {
   return dispatch => fetch(`${API_URL}/node-get?nid=${id}`)
     .then(response => response.json())
+    .then(reverseFrameMapForNode)
     .then(json => dispatch(batchActions([
-      EditorActions.setTarget({
-        ...json,
-        frame: reverseFrameMap(json.frame)
-      }),
-      GraphActions.refreshOne(json)
+      EditorActions.setTarget(json),
+      GraphActions.refreshOne(json),
     ])));
 }
 
 export function fetchAllPoints() {
   return dispatch => fetch(`${API_URL}/point-get-owner`)
     .then(response => response.json())
+    .then(json => json.map(reverseFrameMapForNode))
     .then(json => dispatch(GraphActions.refreshMulti(json)));
 }
 
@@ -104,24 +118,24 @@ const frameMap = (frame) => frame === "\<Private\>" ? null : frame;
 
 const reverseFrameMap = (frame) => frame.startsWith('@') ? "\<Private\>" : frame;
 
-export const MOCK_TARGET = {
-  id: null,
-  name: "",
-  content: "",
-  frame: "\<Private\>",
-};
+const reverseFrameMapForNode = (node) => ({...node, frame: reverseFrameMap(node.frame)});
 
 export function createOrUpdateNode(mode) {
   return (dispatch, getState) => {
     const target = getState().editor.target;
     let data = {...target, frame: frameMap(target.frame), type: 'ARTICLE'};
+    dispatch(EditorActions.requestPost());
     return fetch(`${API_URL}/node-${mode}`, {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       method: 'POST',
-      body: data,
-    }).then(response => console.log(response.json()));
+      body: JSON.stringify(data),
+    }).then(response => response.json())
+      .then(json => {
+        if (json === null) alert('Update failed!');
+        return dispatch(GraphActions.refreshOne(reverseFrameMapForNode(json)));
+      });
   }
 }

@@ -28,13 +28,13 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public boolean updateNode(Node n) {
+    public Node updateNode(Node n) {
         n.doDigest();
         try {
             nodeMapper.update(n);
-            return true;
+            return n;
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
 

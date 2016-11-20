@@ -16,7 +16,7 @@ public interface CrudService {
     // Save/update a node into db
     Node putNode(Node n);
 
-    boolean updateNode(Node n);
+    Node updateNode(Node n);
 
     // Retrieve a node by its qid of db
     Node getNode(Integer id);

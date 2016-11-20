@@ -12,7 +12,7 @@ class Graph extends React.Component {
   }
 
   renderSinglePoint(point) {
-    return <div key={point.id} className="col-lg-4">
+    return <div key={`KEY${point.id}${point.digest}`} className="col-lg-4">
       <a className="point-wrapper-a" onClick={this.displayEditorFor(point.id)}>
         <div className="point-wrapper">
           <h4>{point.name}</h4>
