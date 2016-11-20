@@ -42,8 +42,7 @@ FrameDropdownMenu.propTypes = {
 
 
 const Editor = ({fetching, target, frameChoices, hide, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
-  <div id="node-editor" className="container"
-       style={{backgroundColor: 'white', marginTop: '1em', padding: '0.8em 1.5em 1.5em 1.5em'}}>
+  <div id="node-editor" className="container">
     <form className="form-horizontal" onSubmit={submitNode}>
       <div className="form-group">
         <div className="col-lg-9 upper-margin">

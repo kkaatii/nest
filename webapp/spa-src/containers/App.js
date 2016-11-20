@@ -1,23 +1,9 @@
-import React, {PropTypes} from 'react';
+import React, {PropTypes} from 'react'
 import {connect} from 'react-redux'
-import Editor from '../components/Editor';
-import Graph from '../components/Graph';
+import Editor from '../components/Editor'
+import Graph from '../components/Graph'
+import PageShader from '../components/PageShader'
 import {EditorActions, fetchAllPoints, createOrUpdateNode} from '../actions'
-
-const PageShader = ({displaying, hide}) => (displaying ?
-  (<div style={{
-    backgroundColor: "#aaaaaa", opacity: 0.5, zIndex: 1,
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%'
-  }} /*onClick={hide}*//>)
-  : null);
-
-PageShader.propTypes = {
-  displaying: PropTypes.bool.isRequired
-};
 
 class App extends React.Component {
   constructor(props) {
@@ -91,31 +77,23 @@ class App extends React.Component {
 
   render() {
     const {editor, graph} = this.props;
-    let displayingStyle = (displaying) => {
-      if (displaying)
-        return {
-          position: 'relative',
-          display: 'block',
-          zIndex: 2,
-        };
-      else return {display: 'none'};
-    };
     return (
       <div>
-          <div className="container-fluid tube-nav">
-            <a /*onClick={this.toggleEditorDisplay}*/>
-              <img src="/img/logo.png" height={38} style={{margin: "6px 0 6px"}}/>
-            </a>
-            <div className="btn btn-default pull-right" style={{marginTop: 8}} onClick={this.newNodeForEdit}>New</div>
-          </div>
+        <div className="container-fluid tube-nav">
+          <a /*onClick={this.toggleEditorDisplay}*/>
+            <img src="/img/logo.png" height={38} style={{margin: "6px 0 6px"}}/>
+          </a>
+          <div className="btn btn-default pull-right" style={{marginTop: 8}} onClick={this.newNodeForEdit}>New</div>
+        </div>
         <div className="nav-divider-wrapper">
           <hr className="nav-divider"/>
           <hr className="nav-divider-cover" style={{opacity: (this.state.displayingEditor ? 0 : 1)}}/>
         </div>
-        <Graph graph={graph} chooseNodeForEdit={this.chooseNodeForEdit}/>
 
+        <Graph graph={graph} chooseNodeForEdit={this.chooseNodeForEdit}/>
         <PageShader displaying={this.state.displayingEditor} hide={this.hideEditor}/>
-        <div id="node-editor-wrapper" style={displayingStyle(this.state.displayingEditor)}>
+
+        <div id="node-editor-wrapper" style={{display: (this.state.displayingEditor ? 'block' : 'none')}}>
           <Editor
             fetching={editor.fetching}
             target={editor.target}
@@ -139,7 +117,6 @@ App.propTypes = {
 
 function mapStateToProps(state) {
   const {editor, graph} = state;
-
   return {
     editor, graph
   }

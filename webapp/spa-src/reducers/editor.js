@@ -5,8 +5,6 @@ const editorTarget = (state = {}, action)=> {
   switch (action.type) {
     case Editor.CHANGE_TARGET_CONTENT:
       return {...state, content: action.payload.content};
-    /*case Editor.CHANGE_TARGET_FRAME:
-      return {...state, frame: action.payload.frame};*/
     case Editor.CHANGE_TARGET_NAME:
       return {...state, name: action.payload.name};
     default:
