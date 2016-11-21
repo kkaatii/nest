@@ -24,13 +24,13 @@ class Graph extends React.Component {
 
   render() {
     const {pointMap} = this.props.graph;
-    return (this.props.displaying ?
-      <div className="container-fluid graph">
+    return (
+      <div className="container-fluid graph" style={{visibility: this.props.displaying ? 'visible' : 'hidden'}}>
         <div className="row">
           {Object.keys(pointMap).map(key => pointMap[key]).map(this.renderSinglePoint)}
         </div>
       </div>
-      : null);
+    );
   }
 }
 

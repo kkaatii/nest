@@ -120,7 +120,7 @@ class App extends React.Component {
         </div>
 
         <PageShader displaying={this.state.displayingEditor} hide={this.hideEditor}/>
-        <div id="node-editor-wrapper" style={{visibility: (this.state.displayingEditor ? 'visible' : 'hidden')}}>
+        <div id="node-editor-wrapper" style={{display: (this.state.displayingEditor ? 'block' : 'none')}}>
           <Editor
             fetching={editor.fetching}
             target={editor.target}
