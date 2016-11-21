@@ -74,7 +74,7 @@ const Editor = ({fetching, target, frameChoices, hide, submitNode, handleNameCha
             id='node-content'
             config={{
               selector: '#node-content',
-              height: '40rem',
+              //height: '40rem',
               content_style: 'body.mce-content-body {font-size:14px}',
             }}
             content={target.content}

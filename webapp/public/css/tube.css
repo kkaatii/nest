@@ -9,6 +9,7 @@
 
 #node-viewer {
   background-color: white;
+  margin-top: 5px;
   padding-top: 0.8em;
   position: relative;
   z-index: 2;
@@ -62,9 +63,31 @@
   position: absolute;
 }
 
+.viewer-button-group {
+  display: inline-block;
+  float: right!important;
+  padding-left: 3px;
+}
+
 .viewer-button {
+  display: block;
   color: #ccc;
   font-size: 18px;
+  margin-left:15px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  vertical-align: top;
+  text-align: right;
+}
+h3.viewer-node-name {
+    margin-top: 0;
+    display: inline;
+    line-height:3rem;
+}
+
+.viewer-topline {
+    display: block;
+    margin-bottom: 1.8rem;
 }
 
 h4 {

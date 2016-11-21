@@ -3,14 +3,15 @@ import React, {PropTypes} from 'react'
 const Viewer = ({target, displaying, hide, chooseForEdit}) => (
   displaying
     ?
-    <div id="node-viewer" className="container-fluid">
-      <div style={{display: 'block', marginBottom: 30}}>
-        <span className="viewer-button pull-right glyphicon glyphicon-remove" aria-hidden="true" onClick={hide}/>
-        <span className="viewer-button pull-left glyphicon glyphicon-pencil" aria-hidden="true"
-              onClick={chooseForEdit}/>
+    <div id="node-viewer" className="container">
+      <div className="viewer-topline">
+        <div className="viewer-button-group">
+          <span className="viewer-button glyphicon glyphicon-remove" aria-hidden="true" onClick={hide}/>
+          <span className="viewer-button glyphicon glyphicon-pencil" aria-hidden="true" style={{marginLeft: 10}}
+                onClick={chooseForEdit}/>
+        </div>
+        <h3 className="viewer-node-name">{target.name}</h3>
       </div>
-      <h3>{target.name}</h3>
-      <br/>
       <div dangerouslySetInnerHTML={{__html: target.content}}/>
     </div>
     :

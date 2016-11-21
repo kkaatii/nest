@@ -10,12 +10,11 @@ var Auth0Strategy = require('passport-auth0');
 var request = require('request');
 var compiler = require('webpack')(require('./webpack.config.js'));
 
-compiler.watch({
+compiler.run(function (err, stats) {});
+/*compiler.watch({
   aggregateTimeout: 300,
   poll: true
-}, function (err, stats) {
-
-});
+}, function (err, stats) {});*/
 
 dotenv.load();
 
