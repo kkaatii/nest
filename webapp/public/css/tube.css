@@ -1,4 +1,16 @@
 
+
+#top-attached {
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+
 #node-editor {
   border-radius: 8px;
   background-color: white;
@@ -9,11 +21,25 @@
 
 #node-viewer {
   background-color: white;
-  margin-top: 5px;
   padding-top: 0.8em;
   position: relative;
   z-index: 2;
   height: 100%;
+  width: 100%;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+#node-viewer::-webkit-scrollbar {
+    width: 6px;
+}
+
+#node-viewer::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+}
+
+#node-viewer::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
 }
 
 .point-wrapper {
@@ -54,17 +80,18 @@
   text-decoration: none;
 }
 
-.graph-wrapper {
+#graph-wrapper {
   display: block;
   height: 100%;
 }
 
-.graph {
+#point-graph {
   position: absolute;
 }
 
 .viewer-button-group {
   display: block;
+  padding-right: 10px;
 }
 
 .viewer-button {

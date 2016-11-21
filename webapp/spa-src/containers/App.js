@@ -105,18 +105,21 @@ class App extends React.Component {
           </a>
           <div className="btn btn-default pull-right" style={{marginTop: 8}} onClick={this.newNodeForEdit}>New</div>
         </div>
-        <div className="nav-divider-wrapper">
+        <div id="top-attached">
+          <div className="tube-nav" style={{position: 'relative'}}/>
+          <Viewer displaying={this.state.displayingViewer} hide={this.hideViewer}
+                  chooseForEdit={() => this.chooseNodeForEdit(editor.target.id)}
+                  target={editor.target}/>
+        </div>
+        <div id="nav-divider-wrapper">
           <hr className="nav-divider"/>
           <hr className="nav-divider-cover"
               style={{opacity: (this.state.displayingEditor || this.state.displayingViewer ? 0 : 1)}}/>
         </div>
 
-        <div className="graph-wrapper">
+        <div id="graph-wrapper">
           <Graph displaying={!this.state.displayingViewer} graph={graph}
                  chooseNodeForView={this.chooseNodeForView}/>
-          <Viewer displaying={this.state.displayingViewer} hide={this.hideViewer}
-                  chooseForEdit={() => this.chooseNodeForEdit(editor.target.id)}
-                  target={editor.target}/>
         </div>
 
         <PageShader displaying={this.state.displayingEditor} hide={this.hideEditor}/>

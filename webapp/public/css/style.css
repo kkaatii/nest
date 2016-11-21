@@ -27,7 +27,7 @@ a {
   z-index: 100;
 }
 
-.nav-divider-wrapper {
+#nav-divider-wrapper {
   position: relative;
 }
 
