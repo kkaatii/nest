@@ -6,7 +6,7 @@ const Viewer = ({target, displaying, hide, chooseForEdit}) => (
     <div id="node-viewer" className="container">
       <div className="viewer-topline">
         <div className="viewer-button-group">
-          <span className="viewer-button pull-right glyphicon glyphicon-remove" aria-hidden="true" onClick={hide}/>
+          <span className="viewer-button pull-right glyphicon glyphicon-th" aria-hidden="true" onClick={hide}/>
           <span className="viewer-button pull-right glyphicon glyphicon-pencil" aria-hidden="true"
                 style={{marginLeft: 12}}
                 onClick={chooseForEdit}/>
