@@ -24,12 +24,14 @@ class Graph extends React.Component {
 
   render() {
     const {pointMap} = this.props.graph;
+    const displaying = this.props.displaying;
     return (
-        <div id="point-graph" className="container-fluid" style={{visibility: this.props.displaying ? 'visible':'hidden'}}>
-          <div className="row">
-            {Object.keys(pointMap).map(key => pointMap[key]).map(this.renderSinglePoint)}
-          </div>
+      <div id="point-graph" className="container-fluid"
+           style={{visibility: (displaying === '' || displaying === 'Editor') ? 'visible' : 'hidden'}}>
+        <div className="row">
+          {Object.keys(pointMap).map(key => pointMap[key]).map(this.renderSinglePoint)}
         </div>
+      </div>
     );
   }
 }
@@ -39,7 +41,7 @@ Graph.propTypes = {
     pointMap: PropTypes.object.isRequired,
   }),
   chooseNodeForView: PropTypes.func.isRequired,
-  displaying: PropTypes.bool.isRequired,
+  displaying: PropTypes.string.isRequired,
 };
 
 export default Graph;

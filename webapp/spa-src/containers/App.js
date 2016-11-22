@@ -10,8 +10,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayingEditor: false,
-      displayingViewer: false,
+      displaying: '',
       editorMode: 'create',
     };
     this.toggleEditorDisplay = this.toggleEditorDisplay.bind(this);
@@ -33,8 +32,7 @@ class App extends React.Component {
   chooseNodeForEdit(id) {
     const {dispatch, graph} = this.props;
     this.setState({
-      displayingViewer: false,
-      displayingEditor: true,
+      displaying: 'Editor',
       editorMode: 'update',
     });
     dispatch(EditorActions.fetchAndSetTarget(graph.pointMap[id]));
@@ -43,35 +41,34 @@ class App extends React.Component {
   chooseNodeForView(id) {
     const {dispatch, graph} = this.props;
     this.setState({
-      displayingViewer: true,
+      displaying: 'Viewer',
     });
     dispatch(EditorActions.fetchAndSetTarget(graph.pointMap[id]));
   }
 
   toggleEditorDisplay() {
     this.setState({
-      displayingEditor: !this.state.displayingEditor,
+      displaying: this.state.displaying === 'Editor' ? '' : 'Editor',
     })
   }
 
   newNodeForEdit() {
     this.props.dispatch(EditorActions.newNode());
     this.setState({
-      displayingViewer: false,
-      displayingEditor: true,
+      displaying: 'Editor',
       editorMode: 'create',
     })
   }
 
   hideEditor() {
     this.setState({
-      displayingEditor: false,
+      displaying: this.state.displaying === 'Editor' ? '' : this.state.displaying,
     });
   }
 
   hideViewer() {
     this.setState({
-      displayingViewer: false,
+      displaying: this.state.displaying === 'Viewer' ? '' : this.state.displaying,
     });
   }
 
@@ -97,6 +94,7 @@ class App extends React.Component {
 
   render() {
     const {editor, graph} = this.props;
+    const displaying = this.state.displaying;
     return (
       <div>
         <div className="container-fluid tube-nav">
@@ -105,33 +103,30 @@ class App extends React.Component {
           </a>
           <div className="btn btn-default pull-right" style={{marginTop: 8}} onClick={this.newNodeForEdit}>New</div>
         </div>
+
         <div id="top-attached">
           <div className="tube-nav-block"/>
-          <Graph displaying={!this.state.displayingViewer} graph={graph}
+          <Graph displaying={displaying} graph={graph}
                  chooseNodeForView={this.chooseNodeForView}/>
-
         </div>
         <hr className="nav-divider"/>
         <div className="tube-nav-block"/>
 
-        <Viewer displaying={this.state.displayingViewer} hide={this.hideViewer}
+        <Viewer displaying={displaying} hide={this.hideViewer}
                 chooseForEdit={() => this.chooseNodeForEdit(editor.target.id)}
                 target={editor.target}/>
-
-
-        <PageShader displaying={this.state.displayingEditor} hide={this.hideEditor}/>
-        <div id="node-editor-wrapper" style={{display: (this.state.displayingEditor ? 'block' : 'none')}}>
-          <Editor
-            fetching={editor.fetching}
-            target={editor.target}
-            hide={this.hideEditor}
-            frameChoices={editor.frameChoices}
-            handleContentChange={this.handleEditorContentChange}
-            handleFrameChange={this.handleEditorFrameChange}
-            handleNameChange={this.handleEditorNameChange}
-            submitNode={this.submitEditorNodeIn(this.state.editorMode)}
-          />
-        </div>
+        <PageShader displaying={displaying} hide={this.hideEditor}/>
+        <Editor
+          displaying={displaying}
+          fetching={editor.fetching}
+          target={editor.target}
+          hide={this.hideEditor}
+          frameChoices={editor.frameChoices}
+          handleContentChange={this.handleEditorContentChange}
+          handleFrameChange={this.handleEditorFrameChange}
+          handleNameChange={this.handleEditorNameChange}
+          submitNode={this.submitEditorNodeIn(this.state.editorMode)}
+        />
       </div>
     )
   }

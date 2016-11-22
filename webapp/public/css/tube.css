@@ -1,3 +1,9 @@
+.elem-display-none {
+    display: none;
+}
+.elem-display-block {
+    display: block;
+}
 
 
 #top-attached {
@@ -109,6 +115,11 @@
   vertical-align: top;
   text-align: right;
 }
+
+.viewer-button:hover, .viewer-button:focus {
+    color: #999;
+}
+
 h3.viewer-node-name {
     margin-top: 0;
     display: inline;

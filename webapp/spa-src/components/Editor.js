@@ -1,6 +1,7 @@
-import React, {PropTypes} from 'react';
-import TinyMCE from 'react-tinymce';
-import isEqual from 'lodash/isEqual';
+import React, {PropTypes} from 'react'
+import TinyMCE from 'react-tinymce'
+import isEqual from 'lodash/isEqual'
+import {displayCSS} from '../constants'
 var tinymce = require('tinymce');
 
 
@@ -41,8 +42,8 @@ FrameDropdownMenu.propTypes = {
 };
 
 
-const Editor = ({fetching, target, frameChoices, hide, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
-  <div id="node-editor" className="container">
+const Editor = ({displaying, fetching, target, frameChoices, hide, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
+  <div id="node-editor" className={`container ${displayCSS(displaying, 'Editor')}`}>
     <form className="form-horizontal" onSubmit={submitNode}>
       <div className="form-group">
         <div className="col-lg-9 upper-margin">
@@ -91,6 +92,7 @@ const Editor = ({fetching, target, frameChoices, hide, submitNode, handleNameCha
   </div>;
 
 Editor.propTypes = {
+  displaying: PropTypes.string.isRequired,
   fetching: PropTypes.bool.isRequired,
   target: PropTypes.shape({
     id: PropTypes.number,

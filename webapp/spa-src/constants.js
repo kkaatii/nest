@@ -14,3 +14,5 @@ export const INIT_STORE = {
     target: MOCK_TARGET,
   }
 };
+
+export const displayCSS = (displaying, element) => displaying === element ? '' : 'elem-display-none';
