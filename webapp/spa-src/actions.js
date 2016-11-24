@@ -21,6 +21,15 @@ export const GraphActions = {
         node: node
       }
     }
+  },
+
+  removeOne: function (id) {
+    return {
+      type: Graph.REMOVE_ONE,
+      payload: {
+        id: id
+      }
+    }
   }
 };
 
@@ -112,6 +121,11 @@ export function fetchAllPoints() {
     .then(response => response.json())
     .then(json => json.map(reverseFrameMapForNode))
     .then(json => dispatch(GraphActions.refreshMulti(json)));
+}
+
+export function deactivateNode(id) {
+  return dispatch => fetch(`${API_URL}/node-activate?nid=${id}&a=false`, {credentials: 'include', method: 'POST'})
+    .then(response => response === 'Success' ? dispatch(GraphActions.removeOne(id)): null);
 }
 
 const frameMap = (frame) => frame === "\<Private\>" ? null : frame;

@@ -42,7 +42,10 @@ FrameDropdownMenu.propTypes = {
 };
 
 
-const Editor = ({displaying, fetching, target, frameChoices, hide, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
+const Editor = ({
+  displaying, fetching, target, frameChoices, hide, submitNode,
+  handleNameChange, handleFrameChange, handleContentChange, deactivateNode,
+}) =>
   <div id="node-editor" className={`container ${displayCSS(displaying, 'Editor')}`}>
     <p className="text-center"><span className="glyphicon glyphicon-chevron-up" aria-hidden="true"
                                      style={{cursor: 'pointer', marginBottom: 6}} onClick={hide}/></p>
@@ -88,7 +91,7 @@ const Editor = ({displaying, fetching, target, frameChoices, hide, submitNode, h
       <div className="btn-toolbar">
         <button className="btn btn-primary" type="submit" disabled={fetching}>Submit</button>
         <button className="btn btn-default" type="button" disabled="true">Save draft</button>
-        <button className="btn btn-danger pull-right" type="button" disabled="true">Delete</button>
+        <button className="btn btn-danger pull-right" type="button" onClick={deactivateNode}>Delete</button>
       </div>
     </form>
   </div>;
@@ -113,6 +116,7 @@ Editor.propTypes = {
   handleNameChange: PropTypes.func.isRequired,
   handleFrameChange: PropTypes.func.isRequired,
   handleContentChange: PropTypes.func.isRequired,
+  deactivateNode: PropTypes.func.isRequired
 };
 
 export default Editor;

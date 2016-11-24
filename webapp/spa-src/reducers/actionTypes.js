@@ -13,4 +13,5 @@ export const Editor = {
 export const Graph = {
   REFRESH_ONE: 'REFRESH_ONE',
   REFRESH_MULTI: 'REFRESH_MULTI',
+  REMOVE_ONE: 'REMOVE_ONE',
 };

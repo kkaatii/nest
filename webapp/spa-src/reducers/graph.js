@@ -11,6 +11,9 @@ const graph = (state={}, action) => {
     case Graph.REFRESH_ONE:
       newState.pointMap[action.payload.node.id] = action.payload.node;
       return newState;
+    case Graph.REMOVE_ONE:
+      delete newState.pointMap[action.payload.id];
+      return newState;
     default:
       return state;
   }

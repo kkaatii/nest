@@ -4,7 +4,7 @@ import Editor from '../components/Editor'
 import Viewer from '../components/Viewer'
 import PageShader from '../components/PageShader'
 import Graph from '../components/Graph'
-import {EditorActions, fetchAllPoints, createOrUpdateNode} from '../actions'
+import {EditorActions, fetchAllPoints, createOrUpdateNode, deactivateNode} from '../actions'
 
 class App extends React.Component {
   constructor(props) {
@@ -23,6 +23,7 @@ class App extends React.Component {
     this.handleEditorFrameChange = this.handleEditorFrameChange.bind(this);
     this.handleEditorNameChange = this.handleEditorNameChange.bind(this);
     this.submitEditorNodeIn = this.submitEditorNodeIn.bind(this);
+    this.deactivateEditorTarget = this.deactivateEditorTarget.bind(this);
   };
 
   componentDidMount() {
@@ -92,6 +93,14 @@ class App extends React.Component {
     }
   }
 
+  deactivateEditorTarget(id) {
+    return () => {
+      if (id !== null)
+        this.props.dispatch(deactivateNode(id));
+      this.hideEditor();
+    }
+  }
+
   render() {
     const {editor, graph} = this.props;
     const displaying = this.state.displaying;
@@ -126,6 +135,7 @@ class App extends React.Component {
           handleFrameChange={this.handleEditorFrameChange}
           handleNameChange={this.handleEditorNameChange}
           submitNode={this.submitEditorNodeIn(this.state.editorMode)}
+          deactivateNode={this.deactivateEditorTarget(editor.target.id)}
         />
       </div>
     )

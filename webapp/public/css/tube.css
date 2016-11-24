@@ -1,21 +1,20 @@
 .elem-display-none {
-    display: none;
-}
-.elem-display-block {
-    display: block;
+  display: none;
 }
 
+.elem-display-block {
+  display: block;
+}
 
 #top-attached {
-    position: fixed;
-    top:0;
-    left:0;
-    right:0;
-    display: flex;
-    flex-flow: column;
-    height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-flow: column;
+  height: 100%;
 }
-
 
 #node-editor {
   border-radius: 8px;
@@ -38,15 +37,15 @@
 }
 
 #point-graph::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 #point-graph::-webkit-scrollbar-thumb {
-    background-color: #ccc;
+  background-color: #ccc;
 }
 
 #point-graph::-webkit-scrollbar-track {
-    background-color: #f0f0f0;
+  background-color: #f0f0f0;
 }
 
 .point-wrapper {
@@ -58,8 +57,8 @@
   background-color: white;
   border-radius: 3px;
   border: 1px solid #e0e0e0;
-  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,.1);
-  box-shadow: 0 1px 5px rgba(0,0,0,.1);
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, .1);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .1);
   overflow: hidden;
 }
 
@@ -93,16 +92,16 @@
 }
 
 #node-viewer p {
-    line-height: 1.3;
-    margin-bottom: 8px;
+  line-height: 1.4285714;
+  margin-bottom: 8px;
 }
 
 .tube-nav-block {
-    position: relative;
-    top:0;
-    display: block;
-    min-height:50px;
-    width:100%;
+  position: relative;
+  top: 0;
+  display: block;
+  min-height: 50px;
+  width: 100%;
 }
 
 .viewer-button-group {
@@ -114,7 +113,7 @@
   display: block;
   color: #ccc;
   font-size: 18px;
-  margin-left:30px;
+  margin-left: 30px;
   margin-bottom: 20px;
   cursor: pointer;
   vertical-align: top;
@@ -122,18 +121,18 @@
 }
 
 .viewer-button:hover, .viewer-button:focus {
-    color: #999;
+  color: #999;
 }
 
 h3.viewer-node-name {
-    margin-top: 0;
-    display: inline;
-    line-height:3rem;
+  margin-top: 0;
+  display: inline;
+  line-height: 3rem;
 }
 
 .viewer-topline {
-    display: block;
-    margin-bottom: 1.8rem;
+  display: block;
+  margin-bottom: 1.8rem;
 }
 
 h4 {
