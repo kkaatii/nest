@@ -93,12 +93,9 @@ class App extends React.Component {
     }
   }
 
-  deactivateEditorTarget(id) {
-    return () => {
-      if (id !== null)
-        this.props.dispatch(deactivateNode(id));
-      this.hideEditor();
-    }
+  deactivateEditorTarget() {
+    this.props.dispatch(deactivateNode());
+    this.hideEditor();
   }
 
   render() {
@@ -135,7 +132,7 @@ class App extends React.Component {
           handleFrameChange={this.handleEditorFrameChange}
           handleNameChange={this.handleEditorNameChange}
           submitNode={this.submitEditorNodeIn(this.state.editorMode)}
-          deactivateNode={this.deactivateEditorTarget(editor.target.id)}
+          deactivateNode={this.deactivateEditorTarget}
         />
       </div>
     )

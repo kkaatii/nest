@@ -123,9 +123,13 @@ export function fetchAllPoints() {
     .then(json => dispatch(GraphActions.refreshMulti(json)));
 }
 
-export function deactivateNode(id) {
-  return dispatch => fetch(`${API_URL}/node-activate?nid=${id}&a=false`, {credentials: 'include', method: 'POST'})
-    .then(response => response === 'Success' ? dispatch(GraphActions.removeOne(id)): null);
+export function deactivateNode() {
+  return (dispatch, getState) => {
+    let id = getState().editor.target.id;
+    if (id !== null)
+      fetch(`${API_URL}/node-activate?nid=${id}&a=false`, {credentials: 'include', method: 'POST'})
+        .then(response => response === 'Success' ? dispatch(GraphActions.removeOne(id)) : {});
+  }
 }
 
 const frameMap = (frame) => frame === "\<Private\>" ? null : frame;
