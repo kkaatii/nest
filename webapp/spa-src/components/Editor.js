@@ -44,6 +44,8 @@ FrameDropdownMenu.propTypes = {
 
 const Editor = ({displaying, fetching, target, frameChoices, hide, submitNode, handleNameChange, handleFrameChange, handleContentChange}) =>
   <div id="node-editor" className={`container ${displayCSS(displaying, 'Editor')}`}>
+    <p className="text-center"><span className="glyphicon glyphicon-chevron-up" aria-hidden="true"
+                                     style={{cursor: 'pointer', marginBottom: 6}} onClick={hide}/></p>
     <form className="form-horizontal" onSubmit={submitNode}>
       <div className="form-group">
         <div className="col-lg-9 upper-margin">
@@ -86,7 +88,7 @@ const Editor = ({displaying, fetching, target, frameChoices, hide, submitNode, h
       <div className="btn-toolbar">
         <button className="btn btn-primary" type="submit" disabled={fetching}>Submit</button>
         <button className="btn btn-default" type="button" disabled="true">Save draft</button>
-        <button className="btn btn-danger pull-right" onClick={hide} type="button">Discard changes</button>
+        <button className="btn btn-danger pull-right" type="button" disabled="true">Delete</button>
       </div>
     </form>
   </div>;
