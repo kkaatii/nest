@@ -128,7 +128,8 @@ export function deactivateNode() {
     let id = getState().editor.target.id;
     if (id !== null)
       fetch(`${API_URL}/node-activate?nid=${id}&a=false`, {credentials: 'include', method: 'POST'})
-        .then(response => response.json() === 'Success' ? dispatch(GraphActions.removeOne(id)) : {});
+        .then(response => response.text())
+        .then(text => text === 'Success' ? dispatch(GraphActions.removeOne(id)) : {});
   }
 }
 

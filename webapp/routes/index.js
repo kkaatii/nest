@@ -2,7 +2,7 @@ var express = require('express');
 var passport = require('passport');
 var request = require('request');
 var router = express.Router();
-var path=require('path');
+var path = require('path');
 
 var env = {
   AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID,
@@ -95,22 +95,21 @@ router.get('/api/*', auth, function (req, res) {
 });
 
 router.post('/api/*', auth, function (req, res) {
-  if (req.headers['content-type'].startsWith('application/json')) {
-    var body = req.body;
-    body['ownerId'] = req.user.tube.id;
+  var body = req.body;
+  body['ownerId'] = req.user.tube.id;
+  if (typeof req.headers['content-type'] !== 'undefined' && req.headers['content-type'].startsWith('application/json'))
     body.frame = body.frame === null ? '@' + req.user.tube.nickname : body.frame;
-    var options = {
-      url: LOCAL_API_SERVER + cleanseUrl(req.url),
-      json: true,
-      body: body,
-      method: 'post'
-    };
-    request(options, function (error, response, data) {
-      if (!error && response.statusCode == 200) {
-        res.send(data);
-      }
-    });
-  }
+  var options = {
+    url: LOCAL_API_SERVER + cleanseUrl(req.url),
+    json: true,
+    body: body,
+    method: 'post',
+  };
+  request(options, function (error, response, data) {
+    if (!error && response.statusCode == 200) {
+      res.send(data);
+    }
+  });
 });
 
 router.get('/betrue', function (req, res) {
@@ -121,7 +120,7 @@ router.get('/betrue', function (req, res) {
     ),
     method: 'get'
   }, function (error, response, data) {
-    if (!error && response.statusCode == 200){
+    if (!error && response.statusCode == 200) {
       data = JSON.parse(data);
       res.render('betrue', {articles: data})
     }
