@@ -29,11 +29,7 @@ public class OafApiController {
 
     @RequestMapping("/frames-readable")
     public List<String> readableFrames(@RequestParam Integer oid, @RequestParam String on) {
-        List<String> results = oafMapper.selectFramesAccessibleTo(oid, AuthService.READ_ACCESS);
-        return (results == null) ? null : results.stream().map(frame -> {
-            String[] s = frame.split("@");
-            return s[1].equals(on) ? s[0] : frame;
-        }).collect(Collectors.toList());
+        return oafMapper.selectFramesAccessibleTo(oid, AuthService.READ_ACCESS);
     }
 
 }

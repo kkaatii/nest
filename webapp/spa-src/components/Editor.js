@@ -4,6 +4,7 @@ import isEqual from 'lodash/isEqual'
 import {displayCSS} from '../constants'
 var tinymce = require('tinymce');
 
+const nickname = document.getElementById('api').getAttribute('nickname');
 
 class MyTinyMCE extends TinyMCE {
   componentWillReceiveProps(nextProps) {
@@ -25,7 +26,7 @@ const FrameDropdownMenu = ({choices, display}) => {
   let a = [], h = {};
   for (let i = 0; i < choices.length; i++) {
     let choice = choices[i].split('@');
-    if (!choice[1]) {
+    if (choice[1] === nickname) {
       a.push(<li key={i}><a onClick={display(i)}>{choice[0]}</a></li>);
     } else {
       if (!h[choice[1]]) {
@@ -67,7 +68,8 @@ const Editor = ({
             <button type="button" className="btn btn-default btn-block dropdown-toggle"
                     data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false"
-                    id="node-frame-select" style={{textAlign: "left"}}>{target.frame}
+                    id="node-frame-select" style={{textAlign: "left"}}>
+              {target.frame.split('@')[1] === nickname ? target.frame.split('@')[0] : target.frame}
               <span className="caret" style={{
                 position: "absolute",
                 top: "50%",
