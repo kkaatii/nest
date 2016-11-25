@@ -24,17 +24,18 @@ class MyTinyMCE extends TinyMCE {
 
 const FrameDropdownMenu = ({choices, display}) => {
   let a = [], h = {};
-  for (let i = 0; i < choices.length; i++) {
+  a.push(<li key={choices[0]}><a onClick={display(0)}>{choices[0]}</a></li>);
+  for (let i = 1; i < choices.length; i++) {
     let choice = choices[i].split('@');
     if (choice[1] === nickname) {
-      a.push(<li key={i}><a onClick={display(i)}>{choice[0]}</a></li>);
+      a.push(<li key={choices[i]}><a onClick={display(i)}>{choice[0]}</a></li>);
     } else {
       if (!h[choice[1]]) {
         h[choice[1]] = [];
-        h[choice[1]].push(<li key={-i} className="dropdown-header"
+        h[choice[1]].push(<li key={choice[1]} className="dropdown-header"
                               style={{fontWeight: "bold", color: "#8ad"}}>{choice[1]}</li>);
       }
-      h[choice[1]].push(<li key={i}><a onClick={display(i)}>{choice[0]}</a></li>);
+      h[choice[1]].push(<li key={choices[i]}><a onClick={display(i)}>{choice[0]}</a></li>);
     }
   }
   Object.keys(h).map(key => a.push(h[key]));
