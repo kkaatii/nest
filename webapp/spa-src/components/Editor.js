@@ -22,18 +22,23 @@ class MyTinyMCE extends TinyMCE {
 }
 
 const FrameDropdownMenu = ({choices, display}) => {
-  let h = {};
-  let owner;
+  let a = [], h = {};
   for (let i = 0; i < choices.length; i++) {
     let choice = choices[i].split('@');
     if (!choice[1]) {
-      owner = choice[0];
-      h.push(<li key={-i} className="dropdown-header" style={{fontWeight: "bold", color: "#8ad"}}>{choice[1]}</li>);
+      a.push(<li key={i}><a onClick={display(i)}>{choice[0]}</a></li>);
+    } else {
+      if (!h[choice[1]]) {
+        h[choice[1]] = [];
+        h[choice[1]].push(<li key={-i} className="dropdown-header"
+                              style={{fontWeight: "bold", color: "#8ad"}}>{choice[1]}</li>);
+      }
+      h[choice[1]].push(<li key={i}><a onClick={display(i)}>{choice[0]}</a></li>);
     }
-    h.push(<li key={i}><a href="#" onClick={display(i)}>{choice[0]}</a></li>);
   }
+  Object.keys(h).map(key => a.push(h[key]));
   return <ul aria-labelledby="node-frame-select"
-             className="dropdown-menu">{h}</ul>;
+             className="dropdown-menu">{a}</ul>;
 };
 
 FrameDropdownMenu.propTypes = {

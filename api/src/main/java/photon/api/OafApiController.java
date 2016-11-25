@@ -7,6 +7,7 @@ import photon.tube.model.OwnerAndFrameMapper;
 import photon.tube.service.AuthService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/oaf")
@@ -26,9 +27,13 @@ public class OafApiController {
         return oafMapper.selectOwnerByAuthId(aid);
     }
 
-    @RequestMapping("/readable-frames")
-    public List<String> readableFrames(@RequestParam Integer oid) {
-        return oafMapper.selectFramesAccessibleTo(oid, AuthService.READ_ACCESS);
+    @RequestMapping("/frames-readable")
+    public List<String> readableFrames(@RequestParam Integer oid, @RequestParam String on) {
+        List<String> results = oafMapper.selectFramesAccessibleTo(oid, AuthService.READ_ACCESS);
+        return (results == null) ? null : results.stream().map(frame -> {
+            String[] s = frame.split("@");
+            return s[1].equals(on) ? s[0] : frame;
+        }).collect(Collectors.toList());
     }
 
 }

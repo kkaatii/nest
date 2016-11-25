@@ -1,4 +1,4 @@
-const NULL_FRAME = "<Private>";
+export const NULL_FRAME = "<Private>";
 
 export const MOCK_TARGET = {
   id: null,
@@ -14,12 +14,6 @@ export const INIT_STORE = {
     frameChoices: [NULL_FRAME],
     target: MOCK_TARGET,
   }
-};
-
-export const FrameMap = {
-  displayToJson: (frame) => frame === NULL_FRAME ? null : frame,
-  jsonToDisplay: (frame) => frame.startsWith('@') ? NULL_FRAME : frame,
-  nodeJsonToDisplay: (node) => ({...node, frame: FrameMap.jsonToDisplay(node.frame)}),
 };
 
 export const displayCSS = (displaying, element) => displaying === element ? '' : 'elem-display-none';

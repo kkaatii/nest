@@ -1,9 +1,9 @@
 import {batchActions} from 'redux-batched-actions';
 import {Graph, Editor} from './reducers/actionTypes'
-import {FrameMap} from './constants'
 
 const REMOTE_SERVER = document.getElementById('api').getAttribute('server');
-const API_URL = REMOTE_SERVER + '/api/tube';
+const TUBE_API_URL = REMOTE_SERVER + '/api/tube';
+const OAF_API_URL = REMOTE_SERVER + '/api/oaf';
 
 export const GraphActions = {
   refreshMulti: function (nodes) {
@@ -34,9 +34,8 @@ export const GraphActions = {
   },
 
   fetchAllPoints: function () {
-    return dispatch => fetch(`${API_URL}/point-get-owner`, {credentials: 'include'})
+    return dispatch => fetch(`${TUBE_API_URL}/point-get-owner`, {credentials: 'include'})
       .then(response => response.json())
-      .then(json => json.map(FrameMap.nodeJsonToDisplay))
       .then(json => dispatch(GraphActions.refreshMulti(json)));
   }
 };
@@ -118,22 +117,22 @@ export const EditorActions = {
     }
   },
 
-  deactivateNode: function() {
+  deactivateNode: function () {
     return (dispatch, getState) => {
       let id = getState().editor.target.id;
       if (id !== null)
-        fetch(`${API_URL}/node-activate?nid=${id}&a=false`, {credentials: 'include', method: 'POST'})
+        fetch(`${TUBE_API_URL}/node-activate?nid=${id}&a=false`, {credentials: 'include', method: 'POST'})
           .then(response => response.text())
           .then(text => text === 'Success' ? dispatch(GraphActions.removeOne(id)) : {});
     }
   },
 
-  createOrUpdateNode: function(mode) {
+  createOrUpdateNode: function (mode) {
     return (dispatch, getState) => {
       const target = getState().editor.target;
-      let data = {...target, frame: FrameMap.displayToJson(target.frame), type: 'ARTICLE'};
+      let data = {...target, type: 'ARTICLE'};
       dispatch(EditorActions._requestPost());
-      return fetch(`${API_URL}/node-${mode}`, {
+      return fetch(`${TUBE_API_URL}/node-${mode}`, {
         credentials: 'include',
         headers: {
           'Accept': 'application/json',
@@ -144,9 +143,15 @@ export const EditorActions = {
       }).then(response => response.json())
         .then(json => {
           if (json === null) alert('Update failed!');
-          return dispatch(GraphActions.refreshOne(FrameMap.nodeJsonToDisplay(json)));
+          return dispatch(GraphActions.refreshOne(json));
         });
     }
+  },
+
+  fetchFrameChoices: function () {
+    return dispatch => fetch(`${OAF_API_URL}/frames-readable`)
+      .then(response => response.json())
+      .then(json => dispatch(EditorActions.setFrameChoices(json)));
   }
 
 };
@@ -156,9 +161,8 @@ function _shouldFetchNode(point) {
 }
 
 function _fetchNode(id) {
-  return dispatch => fetch(`${API_URL}/node-get?nid=${id}`, {credentials: 'include'})
+  return dispatch => fetch(`${TUBE_API_URL}/node-get?nid=${id}`, {credentials: 'include'})
     .then(response => response.json())
-    .then(FrameMap.nodeJsonToDisplay)
     .then(json => dispatch(batchActions([
       EditorActions.setTarget(json),
       GraphActions.refreshOne(json),

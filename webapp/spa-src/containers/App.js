@@ -28,6 +28,7 @@ class App extends React.Component {
 
   componentDidMount() {
     this.props.dispatch(GraphActions.fetchAllPoints());
+    this.props.dispatch(EditorActions.fetchFrameChoices());
     document.addEventListener("keydown", this.hideViewer, false);
   }
 

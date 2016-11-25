@@ -1,5 +1,5 @@
 import {Editor} from './actionTypes'
-import {MOCK_TARGET} from '../constants'
+import {MOCK_TARGET, NULL_FRAME} from '../constants'
 
 const editorTarget = (state = {}, action)=> {
   switch (action.type) {
@@ -23,7 +23,7 @@ const editor = (state = {}, action) => {
     case Editor.NEW_TARGET:
       return {...state, target: MOCK_TARGET};
     case Editor.SET_FRAMECHOICES:
-      return {...state, frameChoices: action.payload.frameChoices};
+      return {...state, frameChoices: [NULL_FRAME, ...action.payload.frameChoices]};
     case Editor.CHANGE_TARGET_FRAME:
       return {...state, target: {...state.target, frame: state.frameChoices[action.payload.frameNo]}};
     case Editor.CHANGE_TARGET_CONTENT:
