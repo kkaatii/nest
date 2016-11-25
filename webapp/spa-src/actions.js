@@ -149,7 +149,7 @@ export const EditorActions = {
   },
 
   fetchFrameChoices: function () {
-    return dispatch => fetch(`${OAF_API_URL}/frames-readable`)
+    return dispatch => fetch(`${OAF_API_URL}/frames-readable`, {credentials: 'include'})
       .then(response => response.json())
       .then(json => dispatch(EditorActions.setFrameChoices(json)));
   }
