@@ -19,7 +19,7 @@
         VALUES (#{authId}, #{ownerId})
     </insert>
 
-    <select id="selectByAuthId" resultMap="ownerRM">
+    <select id="selectOwnerByAuthId" resultMap="ownerRM">
         SELECT
             nickname,
             id
@@ -42,6 +42,12 @@
         SELECT access
         FROM tube.frame_access
         WHERE owner_id = #{ownerId} AND frame = #{frame}
+    </select>
+
+    <select id="selectFramesAccessibleTo" resultType="string">
+        select frame
+        from tube.frame_access
+        where owner_id = #{ownerId} and access > #{access}
     </select>
 
 </mapper>

@@ -68,10 +68,11 @@ module.exports = {
     extensions: ['', '.js', '.json']
   },
 
+  //devServer: { inline: true },
   plugins: [
-    new ProgressPlugin(function (percentage, msg) {
+    /*new ProgressPlugin(function (percentage, msg) {
       console.log((percentage * 100) + '%', msg);
-    }),
+    }),*/
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",

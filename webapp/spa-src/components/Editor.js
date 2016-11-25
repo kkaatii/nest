@@ -22,12 +22,12 @@ class MyTinyMCE extends TinyMCE {
 }
 
 const FrameDropdownMenu = ({choices, display}) => {
-  let h = [];
-  let lastHeader = '';
+  let h = {};
+  let owner;
   for (let i = 0; i < choices.length; i++) {
     let choice = choices[i].split('@');
-    if (choice[1] && choice[1] !== lastHeader) {
-      lastHeader = choice[1];
+    if (!choice[1]) {
+      owner = choice[0];
       h.push(<li key={-i} className="dropdown-header" style={{fontWeight: "bold", color: "#8ad"}}>{choice[1]}</li>);
     }
     h.push(<li key={i}><a href="#" onClick={display(i)}>{choice[0]}</a></li>);

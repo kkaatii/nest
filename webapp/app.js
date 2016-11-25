@@ -39,7 +39,7 @@ passport.use(strategy);
 // you can use this section to keep a smaller payload
 passport.serializeUser(function (user, done) {
   request({
-    url: process.env.LOCAL_API_SERVER + '/api/oaf/user?aid=' + user.id,
+    url: process.env.LOCAL_API_SERVER + '/api/oaf/owner?aid=' + user.id,
     method: 'get'
   }, function (error, response, data) {
     if (!error && response.statusCode == 200) {

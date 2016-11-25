@@ -2,14 +2,17 @@ package photon.tube.model;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * Created by Dun Liu on 11/9/2016.
  */
 public interface OwnerAndFrameMapper {
     void addOwner(Owner o);
-    Owner selectByAuthId(String authId);
+    Owner selectOwnerByAuthId(String authId);
     void deleteOwnerById(Integer id);
     void addAlias(@Param("ownerId") Integer ownerId, @Param("authId") String authId);
     void deleteAlias(@Param("ownerId") Integer ownerId, @Param("authId") String authId);
+    List<String> selectFramesAccessibleTo(@Param("ownerId") Integer ownerId, @Param("access") int access);
     Integer selectAccess(@Param("ownerId") Integer ownerId, @Param("frame") String frame);
 }

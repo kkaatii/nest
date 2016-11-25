@@ -6,11 +6,9 @@ import photon.tube.model.Owner;
 import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
-import photon.tube.service.OafService;
+import photon.tube.service.AuthService;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static photon.util.Util.ensureList;
@@ -18,11 +16,11 @@ import static photon.util.Util.ensureList;
 public class CompleteProcessor implements Processor {
 
     private final CrudService crudService;
-    private final OafService oafService;
+    private final AuthService authService;
 
-    public CompleteProcessor(CrudService crudService, OafService oafService) {
+    public CompleteProcessor(CrudService crudService, AuthService authService) {
         this.crudService = crudService;
-        this.oafService = oafService;
+        this.authService = authService;
     }
 
     @Override
@@ -37,9 +35,9 @@ public class CompleteProcessor implements Processor {
             Arrow tmp;
             boolean[] accesses = new boolean[length];
             for (int i = 0; i < length; i++) {
-                accesses[i] = oafService.authorizedRead(owner, crudService.getNodeFrame(ids[i]));
+                accesses[i] = authService.authorizedRead(owner, crudService.getNodeFrame(ids[i]));
             }
-            if (!oafService.authorizedRead(owner, crudService.getNodeFrame(ids[0])))
+            if (!authService.authorizedRead(owner, crudService.getNodeFrame(ids[0])))
                 return GraphContainer.emptyContainer();
             for (int i = 0; i < length; i++) {
                 if (!accesses[i]) continue;

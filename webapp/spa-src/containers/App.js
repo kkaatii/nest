@@ -4,7 +4,7 @@ import Editor from '../components/Editor'
 import Viewer from '../components/Viewer'
 import PageShader from '../components/PageShader'
 import Graph from '../components/Graph'
-import {EditorActions, fetchAllPoints, createOrUpdateNode, deactivateNode} from '../actions'
+import {EditorActions, GraphActions} from '../actions'
 
 class App extends React.Component {
   constructor(props) {
@@ -27,7 +27,8 @@ class App extends React.Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(fetchAllPoints());
+    this.props.dispatch(GraphActions.fetchAllPoints());
+    document.addEventListener("keydown", this.hideViewer, false);
   }
 
   chooseNodeForEdit(id) {
@@ -88,13 +89,13 @@ class App extends React.Component {
   submitEditorNodeIn(mode) {
     return (e) => {
       e.preventDefault();
-      this.props.dispatch(createOrUpdateNode(mode));
+      this.props.dispatch(EditorActions.createOrUpdateNode(mode));
       this.hideEditor();
     }
   }
 
   deactivateEditorTarget() {
-    this.props.dispatch(deactivateNode());
+    this.props.dispatch(EditorActions.deactivateNode());
     this.hideEditor();
   }
 
@@ -105,7 +106,7 @@ class App extends React.Component {
       <div>
         <div className="container-fluid tube-nav">
           <a /*onClick={this.toggleEditorDisplay}*/>
-            <img src="/img/logo.png" height={38} style={{margin: "6px 0 6px"}}/>
+            <img src="/img/logo.png" alt="Artificy" height={38} style={{margin: "6px 0 6px"}}/>
           </a>
           <div className="btn btn-default pull-right" style={{marginTop: 8}} onClick={this.newNodeForEdit}>New</div>
         </div>

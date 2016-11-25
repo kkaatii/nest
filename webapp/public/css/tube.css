@@ -78,7 +78,7 @@
 
 .point-wrapper-a {
   color: #000;
-  cursor: pointer;
+  cursor: default;
 }
 
 .point-wrapper-a:hover, .point-wrapper-a:focus {

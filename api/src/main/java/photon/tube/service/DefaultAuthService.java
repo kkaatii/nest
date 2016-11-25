@@ -1,17 +1,16 @@
 package photon.tube.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.stereotype.Service;
 import photon.tube.model.Owner;
 import photon.tube.model.OwnerAndFrameMapper;
 
 @Service
-public class DefaultOafService implements OafService {
+public class DefaultAuthService implements AuthService {
     private final OwnerAndFrameMapper oafMapper;
 
     @Autowired
-    public DefaultOafService(OwnerAndFrameMapper oafMapper) {
+    public DefaultAuthService(OwnerAndFrameMapper oafMapper) {
         this.oafMapper = oafMapper;
     }
 
@@ -21,13 +20,13 @@ public class DefaultOafService implements OafService {
     }
 
     @Override
-    public boolean authorizedDelete(Owner owner, String frame) {
-        return hasAccess(DELETE_ACCESS, owner, frame);
+    public boolean authorizedConnect(Owner owner, String frame) {
+        return hasAccess(CONNECT_ACCESS, owner, frame);
     }
 
     @Override
-    public boolean authorizedCreate(Owner owner, String frame) {
-        return hasAccess(CREATE_ACCESS, owner, frame);
+    public boolean authorizedWrite(Owner owner, String frame) {
+        return hasAccess(WRITE_ACCESS, owner, frame);
     }
 
     private boolean hasAccess(int access, Owner owner, String frame) {
@@ -35,7 +34,7 @@ public class DefaultOafService implements OafService {
             return true;
         else {
             Integer a = oafMapper.selectAccess(owner.getId(), frame);
-            return (access & ((a == null) ? 0 : a)) != 0;
+            return ((a == null) ? 0 : a) >= access;
         }
     }
 }

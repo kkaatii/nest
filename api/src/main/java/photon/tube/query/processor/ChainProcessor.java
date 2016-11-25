@@ -5,7 +5,7 @@ import photon.tube.model.*;
 import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
-import photon.tube.service.OafService;
+import photon.tube.service.AuthService;
 import photon.util.EQueue;
 
 import java.util.*;
@@ -15,11 +15,11 @@ import static photon.tube.query.GraphContainer.INIT_DEPTH;
 public class ChainProcessor implements Processor {
 
     private final CrudService crudService;
-    private final OafService oafService;
+    private final AuthService authService;
 
-    public ChainProcessor(CrudService crudService, OafService oafService) {
+    public ChainProcessor(CrudService crudService, AuthService authService) {
         this.crudService = crudService;
-        this.oafService = oafService;
+        this.authService = authService;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ChainProcessor implements Processor {
                 int originDepth = nodeIdToDepth.get(newOrigin);
                 List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(newOrigin, at);
                 for (FrameArrow a : arrows) {
-                    if (!oafService.authorizedRead(owner, a.getTargetFrame())) continue;
+                    if (!authService.authorizedRead(owner, a.getTargetFrame())) continue;
                     int candidate = a.getTarget();
                     Integer candidateDepth = nodeIdToDepth.get(candidate);
                     if (candidateDepth == null) {
