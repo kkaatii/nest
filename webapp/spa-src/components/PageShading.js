@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react'
 import {displayCSS} from '../constants'
 
-const PageShader = ({displaying, hide}) =>
+const PageShading = ({displaying, hide}) =>
   (
     <div style={{
       backgroundColor: "#aaaaaa", opacity: 0.5, zIndex: 1,
@@ -14,9 +14,9 @@ const PageShader = ({displaying, hide}) =>
          className={displayCSS(displaying, 'Editor')}
          onClick={hide}/>);
 
-PageShader.propTypes = {
+PageShading.propTypes = {
   displaying: PropTypes.string.isRequired,
   hide: PropTypes.func.isRequired,
 };
 
-export default PageShader;
+export default PageShading;

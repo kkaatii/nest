@@ -1,11 +1,10 @@
 import React from 'react';
-import { findDOMNode } from 'react-dom';
+import {findDOMNode} from 'react-dom';
 import isEqual from 'lodash/isEqual';
-import clone from 'lodash/clone';
-//import uuid from '../helpers/uuid';
 
 import tinymce from 'tinymce/tinymce'
 import 'tinymce/themes/modern/theme'
+import 'tinymce/plugins/autoresize'
 
 function ucFirst(str) {
   return str[0].toUpperCase() + str.substring(1);
@@ -39,7 +38,6 @@ const MyTinyMCE = React.createClass({
   displayName: 'TinyMCE',
 
   propTypes: {
-    config: React.PropTypes.object,
     content: React.PropTypes.string,
     id: React.PropTypes.string,
     className: React.PropTypes.string
@@ -47,24 +45,25 @@ const MyTinyMCE = React.createClass({
 
   getDefaultProps() {
     return {
-      config: {},
       content: ''
     };
   },
 
   componentWillMount() {
-    this.id = this.id || this.props.id; //|| uuid();
+    this.id = this.id || this.props.id;
   },
 
   componentDidMount() {
-    const config = clone(this.props.config);
+    const config = {
+      selector: `#${this.id}`,
+      skin_url: '/css/tinymce-skins/lightgray',
+      content_style: 'body.mce-content-body {font-size:14px}',
+      plugins: 'autoresize',
+    };
     this._init(config);
   },
 
   componentWillReceiveProps(nextProps) {
-    if (!isEqual(this.props.config, nextProps.config)) {
-      this._init(nextProps.config, nextProps.content)
-    }
     if (!isEqual(this.props.id, nextProps.id)) {
       this.id = nextProps.id
     }
@@ -77,8 +76,7 @@ const MyTinyMCE = React.createClass({
 
   shouldComponentUpdate(nextProps) {
     return (
-      !isEqual(this.props.content, nextProps.content) ||
-      !isEqual(this.props.config, nextProps.config)
+      !isEqual(this.props.content, nextProps.content)
     );
   },
 
@@ -87,13 +85,13 @@ const MyTinyMCE = React.createClass({
   },
 
   render() {
-    return this.props.config.inline ? (
+    return (/*this.props.config.inline ? (
       <div
         id={this.id}
         className={this.props.className}
         dangerouslySetInnerHTML={{__html: this.props.content}}
       />
-    ) : (
+    ) : (*/
       <textarea
         id={this.id}
         className={this.props.className}

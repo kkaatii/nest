@@ -1,24 +1,20 @@
 import React, {PropTypes} from 'react'
-import {displayCSS} from '../constants'
+import {displayCSS, NICKNAME} from '../constants'
 import MyTinyMCE from './MyTinyMCE'
 
-const nickname = document.getElementById('api').getAttribute('nickname');
-
-
-const FrameDropdownMenu = ({choices, display}) => {
+const FrameDropdownMenu = ({choices, setFrame}) => {
   let a = [], h = {};
-  a.push(<li key={choices[0]}><a onClick={display(0)}>{choices[0]}</a></li>);
-  for (let i = 1; i < choices.length; i++) {
+  for (let i = 0; i < choices.length; i++) {
     let choice = choices[i].split('@');
-    if (choice[1] === nickname) {
-      a.push(<li key={choices[i]}><a onClick={display(i)}>{choice[0]}</a></li>);
+    if (choice[1] === NICKNAME) {
+      a.push(<li key={choices[i]}><a onClick={setFrame(choices[i])}>{choice[0]}</a></li>);
     } else {
       if (!h[choice[1]]) {
         h[choice[1]] = [];
         h[choice[1]].push(<li key={choice[1]} className="dropdown-header"
                               style={{fontWeight: "bold", color: "#8ad"}}>{choice[1]}</li>);
       }
-      h[choice[1]].push(<li key={choices[i]}><a onClick={display(i)}>{choice[0]}</a></li>);
+      h[choice[1]].push(<li key={choices[i]}><a onClick={setFrame(choices[i])}>{choice[0]}</a></li>);
     }
   }
   Object.keys(h).map(key => a.push(h[key]));
@@ -28,22 +24,19 @@ const FrameDropdownMenu = ({choices, display}) => {
 
 FrameDropdownMenu.propTypes = {
   choices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-  display: PropTypes.func.isRequired,
+  setFrame: PropTypes.func.isRequired,
 };
 
-
 const Editor = ({
-  displaying, fetching, target, frameChoices, hide, submitNode,
+  displaying, fetching, target, frameChoices, submitNode,
   handleNameChange, handleFrameChange, handleContentChange, deactivateNode,
 }) =>
   <div id="node-editor" className={`container ${displayCSS(displaying, 'Editor')}`}>
-    <p className="text-center"><span className="glyphicon glyphicon-chevron-up" aria-hidden="true"
-                                     style={{cursor: 'pointer', marginBottom: 6}} onClick={hide}/></p>
     <form className="form-horizontal" onSubmit={submitNode}>
       <div className="form-group">
         <div className="col-lg-9 upper-margin">
           <label htmlFor="node-name">Title</label>
-          <input type="text" className="form-control" id="node-name" placeholder="Article"
+          <input type="text" className="form-control" id="node-name" placeholder={target.type}
                  onChange={handleNameChange} value={target.name}/>
         </div>
         <div className="col-lg-3 upper-margin">
@@ -53,14 +46,14 @@ const Editor = ({
                     data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false"
                     id="node-frame-select" style={{textAlign: "left"}}>
-              {target.frame.split('@')[1] === nickname ? target.frame.split('@')[0] : target.frame}
+              {target.frame.split('@')[1] === NICKNAME ? target.frame.split('@')[0] : target.frame}
               <span className="caret" style={{
                 position: "absolute",
                 top: "50%",
                 right: 8,
                 transform: "translateY(-50%)"
               }}/></button>
-            <FrameDropdownMenu choices={frameChoices} display={handleFrameChange}/>
+            <FrameDropdownMenu choices={frameChoices} setFrame={handleFrameChange}/>
           </div>
         </div>
       </div>
@@ -69,20 +62,13 @@ const Editor = ({
           <label htmlFor="node-content">Content</label>
           <MyTinyMCE
             id='node-content'
-            config={{
-              selector: '#node-content',
-              skin_url: '/css/tinymce-skins/lightgray',
-              //height: '40rem',
-              content_style: 'body.mce-content-body {font-size:14px}',
-            }}
             content={target.content}
             onChange={handleContentChange}
           />
         </div>
       </div>
       <div className="btn-toolbar">
-        <button className="btn btn-primary" type="submit" disabled={fetching}>Submit</button>
-        <button className="btn btn-default" type="button" disabled="true">Save draft</button>
+        <button className="btn btn-primary" type="submit" disabled={fetching}>Save</button>
         <button className="btn btn-danger pull-right" type="button" onClick={deactivateNode}>Delete</button>
       </div>
     </form>
@@ -102,7 +88,6 @@ Editor.propTypes = {
     digest: PropTypes.string,
     active: PropTypes.bool
   }),
-  hide: PropTypes.func.isRequired,
   frameChoices: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   submitNode: PropTypes.func.isRequired,
   handleNameChange: PropTypes.func.isRequired,

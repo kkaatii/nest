@@ -24,10 +24,10 @@ class Graph extends React.Component {
 
   render() {
     const {pointMap} = this.props.graph;
-    const displaying = this.props.displaying;
+    const displaying = this.props.displaying === '' || this.props.displaying === 'Editor';
     return (
       <div id="point-graph" className="container-fluid"
-           style={{visibility: (displaying === '' || displaying === 'Editor') ? 'visible' : 'hidden'}}>
+           style={{visibility: displaying ? 'visible' : 'hidden', overflow: displaying ? '' : 'hidden'}}>
         <div className="row">
           {Object.keys(pointMap).map(key => pointMap[key]).map(this.renderSinglePoint)}
         </div>

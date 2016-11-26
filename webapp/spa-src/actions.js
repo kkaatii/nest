@@ -1,7 +1,8 @@
 import {batchActions} from 'redux-batched-actions';
-import {Graph, Editor} from './reducers/actionTypes'
+import {Graph, Editor, Context} from './reducers/actionTypes'
+import {MOCK_TARGET, NULL_FRAME, REMOTE_SERVER} from "./constants";
+import {viewToNodeType} from "./constants";
 
-const REMOTE_SERVER = document.getElementById('api').getAttribute('server');
 const TUBE_API_URL = REMOTE_SERVER + '/api/tube';
 const OAF_API_URL = REMOTE_SERVER + '/api/oaf';
 
@@ -42,11 +43,11 @@ export const GraphActions = {
 
 export const EditorActions = {
 
-  changeTargetFrame: function (frameNo) {
+  changeTargetFrame: function (frame) {
     return {
       type: Editor.CHANGE_TARGET_FRAME,
       payload: {
-        frameNo: frameNo
+        frame: frame
       }
     }
   },
@@ -67,9 +68,12 @@ export const EditorActions = {
     }
   },
 
-  _requestFetch: function () {
+  _requestFetch: function (placeholder) {
     return {
       type: Editor.REQUEST_FETCH,
+      payload: {
+        placeholder: {...placeholder, content: '(Loading...)'}
+      }
     }
   },
 
@@ -91,10 +95,17 @@ export const EditorActions = {
     }
   },
 
-  newNode: function () {
+  _newNodeOfType: function (type) {
     return {
-      type: Editor.NEW_TARGET
+      type: Editor.SET_TARGET,
+      payload: {
+        target: {...MOCK_TARGET, type: type}
+      }
     }
+  },
+
+  newNode: function () {
+    return (dispatch, getState) => dispatch(EditorActions._newNodeOfType(viewToNodeType(getState().context.view)));
   },
 
   setFrameChoices: function (frameChoices) {
@@ -109,7 +120,7 @@ export const EditorActions = {
   fetchAndSetTarget: function (target) {
     return (dispatch) => {
       if (_shouldFetchNode(target)) {
-        dispatch(EditorActions._requestFetch());
+        dispatch(EditorActions._requestFetch(target));
         return dispatch(_fetchNode(target.id));
       } else {
         return dispatch(EditorActions.setTarget(target));
@@ -129,8 +140,6 @@ export const EditorActions = {
 
   createOrUpdateNode: function (mode) {
     return (dispatch, getState) => {
-      const target = getState().editor.target;
-      let data = {...target, type: 'ARTICLE'};
       dispatch(EditorActions._requestPost());
       return fetch(`${TUBE_API_URL}/node-${mode}`, {
         credentials: 'include',
@@ -139,21 +148,30 @@ export const EditorActions = {
           'Content-Type': 'application/json'
         },
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(getState().editor.target),
       }).then(response => response.json())
-        .then(json => {
-          if (json === null) alert('Update failed!');
-          return dispatch(GraphActions.refreshOne(json));
-        });
+        .then(json => json === null ? (alert('Update failed!') || null) : dispatch(GraphActions.refreshOne(json))
+        );
     }
   },
 
   fetchFrameChoices: function () {
     return dispatch => fetch(`${OAF_API_URL}/frames-readable`, {credentials: 'include'})
       .then(response => response.json())
-      .then(json => dispatch(EditorActions.setFrameChoices(json)));
+      .then(json => dispatch(EditorActions.setFrameChoices([NULL_FRAME, ...json])));
   }
 
+};
+
+export const ContextActions = {
+  setView: function (view) {
+    return {
+      type: Context.SET_VIEW,
+      payload: {
+        view: view
+      }
+    }
+  }
 };
 
 function _shouldFetchNode(point) {

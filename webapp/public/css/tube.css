@@ -6,6 +6,17 @@
   display: block;
 }
 
+.nav-btn {
+  border-color: transparent;
+  margin: 8px 0 0 3px;
+  border-radius: 3px;
+}
+
+.nav-btn:hover, .nav-btn:focus {
+  border-color: #ccc;
+  background-color: transparent;
+}
+
 #top-attached {
   position: fixed;
   top: 0;
@@ -104,12 +115,12 @@
   width: 100%;
 }
 
-.viewer-button-group {
+.viewer-btn-group {
   display: block;
   padding-right: 3px;
 }
 
-.viewer-button {
+.viewer-btn {
   display: block;
   color: #ccc;
   font-size: 18px;
@@ -120,7 +131,7 @@
   text-align: right;
 }
 
-.viewer-button:hover, .viewer-button:focus {
+.viewer-btn:hover, .viewer-btn:focus {
   color: #999;
 }
 
@@ -137,4 +148,20 @@ h3.viewer-node-name {
 
 h4 {
   margin-top: 0;
+}
+
+.pseudo-btn-active {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+
+.pseudo-btn-active:hover {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
+
+.dropdown li {
+  cursor: default;
 }

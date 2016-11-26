@@ -1,10 +1,11 @@
 import React, {PropTypes} from 'react'
 import {connect} from 'react-redux'
+import Nav from '../components/Nav'
 import Editor from '../components/Editor'
 import Viewer from '../components/Viewer'
-import PageShader from '../components/PageShader'
+import PageShading from '../components/PageShading'
 import Graph from '../components/Graph'
-import {EditorActions, GraphActions} from '../actions'
+import {EditorActions, GraphActions, ContextActions} from '../actions'
 
 class App extends React.Component {
   constructor(props) {
@@ -14,7 +15,8 @@ class App extends React.Component {
       editorMode: 'create',
     };
     this.toggleEditorDisplay = this.toggleEditorDisplay.bind(this);
-    this.newNodeForEdit = this.newNodeForEdit.bind(this);
+    this.editorButtonFunction = this.editorButtonFunction.bind(this);
+    this.graphButtonFunction = this.graphButtonFunction.bind(this);
     this.hideEditor = this.hideEditor.bind(this);
     this.hideViewer = this.hideViewer.bind(this);
     this.chooseNodeForEdit = this.chooseNodeForEdit.bind(this);
@@ -24,12 +26,13 @@ class App extends React.Component {
     this.handleEditorNameChange = this.handleEditorNameChange.bind(this);
     this.submitEditorNodeIn = this.submitEditorNodeIn.bind(this);
     this.deactivateEditorTarget = this.deactivateEditorTarget.bind(this);
+    this.switchView = this.switchView.bind(this);
   };
 
   componentDidMount() {
     this.props.dispatch(GraphActions.fetchAllPoints());
     this.props.dispatch(EditorActions.fetchFrameChoices());
-    document.addEventListener("keydown", this.hideViewer, false);
+    document.addEventListener("keydown", e => (e.keyCode === 27 ? this.hideViewer() : {}), false);
   }
 
   chooseNodeForEdit(id) {
@@ -55,12 +58,36 @@ class App extends React.Component {
     })
   }
 
-  newNodeForEdit() {
-    this.props.dispatch(EditorActions.newNode());
-    this.setState({
-      displaying: 'Editor',
-      editorMode: 'create',
-    })
+  editorButtonFunction() {
+    switch (this.state.displaying) {
+      case 'Viewer':
+        return () => this.chooseNodeForEdit(this.props.editor.target.id);
+
+      case 'Editor':
+      case '':
+        return () => {
+          this.props.dispatch(EditorActions.newNode());
+          this.setState({
+            displaying: 'Editor',
+            editorMode: 'create',
+          })
+        };
+      default:
+        return () => null;
+    }
+  }
+
+  graphButtonFunction() {
+    switch (this.state.displaying) {
+      case 'Editor':
+        return () => this.hideEditor();
+      case 'Viewer':
+        return () => this.hideViewer();
+      case '':
+        return () => this.props.dispatch(GraphActions.fetchAllPoints());
+      default:
+        return () => null;
+    }
   }
 
   hideEditor() {
@@ -83,8 +110,8 @@ class App extends React.Component {
     this.props.dispatch(EditorActions.changeTargetName(e.target.value));
   }
 
-  handleEditorFrameChange(i) {
-    return () => this.props.dispatch(EditorActions.changeTargetFrame(i));
+  handleEditorFrameChange(frame) {
+    return () => this.props.dispatch(EditorActions.changeTargetFrame(frame));
   }
 
   submitEditorNodeIn(mode) {
@@ -95,22 +122,24 @@ class App extends React.Component {
     }
   }
 
+  switchView(view) {
+    return () => this.props.dispatch(ContextActions.setView(view));
+  }
+
   deactivateEditorTarget() {
     this.props.dispatch(EditorActions.deactivateNode());
     this.hideEditor();
   }
 
   render() {
-    const {editor, graph} = this.props;
+    const {editor, graph, context} = this.props;
     const displaying = this.state.displaying;
     return (
       <div>
-        <div className="container-fluid tube-nav">
-          <a /*onClick={this.toggleEditorDisplay}*/>
-            <img src="/img/logo.png" alt="Artificy" height={38} style={{margin: "6px 0 6px"}}/>
-          </a>
-          <div className="btn btn-default pull-right" style={{marginTop: 8}} onClick={this.newNodeForEdit}>New</div>
-        </div>
+        <Nav view={context.view} switchView={this.switchView}
+             editorButton={this.editorButtonFunction()}
+             graphButton={this.graphButtonFunction()}
+             displaying={displaying}/>
 
         <div id="top-attached">
           <div className="tube-nav-block"/>
@@ -120,15 +149,12 @@ class App extends React.Component {
         <hr className="nav-divider"/>
         <div className="tube-nav-block"/>
 
-        <Viewer displaying={displaying} hide={this.hideViewer}
-                chooseForEdit={() => this.chooseNodeForEdit(editor.target.id)}
-                target={editor.target}/>
-        <PageShader displaying={displaying} hide={this.hideEditor}/>
+        <Viewer displaying={displaying} target={editor.target}/>
+        <PageShading displaying={displaying} hide={this.hideEditor}/>
         <Editor
           displaying={displaying}
           fetching={editor.fetching}
           target={editor.target}
-          hide={this.hideEditor}
           frameChoices={editor.frameChoices}
           handleContentChange={this.handleEditorContentChange}
           handleFrameChange={this.handleEditorFrameChange}
@@ -141,16 +167,28 @@ class App extends React.Component {
   }
 }
 
-App.propTypes = {
+App
+  .propTypes = {
   editor: PropTypes.object.isRequired,
   graph: PropTypes.object.isRequired,
+  context: PropTypes.object.isRequired,
 };
 
-function mapStateToProps(state) {
-  const {editor, graph} = state;
+function
+
+mapStateToProps(state) {
+  const {editor, graph, context} = state;
   return {
-    editor, graph
+    editor, graph, context
   }
 }
 
-export default connect(mapStateToProps)(App);
+export
+default
+
+connect(mapStateToProps)
+
+(
+  App
+)
+;

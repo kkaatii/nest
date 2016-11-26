@@ -86,7 +86,6 @@
         <include refid="pointColumns"/>
         FROM tube.node
         WHERE owner_id = #{ownerId} AND active
-        ORDER BY updated DESC
     </select>
 
     <select id="preselectByOwner" resultMap="pointRM">
@@ -94,7 +93,6 @@
         <include refid="pointColumns"/>
         FROM tube.node
         WHERE owner_id = #{ownerId} AND active
-        ORDER BY updated DESC
     </select>
 
     <select id="preselectInactive" resultMap="pointRM">

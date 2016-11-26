@@ -97,8 +97,6 @@ router.get('/api/*', auth, function (req, res) {
 router.post('/api/*', auth, function (req, res) {
   var body = req.body;
   body['ownerId'] = req.user.tube.id;
-  if (typeof req.headers['content-type'] !== 'undefined' && req.headers['content-type'].startsWith('application/json'))
-    body.frame = body.frame.indexOf('@') === -1 ? body.frame + '@' + req.user.tube.nickname : body.frame;
   var options = {
     url: LOCAL_API_SERVER + cleanseUrl(req.url),
     json: true,
