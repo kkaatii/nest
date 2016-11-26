@@ -24,12 +24,11 @@ class App extends React.Component {
     this.handleEditorNameChange = this.handleEditorNameChange.bind(this);
     this.submitEditorNodeIn = this.submitEditorNodeIn.bind(this);
     this.deactivateEditorTarget = this.deactivateEditorTarget.bind(this);
-
-    this.props.dispatch(GraphActions.fetchAllPoints());
-    this.props.dispatch(EditorActions.fetchFrameChoices());
   };
 
   componentDidMount() {
+    this.props.dispatch(GraphActions.fetchAllPoints());
+    this.props.dispatch(EditorActions.fetchFrameChoices());
     document.addEventListener("keydown", this.hideViewer, false);
   }
 

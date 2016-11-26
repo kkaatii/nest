@@ -1,26 +1,9 @@
 import React, {PropTypes} from 'react'
-import TinyMCE from 'react-tinymce'
-import isEqual from 'lodash/isEqual'
 import {displayCSS} from '../constants'
-var tinymce = require('tinymce');
+import MyTinyMCE from './MyTinyMCE'
 
 const nickname = document.getElementById('api').getAttribute('nickname');
 
-class MyTinyMCE extends TinyMCE {
-  componentWillReceiveProps(nextProps) {
-    if (!isEqual(this.props.config, nextProps.config)) {
-      this._init(nextProps.config, nextProps.content)
-    }
-    if (!isEqual(this.props.id, nextProps.id)) {
-      this.id = nextProps.id
-    }
-    // Added
-    const editor = tinymce.EditorManager.get(this.id);
-    if (editor && !isEqual(editor.getContent(), nextProps.content)) {
-      tinymce.EditorManager.get(this.id).setContent(nextProps.content)
-    }
-  }
-}
 
 const FrameDropdownMenu = ({choices, display}) => {
   let a = [], h = {};
@@ -88,6 +71,7 @@ const Editor = ({
             id='node-content'
             config={{
               selector: '#node-content',
+              skin_url: '/css/tinymce-skins/lightgray',
               //height: '40rem',
               content_style: 'body.mce-content-body {font-size:14px}',
             }}

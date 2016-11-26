@@ -57,6 +57,19 @@ module.exports = {
         test: /\.css$/,
         include: paths.appPublic,
         loader: 'style!css?importLoaders=1'
+      },
+      {
+        test: require.resolve('tinymce/tinymce'),
+        loaders: [
+          'imports?this=>window',
+          'exports?window.tinymce'
+        ]
+      },
+      {
+        test: /tinymce\/(themes|plugins)\//,
+        loaders: [
+          'imports?this=>window'
+        ]
       }
     ]
   },

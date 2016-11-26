@@ -53,6 +53,7 @@
     "redux-thunk": "^2.1.0",
     "request": "^2.75.0",
     "style-loader": "^0.13.1",
+    "tinymce": "^4.5.0",
     "whatwg-fetch": "^2.0.1"
   },
   "devDependencies": {
