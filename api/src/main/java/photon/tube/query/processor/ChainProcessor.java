@@ -2,7 +2,6 @@ package photon.tube.query.processor;
 
 
 import photon.tube.model.*;
-import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
 import photon.tube.service.AuthService;
@@ -12,14 +11,10 @@ import java.util.*;
 
 import static photon.tube.query.GraphContainer.INIT_DEPTH;
 
-public class ChainProcessor implements Processor {
-
-    private final CrudService crudService;
-    private final AuthService authService;
+public class ChainProcessor extends Processor {
 
     public ChainProcessor(CrudService crudService, AuthService authService) {
-        this.crudService = crudService;
-        this.authService = authService;
+        super(crudService, authService);
     }
 
     @Override

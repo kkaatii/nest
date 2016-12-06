@@ -1,13 +1,13 @@
 package photon.tube.query;
 
 public class QueryResult {
-    private Query query;
+    private QueryContext context;
     private GraphInfo graphInfo;
     private GraphInfo sectionInfo;
     private Section section;
 
-    public QueryResult(Query query) {
-        this.query = query;
+    public QueryResult(QueryContext context) {
+        this.context = context;
     }
 
     public QueryResult withGraphInfo(GraphInfo graphInfo) {
@@ -25,8 +25,8 @@ public class QueryResult {
         return this;
     }
 
-    public Query getQuery() {
-        return query;
+    public QueryContext getContext() {
+        return context;
     }
 
     public GraphInfo getGraphInfo() {

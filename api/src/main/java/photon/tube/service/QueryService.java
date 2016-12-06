@@ -1,10 +1,11 @@
 package photon.tube.service;
 
 import photon.tube.query.Query;
-import photon.tube.query.QueryResult;
+import photon.tube.query.QueryContext;
 
 public interface QueryService {
 
-    QueryResult resultOf(Query q);
+    Query createQuery(QueryContext context);
+    Query createQuery(String string);
 
 }

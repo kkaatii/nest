@@ -29,7 +29,7 @@ class Graph extends React.Component {
       <div id="point-graph" className="container-fluid"
            style={{
              visibility: (displaying === '' || displaying === 'Editor') ? 'visible' : 'hidden',
-             overflow: (displaying ==='') ? '' : 'hidden',
+             overflow: (displaying === '') ? '' : 'hidden',
            }}>
         <div className="row">
           {Object.keys(pointMap).map(key => pointMap[key]).map(this.renderSinglePoint)}

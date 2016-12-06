@@ -3,10 +3,7 @@ package photon.tube.service;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import photon.tube.query.FailedQueryException;
-import photon.tube.query.GraphContainer;
-import photon.tube.query.Query;
-import photon.tube.query.QueryResult;
+import photon.tube.query.*;
 import photon.tube.query.processor.Processor;
 import photon.tube.query.processor.ProcessorNotFoundException;
 
@@ -23,7 +20,7 @@ import java.util.Map;
 public class ProcessorBackedQueryService implements QueryService {
 
     private final Map<String, Processor> procMap = new HashMap<>();
-    private final Map<Query, GraphContainer> gcStore = new HashMap<>();
+    private final Map<QueryContext, GraphContainer> gcStore = new HashMap<>();
 
     private final CrudService crudService;
     private final AuthService authService;
@@ -34,13 +31,12 @@ public class ProcessorBackedQueryService implements QueryService {
         this.authService = authService;
     }
 
-    @Override
-    public QueryResult resultOf(Query query) {
+    private QueryResult getResult(QueryContext context) {
         try {
-            GraphContainer gc = gcStore.computeIfAbsent(query,
-                    k -> getProcessor(query.type).process(query.owner, query.args));
-            GraphContainer sectionContainer = query.sectionConfig.applyOn(gc);
-            return new QueryResult(query)
+            GraphContainer gc = gcStore.computeIfAbsent(context,
+                    k -> findProcessor(context.type).process(context.owner, context.args));
+            GraphContainer sectionContainer = context.sectionConfig.applyOn(gc);
+            return new QueryResult(context)
                     .withGraphInfo(gc.info())
                     .withSectionInfo(sectionContainer.info())
                     .withSection(sectionContainer.export());
@@ -49,7 +45,7 @@ public class ProcessorBackedQueryService implements QueryService {
         }
     }
 
-    private Processor getProcessor(String procName) {
+    private Processor findProcessor(String procName) {
         return procMap.computeIfAbsent(procName, k -> {
             try {
                 Class<?> clazz = Class.forName(completeProcName(procName));
@@ -65,4 +61,23 @@ public class ProcessorBackedQueryService implements QueryService {
         return String.format("photon.tube.query.processor.%sProcessor", WordUtils.capitalizeFully(name));
     }
 
+    @Override
+    public Query createQuery(QueryContext context) {
+        return new Query(context) {
+            @Override
+            public QueryResult result() {
+                return getResult(context);
+            }
+        };
+    }
+
+    @Override
+    public Query createQuery(String string) {
+        return new Query(new QueryContext.Builder().build()) {
+            @Override
+            public QueryResult result() {
+                return null;
+            }
+        };
+    }
 }

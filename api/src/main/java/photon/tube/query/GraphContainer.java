@@ -148,6 +148,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
                 result.add(_entries.get(rankToIndex[r]), rankToDepth[r]);
             toIncludeArrows.accept(r);
         }
+
         result.organized = true;
 
         return result;
@@ -195,7 +196,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
     }
 
     public Section export() {
-        return new Section(points(), arrows());
+        return new Section(points(), arrows(), depthToIndexes);
     }
 
     public GraphInfo info() {

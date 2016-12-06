@@ -3,7 +3,6 @@ package photon.tube.query.processor;
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
 import photon.tube.model.Owner;
-import photon.tube.query.QueryArgumentClassMismatchException;
 import photon.tube.query.GraphContainer;
 import photon.tube.service.CrudService;
 import photon.tube.service.AuthService;
@@ -13,14 +12,10 @@ import java.util.List;
 
 import static photon.util.Util.ensureList;
 
-public class CompleteProcessor implements Processor {
-
-    private final CrudService crudService;
-    private final AuthService authService;
+public class CompleteProcessor extends Processor {
 
     public CompleteProcessor(CrudService crudService, AuthService authService) {
-        this.crudService = crudService;
-        this.authService = authService;
+        super(crudService, authService);
     }
 
     @Override
