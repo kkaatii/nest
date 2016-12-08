@@ -1,6 +1,7 @@
 package photon.tube.query.processor;
 
 
+import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.*;
 import photon.tube.query.GraphContainer;
 import photon.tube.model.CrudService;
@@ -18,7 +19,8 @@ public class ChainProcessor extends Processor {
     }
 
     @Override
-    public GraphContainer process(Owner owner, Object... args) throws QueryArgumentClassMismatchException {
+    public GraphContainer process(Owner owner, Object... args)
+            throws QueryArgumentClassMismatchException, UnauthorizedActionException {
         try {
             Integer[] origins = (Integer[]) args[0];
             ArrowType at = (ArrowType) args[1];
@@ -27,6 +29,8 @@ public class ChainProcessor extends Processor {
             Set<Arrow> arrowSet = new HashSet<>();
             Map<Integer, Integer> nodeIdToDepth = new HashMap<>();
             for (Integer origin : origins) {
+                if (!authService.authorizedRead(owner, crudService.getNodeFrame(origin)))
+                    throw new UnauthorizedActionException();
                 nodeIdToDepth.put(origin, INIT_DEPTH);
                 queue.enqueue(origin);
             }
@@ -46,7 +50,9 @@ public class ChainProcessor extends Processor {
                         nodeIdToDepth.put(candidate, originDepth + 1);
                         queue.enqueue(candidate);
                         arrowSet.add(a);
-                    } else {arrowSet.add(a.reverse());}
+                    } else {
+                        arrowSet.add(a.reverse());
+                    }
                 }
             }
 

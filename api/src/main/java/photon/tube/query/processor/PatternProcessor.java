@@ -1,6 +1,7 @@
 package photon.tube.query.processor;
 
 import photon.tube.auth.AuthService;
+import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.*;
 import photon.tube.query.GraphContainer;
 
@@ -11,29 +12,43 @@ import static photon.tube.query.GraphContainer.INIT_DEPTH;
 
 public class PatternProcessor extends Processor {
 
+    private Owner owner = null;
+    private Map<Integer, Integer> nodeIdToDepth = null;
+    private Set<Arrow> arrowSet = null;
+    private Set<Integer> testingSet = null;
+    private PatternSequence patternSequence = null;
+
     public PatternProcessor(CrudService crudService, AuthService authService) {
         super(crudService, authService);
     }
 
     @Override
-    public GraphContainer process(Owner owner, Object... args) throws QueryArgumentClassMismatchException {
+    public GraphContainer process(Owner owner, Object... args)
+            throws QueryArgumentClassMismatchException, UnauthorizedActionException {
         try {
-
             Integer[] origins = (Integer[]) args[0];
             String[] seqString = (String[]) args[1];
-            if (origins.length == 0)
+            if (origins.length == 0) {
                 return GraphContainer.emptyContainer();
+            }
 
             GraphContainer gc = new GraphContainer();
 
             if (seqString.length == 0) {
-                gc.addAll(crudService.getPoints(Arrays.asList(origins)));
+                List<Point> points = crudService.getPoints(Arrays.asList(origins));
+                points.forEach(point -> {
+                    if (!authService.authorizedRead(owner, point.getFrame()))
+                        throw new UnauthorizedActionException();
+                });
+                gc.addAll(points);
                 return gc;
             }
 
-            Set<Arrow> arrowSet = new HashSet<>();
-            Map<Integer, Integer> nodeIdToDepth = new HashMap<>();
-            PatternSequence patternSequence = new PatternSequence();
+            this.owner = owner;
+            arrowSet = new HashSet<>();
+            testingSet = new HashSet<>();
+            nodeIdToDepth = new HashMap<>();
+            patternSequence = new PatternSequence();
             for (int i = 0; i < seqString.length; i++) {
                 if (i < seqString.length - 1 && seqString[i + 1].matches("\\d*|\\*|\\?|\\+")) {
                     patternSequence.append(seqString[i++], seqString[i]);
@@ -41,48 +56,47 @@ public class PatternProcessor extends Processor {
                     patternSequence.append(seqString[i], "1");
                 }
             }
-
             for (Integer origin : origins) {
-                nodeIdToDepth.put(origin, INIT_DEPTH);
-                patternSequence.first((_at, _sPos) ->
-                        testMatch(origin, patternSequence, _at, _sPos, INIT_DEPTH + 1, nodeIdToDepth, arrowSet, owner)
-                );
+                if (!authService.authorizedRead(owner, crudService.getNodeFrame(origin)))
+                    throw new UnauthorizedActionException();
+                testingSet.add(origin);
+                if (patternSequence.first((_at, _sPos) -> testMatch(origin, _at, _sPos, INIT_DEPTH + 1)))
+                    nodeIdToDepth.put(origin, INIT_DEPTH);
+                testingSet.remove(origin);
             }
 
             Map<Integer, Point> pointMap = crudService.getPointMap(nodeIdToDepth.keySet());
             pointMap.forEach((id, point) -> gc.add(point, nodeIdToDepth.get(id)));
             gc.addArrow(arrowSet);
             return gc.sort();
-
         } catch (ClassCastException cce) {
             throw new QueryArgumentClassMismatchException();
         }
     }
 
     private boolean testMatch(Integer originId,
-                              PatternSequence sequence,
-                              ArrowType atToMatch,
+                              ArrowType at,
                               SequencePosition sPos,
-                              int nextDepth,
-                              Map<Integer, Integer> nodeIdToDepth,
-                              Set<Arrow> arrowSet,
-                              Owner owner) {
+                              int nextDepth) {
         boolean originMatched = false;
         Integer candidateDepth;
-        List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(originId, atToMatch);
+        List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(originId, at);
         for (FrameArrow a : arrows) {
             if (!authService.authorizedRead(owner, a.getTargetFrame())) continue;
             Integer candidate = a.getTarget();
+            if (testingSet.contains(candidate)) continue;
             candidateDepth = nodeIdToDepth.get(candidate);
             if (candidateDepth == null) {
-                boolean matched = sequence.next(sPos, (_at, _sPos) ->
-                        testMatch(candidate, sequence, _at, _sPos, nextDepth + 1, nodeIdToDepth, arrowSet, owner)
+                testingSet.add(candidate);
+                boolean matched = patternSequence.next(sPos, (_at, _sPos) ->
+                        testMatch(candidate, _at, _sPos, nextDepth + 1)
                 );
                 if (matched) {
                     nodeIdToDepth.put(candidate, nextDepth);
                     arrowSet.add(a);
                     originMatched = true;
                 }
+                testingSet.remove(candidate);
             } else {
                 if (candidateDepth > nextDepth)
                     nodeIdToDepth.put(candidate, nextDepth);

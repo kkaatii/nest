@@ -1,5 +1,6 @@
 package photon.tube.query.processor;
 
+import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
 import photon.tube.model.CrudService;
@@ -19,7 +20,8 @@ public class CompleteProcessor extends Processor {
     }
 
     @Override
-    public GraphContainer process(Owner owner, Object... args) throws QueryArgumentClassMismatchException {
+    public GraphContainer process(Owner owner, Object... args)
+            throws QueryArgumentClassMismatchException, UnauthorizedActionException {
         try {
             Integer[] ids = (Integer[]) args[0];
             int length = ids.length;
@@ -28,16 +30,12 @@ public class CompleteProcessor extends Processor {
             ArrowType arrowType = (ArrowType) args[1];
             List<Arrow> arrows = new ArrayList<>();
             Arrow tmp;
-            boolean[] accesses = new boolean[length];
-            for (int i = 0; i < length; i++) {
-                accesses[i] = authService.authorizedRead(owner, crudService.getNodeFrame(ids[i]));
+            for (Integer id : ids) {
+                if (!authService.authorizedRead(owner, crudService.getNodeFrame(id)))
+                    throw new UnauthorizedActionException();
             }
-            if (!authService.authorizedRead(owner, crudService.getNodeFrame(ids[0])))
-                return GraphContainer.emptyContainer();
             for (int i = 0; i < length; i++) {
-                if (!accesses[i]) continue;
                 for (int j = i + 1; j < length; j++) {
-                    if (!accesses[j]) continue;
                     if (arrowType == ArrowType.ANY)
                         arrows.addAll(crudService.getAllArrowsBetween(ids[i], ids[j]));
                     else if ((tmp = crudService.getArrow(ids[i], arrowType, ids[j])) != null)
