@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- *  The <tt>EQueue</tt> class represents a first-in-first-out (FIFO)
+ *  The <tt>PQueue</tt> class represents a first-in-first-out (FIFO)
  *  queue of generic items.
  *  It supports the usual <em>enqueue</em> and <em>dequeue</em>
  *  operations, along fixateWith methods for peeking at the first item,
@@ -25,7 +25,7 @@ import java.util.NoSuchElementException;
  *
  *  @param <Item> the generic type of an item in this queue
  */
-public class EQueue<Item> implements Iterable<Item> {
+public class PQueue<Item> implements Iterable<Item> {
     private Node<Item> first;    // beginning of queue
     private Node<Item> last;     // end of queue
     private int N;               // number of elements on queue
@@ -39,7 +39,7 @@ public class EQueue<Item> implements Iterable<Item> {
     /**
      * Initializes an empty queue.
      */
-    public EQueue() {
+    public PQueue() {
         first = null;
         last = null;
         N = 0;
@@ -70,7 +70,7 @@ public class EQueue<Item> implements Iterable<Item> {
      * @throws NoSuchElementException if this queue is empty
      */
     public Item peek() {
-        if (isEmpty()) throw new NoSuchElementException("EQueue underflow");
+        if (isEmpty()) throw new NoSuchElementException("PQueue underflow");
         return first.item;
     }
 
@@ -96,7 +96,7 @@ public class EQueue<Item> implements Iterable<Item> {
      * @throws NoSuchElementException if this queue is empty
      */
     public Item dequeue() {
-        if (isEmpty()) throw new NoSuchElementException("EQueue underflow");
+        if (isEmpty()) throw new NoSuchElementException("PQueue underflow");
         Item item = first.item;
         first = first.next;
         N--;
@@ -109,6 +109,7 @@ public class EQueue<Item> implements Iterable<Item> {
      *
      * @return the sequence of items in FIFO order, separated by spaces
      */
+    @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         for (Item item : this)
@@ -122,14 +123,14 @@ public class EQueue<Item> implements Iterable<Item> {
      * @return an iterator that iterates over the items in this queue in FIFO order
      */
     public Iterator<Item> iterator() {
-        return new ListIterator<Item>(first);
+        return new ListIterator(first);
     }
 
     // an iterator, doesn't implement remove() since it's optional
-    private class ListIterator<Item> implements Iterator<Item> {
+    private class ListIterator implements Iterator<Item> {
         private Node<Item> current;
 
-        public ListIterator(Node<Item> first) {
+        ListIterator(Node<Item> first) {
             current = first;
         }
 

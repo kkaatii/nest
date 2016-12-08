@@ -3,9 +3,10 @@ package photon.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import photon.tube.model.*;
-import photon.tube.service.CrudService;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tube")
@@ -53,7 +54,7 @@ public class CrudApiController {
 
     @RequestMapping("/point-get-frame")
     public List<Point> getFrame(@RequestParam String frame) {
-        return cs.getAllFromFrame(frame);
+        return cs.getAllPointsFromFrame(frame);
     }
 
     @RequestMapping("/pointmap-get-owner")
@@ -82,8 +83,8 @@ public class CrudApiController {
     }
 
     @RequestMapping(value = "/arrow-create", method = RequestMethod.POST)
-    public void createArrow(@RequestParam Integer[] aid, @RequestParam ArrowType at) {
-        cs.putArrow(new Arrow(aid[0], at, aid[1]));
+    public void createArrow(@RequestParam Integer[] nid, @RequestParam ArrowType at) {
+        cs.putArrow(new Arrow(nid[0], at, nid[1]));
     }
 
     @RequestMapping("/arrows-between")

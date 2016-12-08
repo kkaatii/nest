@@ -1,6 +1,9 @@
-package photon.tube.model;
+package photon.tube.model.mybatis;
 
 import org.apache.ibatis.annotations.Param;
+import photon.tube.model.Arrow;
+import photon.tube.model.ArrowType;
+import photon.tube.model.FrameArrow;
 
 import java.util.List;
 import java.util.Set;
@@ -31,4 +34,6 @@ public interface ArrowMapper {
     void reactivateByNode(Integer id);
 
     void deactivateByNode(Integer id);
+
+    int updateTargetFrame(@Param("target") Integer target, @Param("frame") String frame);
 }

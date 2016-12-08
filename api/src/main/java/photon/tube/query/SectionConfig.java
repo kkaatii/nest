@@ -18,8 +18,10 @@ public class SectionConfig {
         this.leftInclusive = leftInclusive;
         this.rightInclusive = rightInclusive;
     }
-    
+
     public GraphContainer applyOn(GraphContainer container) {
+        if (container.isEmpty())
+            return container;
         switch (sectionMode) {
             case DO_NOT_SECTION:
                 return container;

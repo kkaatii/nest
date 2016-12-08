@@ -1,9 +1,9 @@
-package photon.tube.service;
+package photon.tube.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import photon.tube.model.Owner;
-import photon.tube.model.OwnerAndFrameMapper;
+import photon.tube.model.mybatis.OwnerAndFrameMapper;
 
 @Service
 public class DefaultAuthService implements AuthService {

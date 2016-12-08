@@ -1,15 +1,13 @@
-package photon.tube.query;
-
-import photon.util.Sort;
+package photon.util;
 
 import java.util.*;
 import java.util.stream.IntStream;
 
 /**
- * A container class fixateWith a <tt>depth</tt> assigned to each entry inside. The key method is <tt>organize</tt>, which can
- * rank all _entries according to their _depths thus allowing pagination. <p>
+ * A container class of a <tt>depth</tt> assigned to each entry inside. The key method is <tt>sort</tt>, which can
+ * sort all entries by their depths thus allows pagination. <p>
  */
-abstract class AbstractDepthSequencer<T> {
+public abstract class AbstractDepthSorter<T> {
 
     public static final int INIT_DEPTH = 0;
     protected final List<T> _entries = new ArrayList<>();
@@ -22,7 +20,7 @@ abstract class AbstractDepthSequencer<T> {
     protected int[] rankToIndex;
     protected int[] indexToRank;
     protected int[] rankToDepth;
-    protected boolean organized = false;
+    protected boolean sorted = false;
     protected int currentIndex = 0;
 
     public void setCurrentDepth(int depth) {
@@ -36,7 +34,10 @@ abstract class AbstractDepthSequencer<T> {
     public int minDepth() {
         return minDepth;
     }
-    public int maxDepth() { return maxDepth; }
+
+    public int maxDepth() {
+        return maxDepth;
+    }
 
     private void register(T entry, int depth) {
         if (depth < minDepth)
@@ -50,7 +51,7 @@ abstract class AbstractDepthSequencer<T> {
 
     public void add(T entry) {
 
-        organized = false;
+        sorted = false;
         register(entry, currentDepth);
     }
 
@@ -65,7 +66,7 @@ abstract class AbstractDepthSequencer<T> {
     }
 
     public void addAll(Collection<T> newEntries) {
-        organized = false;
+        sorted = false;
         for (T newEntry : newEntries) {
             register(newEntry, currentDepth);
         }
@@ -101,12 +102,12 @@ abstract class AbstractDepthSequencer<T> {
         return rankToDepth[r];
     }
 
-    public AbstractDepthSequencer<T> organize() {
-        if (organized)
+    public AbstractDepthSorter<T> sort() {
+        if (sorted)
             return this;
 
         if (currentIndex == 0) {
-            organized = true;
+            sorted = true;
             minDepth = INIT_DEPTH;
             maxDepth = INIT_DEPTH;
             return this;
@@ -121,11 +122,11 @@ abstract class AbstractDepthSequencer<T> {
             Sort.qsortInt2(rankToIndex.clone(), indexToRank, 0, currentIndex - 1);
         }
 
-        organized = true;
+        sorted = true;
         return this;
     }
 
-    public abstract AbstractDepthSequencer<T> sectionByRank(int smaller, int larger);
+    public abstract AbstractDepthSorter<T> sectionByRank(int smaller, int larger);
 
-    public abstract AbstractDepthSequencer<T> sectionByDepth(int smaller, int larger);
+    public abstract AbstractDepthSorter<T> sectionByDepth(int smaller, int larger);
 }

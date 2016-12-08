@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import photon.mfw.model.Panel;
 import photon.mfw.model.Catalog;
-import photon.util.EQueue;
+import photon.util.PQueue;
 
 import java.util.*;
 
@@ -12,8 +12,8 @@ import java.util.*;
 public class MixedGalleryService implements GalleryService {
 
     private CrudService mfwCrud;
-    private final Map<Integer, EQueue<Catalog>> displayQueues;
-    private Map<Integer, EQueue<Catalog>> cacheQueues;
+    private final Map<Integer, PQueue<Catalog>> displayQueues;
+    private Map<Integer, PQueue<Catalog>> cacheQueues;
 
     private static final int DEFAULT_BUFFER_SIZE = 128;
     private static final int DEFAULT_VIEW_THRESHOLD = 32;
@@ -30,11 +30,11 @@ public class MixedGalleryService implements GalleryService {
         _init(userId);
     }
 
-    private EQueue<Catalog> _init(Integer userId) {
+    private PQueue<Catalog> _init(Integer userId) {
         synchronized (displayQueues) {
-            EQueue<Catalog> dq = displayQueues.get(userId);
+            PQueue<Catalog> dq = displayQueues.get(userId);
             if (dq != null && !dq.isEmpty()) return dq;
-            EQueue<Catalog> cache = cacheQueues.get(userId);
+            PQueue<Catalog> cache = cacheQueues.get(userId);
             if (cache == null) cache = preload(userId);
             displayQueues.put(userId, cache);
             new Thread(() -> cacheQueues.put(userId, preload(userId))).start();
@@ -45,7 +45,7 @@ public class MixedGalleryService implements GalleryService {
     @Override
     public Panel[] nextBatch(Integer userId, int batchSize) {
         Set<Integer> articleIdSet = new HashSet<>();
-        EQueue<Catalog> dq = displayQueues.get(userId);
+        PQueue<Catalog> dq = displayQueues.get(userId);
         if (dq == null) dq = _init(userId);
         while (articleIdSet.size() < batchSize) {
             if (dq.isEmpty()) dq = _init(userId);
@@ -59,10 +59,10 @@ public class MixedGalleryService implements GalleryService {
         return new Panel[0];
     }
 
-    private EQueue<Catalog> preload(Integer userId) {
+    private PQueue<Catalog> preload(Integer userId) {
         List<Catalog> c = mfwCrud.randomBuffer(userId, DEFAULT_BUFFER_SIZE, DEFAULT_VIEW_THRESHOLD);
         if (c == null) throw new RuntimeException("Failed to preload!");
-        EQueue<Catalog> queue = new EQueue<>();
+        PQueue<Catalog> queue = new PQueue<>();
         c.forEach(queue::enqueue);
         return queue;
     }

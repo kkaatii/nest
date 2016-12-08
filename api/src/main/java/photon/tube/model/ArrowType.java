@@ -7,7 +7,7 @@ public enum ArrowType {
     KEYWORD_OF, HAVING_KEYWORD,
     TYPE, DEPENDED_BY,
 
-    ANY, PAIRED, ;
+    ANY, PAIRED,;
 
     public ArrowType reverse() {
         int ord = ordinal();
@@ -31,5 +31,9 @@ public enum ArrowType {
             default:
                 return super.toString().toLowerCase();
         }
+    }
+
+    public boolean isType(ArrowType at) {
+        return this.equals(ANY) || at.equals(ANY) || this.equals(at);
     }
 }

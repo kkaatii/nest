@@ -1,4 +1,4 @@
-package photon.tube.service;
+package photon.tube.model.mybatis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,11 @@ public class MybatisCrudService implements CrudService {
     public Node updateNode(Node n) {
         n.doDigest();
         try {
-            nodeMapper.update(n);
+            String prevFrame = nodeMapper.selectOne(n.getId()).getFrame();
+            int c = nodeMapper.update(n);
+            if (c > 0 && !prevFrame.equals(n.getFrame())) {
+                arrowMapper.updateTargetFrame(n.getId(), n.getFrame());
+            }
             return n;
         } catch (Exception e) {
             return null;
@@ -70,11 +74,13 @@ public class MybatisCrudService implements CrudService {
 
     @Override
     public void activateNode(Integer id, boolean toBeActive) {
-        nodeMapper.setActive(id, toBeActive);
-        if (toBeActive) {
-            arrowMapper.reactivateByNode(id);
-        } else {
-            arrowMapper.deactivateByNode(id);
+        int c = nodeMapper.setActive(id, toBeActive);
+        if (c > 0) {
+            if (toBeActive) {
+                arrowMapper.reactivateByNode(id);
+            } else {
+                arrowMapper.deactivateByNode(id);
+            }
         }
     }
 
@@ -94,7 +100,7 @@ public class MybatisCrudService implements CrudService {
         List<FrameArrow> candidates = arrowMapper.selectBetween(origin, target);
         if (candidates != null) {
             for (Arrow arrow : candidates) {
-                if (arrow.getType().equals(at)) return arrow;
+                if (arrow.getType().isType(at)) return arrow;
             }
         }
         return null;
@@ -102,7 +108,7 @@ public class MybatisCrudService implements CrudService {
 
     @Override
     public List<FrameArrow> getAllArrowsStartingFrom(Integer origin, ArrowType at) {
-        return arrowMapper.selectByOrigin(origin).stream().filter(arrow -> arrow.getType().equals(at)).collect(Collectors.toList());
+        return arrowMapper.selectByOrigin(origin).stream().filter(arrow -> arrow.getType().isType(at)).collect(Collectors.toList());
     }
 
     @Override
@@ -112,7 +118,7 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<Point> getAllFromFrame(String f) {
+    public List<Point> getAllPointsFromFrame(String f) {
         return nodeMapper.preselectFromFrame(f);
     }
 

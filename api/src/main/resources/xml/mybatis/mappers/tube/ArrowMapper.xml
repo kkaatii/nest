@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="photon.tube.model.ArrowMapper">
+<mapper namespace="photon.tube.model.mybatis.ArrowMapper">
 
     <resultMap type="framearrow" id="framearrowRM">
         <id property="id" column="id"/>
@@ -99,6 +99,12 @@
                         FROM tube.node n
                         WHERE (a.origin = #{id} AND n.id = a.target) OR (a.target = #{id} AND n.id = a.origin))
         WHERE a.origin = #{id} OR a.target = #{id}
+    </update>
+
+    <update id="updateTargetFrame">
+        UPDATE tube.arrow
+        SET target_frame = #{frame}
+        WHERE target = #{target}
     </update>
 
 </mapper>

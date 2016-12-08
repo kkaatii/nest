@@ -3,9 +3,9 @@ package photon.tube.query.processor;
 
 import photon.tube.model.*;
 import photon.tube.query.GraphContainer;
-import photon.tube.service.CrudService;
-import photon.tube.service.AuthService;
-import photon.util.EQueue;
+import photon.tube.model.CrudService;
+import photon.tube.auth.AuthService;
+import photon.util.PQueue;
 
 import java.util.*;
 
@@ -23,21 +23,25 @@ public class ChainProcessor extends Processor {
             Integer[] origins = (Integer[]) args[0];
             ArrowType at = (ArrowType) args[1];
 
-            EQueue<Integer> queue = new EQueue<>();
+            PQueue<Integer> queue = new PQueue<>();
             Set<Arrow> arrowSet = new HashSet<>();
             Map<Integer, Integer> nodeIdToDepth = new HashMap<>();
             for (Integer origin : origins) {
                 nodeIdToDepth.put(origin, INIT_DEPTH);
                 queue.enqueue(origin);
             }
+
+            int newOrigin, originDepth, candidate;
+            Integer candidateDepth;
+            List<FrameArrow> arrows;
             while (!queue.isEmpty()) {
-                int newOrigin = queue.dequeue();
-                int originDepth = nodeIdToDepth.get(newOrigin);
-                List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(newOrigin, at);
+                newOrigin = queue.dequeue();
+                originDepth = nodeIdToDepth.get(newOrigin);
+                arrows = crudService.getAllArrowsStartingFrom(newOrigin, at);
                 for (FrameArrow a : arrows) {
                     if (!authService.authorizedRead(owner, a.getTargetFrame())) continue;
-                    int candidate = a.getTarget();
-                    Integer candidateDepth = nodeIdToDepth.get(candidate);
+                    candidate = a.getTarget();
+                    candidateDepth = nodeIdToDepth.get(candidate);
                     if (candidateDepth == null) {
                         nodeIdToDepth.put(candidate, originDepth + 1);
                         queue.enqueue(candidate);
@@ -50,7 +54,7 @@ public class ChainProcessor extends Processor {
             Map<Integer, Point> pointMap = crudService.getPointMap(nodeIdToDepth.keySet());
             pointMap.forEach((id, point) -> gc.add(point, nodeIdToDepth.get(id)));
             gc.addArrow(arrowSet);
-            return gc.organize();
+            return gc.sort();
 
         } catch (ClassCastException e) {
             throw new QueryArgumentClassMismatchException();

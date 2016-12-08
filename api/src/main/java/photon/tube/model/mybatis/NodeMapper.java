@@ -1,7 +1,9 @@
-package photon.tube.model;
+package photon.tube.model.mybatis;
 
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
+import photon.tube.model.Node;
+import photon.tube.model.Point;
 
 import java.util.List;
 import java.util.Map;
@@ -20,11 +22,11 @@ public interface NodeMapper {
 
     void insert(Node node);
 
-    void update(Node node);
+    int update(Node node);
 
     void delete(Integer id);
 
-    void setActive(@Param("id") Integer id, @Param("active") boolean active);
+    int setActive(@Param("id") Integer id, @Param("active") boolean active);
 
     List<Point> preselectInactive();
 

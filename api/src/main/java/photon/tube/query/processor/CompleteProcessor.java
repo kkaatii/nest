@@ -2,10 +2,10 @@ package photon.tube.query.processor;
 
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
+import photon.tube.model.CrudService;
 import photon.tube.model.Owner;
 import photon.tube.query.GraphContainer;
-import photon.tube.service.CrudService;
-import photon.tube.service.AuthService;
+import photon.tube.auth.AuthService;
 
 import java.util.ArrayList;
 import java.util.List;

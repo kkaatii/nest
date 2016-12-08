@@ -2,6 +2,7 @@ package photon.tube.query;
 
 import photon.tube.model.Arrow;
 import photon.tube.model.Point;
+import photon.util.AbstractDepthSorter;
 import photon.util.Util;
 
 import java.util.*;
@@ -16,7 +17,7 @@ import java.util.stream.IntStream;
  * + Containing all essential elements: <tt>Point</tt>s, <tt>Arrow</tt>s and <tt>Extension</tt>s <p>
  * + Pagination of itself by the depth of each <tt>Point</tt>
  */
-public class GraphContainer extends AbstractDepthSequencer<Point> {
+public class GraphContainer extends AbstractDepthSorter<Point> {
 
     private final List<Arrow> _arrows;
     private final List<Arrow> arrows;
@@ -64,26 +65,30 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
     }
 
     public void addArrow(Arrow arrow) {
-        organized = false;
+        sorted = false;
         _arrows.add(arrow);
     }
 
     public void addArrow(Collection<Arrow> arrows) {
-        organized = false;
+        sorted = false;
         this._arrows.addAll(arrows);
+    }
+
+    public boolean isEmpty() {
+        return size() == 0 && _arrows.isEmpty();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public GraphContainer organize() {
-        if (organized)
+    public GraphContainer sort() {
+        if (sorted)
             return this;
-        super.organize();
-        organized = false;
+        super.sort();
+        sorted = false;
 
-        // In case there are only points or _arrows, just pretend to be organized.
+        // In case there are only points or _arrows, just pretend to be sorted.
         if (currentIndex == 0 || _arrows.isEmpty()) {
-            organized = true;
+            sorted = true;
             return this;
         }
 
@@ -110,7 +115,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
             depthToArrowIndexes.get(rankToDepth[originRank]).add(ai);
         }
 
-        organized = true;
+        sorted = true;
         return this;
     }
 
@@ -120,11 +125,11 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
     }
 
     public GraphContainer sectionByRank(int left, int right, boolean leftInclusive, boolean rightInclusive) {
-        if (!organized)
-            organize();
+        if (!sorted)
+            sort();
         if (right > 0 && left > right)
             return emptyContainer();
-        // In case there of no point but arrows, return all arrows if leftLimit is 0
+        // In case there is no point but arrows, return all arrows if leftLimit is 0
         if (size() == 0)
             return (left == 0) ? this : emptyContainer();
         right = (right >= size()) ? size() - 1 : right;
@@ -149,7 +154,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
             toIncludeArrows.accept(r);
         }
 
-        result.organized = true;
+        result.sorted = true;
 
         return result;
     }
@@ -160,8 +165,8 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
     }
 
     public GraphContainer sectionByDepth(int left, int right, boolean leftInclusive, boolean rightInclusive) {
-        if (!organized)
-            organize();
+        if (!sorted)
+            sort();
         if (right > 0 && left > right)
             return emptyContainer();
         if (size() == 0)
@@ -190,7 +195,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
                 };
 
         depthToIndexes.forEach(toInclude);
-        result.organized = true;
+        result.sorted = true;
 
         return result;
     }
@@ -200,9 +205,9 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
     }
 
     public GraphInfo info() {
-        if (!organized || info == null) {
-            if (!organized)
-                organize();
+        if (!sorted || info == null) {
+            if (!sorted)
+                sort();
             if (info == null)
                 info = new GraphInfo();
             info.minDepth = minDepth;
@@ -220,7 +225,7 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
         SectionContainer(final List<Point> points,
                          final List<Arrow> arrows) {
             super(points, arrows);
-            organized = true;
+            sorted = true;
         }
 
         private static class ImmutableException extends UnsupportedOperationException {
@@ -229,35 +234,35 @@ public class GraphContainer extends AbstractDepthSequencer<Point> {
             }
         }
 
-        private static class NotOrganizableException extends UnsupportedOperationException {
-            NotOrganizableException() {
-                super("Cannot organize/section a section container!");
+        private static class NotSortableException extends UnsupportedOperationException {
+            NotSortableException() {
+                super("Cannot sort/section a section container!");
             }
         }
 
         @Override
-        public GraphContainer organize() {
-            throw new NotOrganizableException();
+        public GraphContainer sort() {
+            throw new NotSortableException();
         }
 
         @Override
         public GraphContainer sectionByRank(int left, int right) {
-            throw new NotOrganizableException();
+            throw new NotSortableException();
         }
 
         @Override
         public GraphContainer sectionByDepth(int left, int right) {
-            throw new NotOrganizableException();
+            throw new NotSortableException();
         }
 
         @Override
         public GraphContainer sectionByRank(int left, int right, boolean leftInclusive, boolean rightInclusive) {
-            throw new NotOrganizableException();
+            throw new NotSortableException();
         }
 
         @Override
         public GraphContainer sectionByDepth(int left, int right, boolean leftInclusive, boolean rightInclusive) {
-            throw new NotOrganizableException();
+            throw new NotSortableException();
         }
 
         @Override

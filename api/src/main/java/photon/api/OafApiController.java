@@ -1,10 +1,13 @@
 package photon.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import photon.tube.model.Owner;
-import photon.tube.model.OwnerAndFrameMapper;
-import photon.tube.service.AuthService;
+import photon.tube.model.mybatis.OwnerAndFrameMapper;
+import photon.tube.auth.AuthService;
 
 import java.util.List;
 

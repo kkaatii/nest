@@ -1,10 +1,9 @@
 package photon.tube.query.processor;
 
-
+import photon.tube.model.CrudService;
 import photon.tube.model.Owner;
 import photon.tube.query.GraphContainer;
-import photon.tube.service.AuthService;
-import photon.tube.service.CrudService;
+import photon.tube.auth.AuthService;
 
 public abstract class Processor {
 
@@ -17,4 +16,5 @@ public abstract class Processor {
     }
 
     public abstract GraphContainer process(Owner owner, Object... args) throws QueryArgumentClassMismatchException;
+
 }

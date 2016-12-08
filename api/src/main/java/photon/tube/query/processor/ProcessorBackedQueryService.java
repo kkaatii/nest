@@ -1,11 +1,11 @@
-package photon.tube.service;
+package photon.tube.query.processor;
 
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photon.tube.auth.AuthService;
+import photon.tube.model.CrudService;
 import photon.tube.query.*;
-import photon.tube.query.processor.Processor;
-import photon.tube.query.processor.ProcessorNotFoundException;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class ProcessorBackedQueryService implements QueryService {
         this.authService = authService;
     }
 
-    private QueryResult getResult(QueryContext context) {
+    private QueryResult processContext(QueryContext context) {
         try {
             GraphContainer gc = gcStore.computeIfAbsent(context,
                     k -> findProcessor(context.type).process(context.owner, context.args));
@@ -66,7 +66,7 @@ public class ProcessorBackedQueryService implements QueryService {
         return new Query(context) {
             @Override
             public QueryResult result() {
-                return getResult(context);
+                return processContext(context);
             }
         };
     }

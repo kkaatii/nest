@@ -14,7 +14,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-@MapperScan({"photon.mfw.model", "photon.tube.model"})
+@MapperScan({"photon.mfw.model", "photon.tube.model.mybatis"})
 public class BeanConfig {
 
     @Bean

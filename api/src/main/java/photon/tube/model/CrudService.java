@@ -1,9 +1,5 @@
-package photon.tube.service;
+package photon.tube.model;
 
-import photon.tube.model.*;
-import photon.tube.model.Point;
-
-import java.awt.*;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +42,10 @@ public interface CrudService {
     // Erase the arrow between two nodes
     void deleteArrow(Arrow a);
 
-    List<Point> getAllFromFrame(String f);
+    List<Point> getAllPointsFromFrame(String f);
 
     Map<Integer, Point> getPointMapOwnedBy(Integer oid);
 
     List<Point> getPointsOwnedBy(Integer oid);
+
 }
