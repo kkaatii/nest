@@ -57,6 +57,8 @@ public class PatternProcessor extends Processor {
                 }
             }
             for (Integer origin : origins) {
+                // If any of the queried origins is not readable then it must be an illegal query request and an
+                // exception is thrown
                 if (!authService.authorizedRead(owner, crudService.getNodeFrame(origin)))
                     throw new UnauthorizedActionException();
                 testingSet.add(origin);
@@ -108,25 +110,28 @@ public class PatternProcessor extends Processor {
     }
 
     private static class PatternSequence {
-        static final int ONE_OR_MORE = -1;
-        static final int ZERO_OR_MORE = -2;
-        static final int ZERO_OR_ONE = -3;
+        static final int ONE_OR_MORE_TIMES = -1;
+        static final int ZERO_OR_MORE_TIMES = -2;
+        static final int ZERO_OR_ONE_TIME = -3;
 
         private final List<ArrowType> atList = new ArrayList<>();
         private final List<Integer> rawTimesList = new ArrayList<>();
         private int count = 0;
 
         void append(String atName, String timeString) {
-            atList.add(ArrowType.valueOf(atName));
+            if (atName.startsWith("^"))
+                atList.add(ArrowType.valueOf(atName.substring(1)).reverse());
+            else
+                atList.add(ArrowType.valueOf(atName));
             switch (timeString) {
                 case "*":
-                    rawTimesList.add(ZERO_OR_MORE);
+                    rawTimesList.add(ZERO_OR_MORE_TIMES);
                     break;
-                case "+":
-                    rawTimesList.add(ONE_OR_MORE);
+                case "!":
+                    rawTimesList.add(ONE_OR_MORE_TIMES);
                     break;
                 case "?":
-                    rawTimesList.add(ZERO_OR_ONE);
+                    rawTimesList.add(ZERO_OR_ONE_TIME);
                     break;
                 default:
                     rawTimesList.add(Integer.valueOf(timeString));
@@ -142,18 +147,19 @@ public class PatternProcessor extends Processor {
             return atList.get(sPos.index);
         }
 
+        // Returns true if the next sPos is already at the end of the sequence
+        // or when the tested predicate is true
         boolean next(SequencePosition sPos, BiPredicate<ArrowType, SequencePosition> func) {
             boolean tested = false;
             if (sPos.times >= 2) {
-                tested = func.test(getArrowType(sPos), new SequencePosition(sPos.index, sPos.times - 1));
-                return tested;
+                return func.test(getArrowType(sPos), new SequencePosition(sPos.index, sPos.times - 1));
             } else {
                 if (isMany(sPos.index)) {
                     tested = func.test(getArrowType(sPos), new SequencePosition(sPos.index, 1));
                 }
                 int i = sPos.index + 1;
                 if (i < count) {
-                    tested = tested || func.test(getArrowType(i), new SequencePosition(i, getTimes(i)));
+                    tested |= func.test(getArrowType(i), new SequencePosition(i, getTimes(i)));
                     return tested || goThroughOptional(i, func);
                 }
                 return true;
@@ -171,7 +177,7 @@ public class PatternProcessor extends Processor {
             boolean tested = false;
             while (optional && ++index < count) {
                 rawTimes = rawTimesList.get(index);
-                tested = tested || func.test(getArrowType(index), new SequencePosition(index, rawTimes > 0 ? rawTimes : 1));
+                tested |= func.test(getArrowType(index), new SequencePosition(index, rawTimes > 0 ? rawTimes : 1));
                 optional = isOptionalRawTimes(rawTimes);
             }
             return (optional && index == count) || tested;
@@ -191,12 +197,12 @@ public class PatternProcessor extends Processor {
         }
 
         boolean isOptionalRawTimes(int rawTimes) {
-            return (ZERO_OR_MORE == rawTimes) || (ZERO_OR_ONE == rawTimes);
+            return (ZERO_OR_MORE_TIMES == rawTimes) || (ZERO_OR_ONE_TIME == rawTimes);
         }
 
         boolean isMany(int index) {
             int rawTimes = rawTimesList.get(index);
-            return (ONE_OR_MORE == rawTimes) || (ZERO_OR_MORE == rawTimes);
+            return (ONE_OR_MORE_TIMES == rawTimes) || (ZERO_OR_MORE_TIMES == rawTimes);
         }
 
     }
