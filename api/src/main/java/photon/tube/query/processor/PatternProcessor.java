@@ -107,10 +107,10 @@ public class PatternProcessor extends Processor {
     }
 
     private static class PatternSequence {
-        private final int MAX_TIMES = Integer.MAX_VALUE - 1;
+        private final int MAX_TIMES = -1;
 
         private final List<ArrowType> atList = new ArrayList<>();
-        private final List<TimesOptions> timesOptionsList = new ArrayList<>();
+        private final List<int[]> timesOptionsList = new ArrayList<>();
         private int length = 0;
 
         void append(String atName, String timeString) {
@@ -119,18 +119,19 @@ public class PatternProcessor extends Processor {
                 at = ArrowType.valueOf(atName.substring(1)).reverse();
             else
                 at = ArrowType.valueOf(atName);
-            String[] options = timeString.split(",");
-            for (String optionStr : options) {
+            String[] options = timeString.split("\\|");
+            if (options.length == 1) {
+                String optionStr = options[0];
                 String[] segments = optionStr.split("-");
                 if (segments.length > 1) {
                     int min = Integer.valueOf(segments[0]), max = Integer.valueOf(segments[1]);
                     for (int i = min; i < max; i++) {
-                        timesOptionsList.add(new TimesOptions(0, 1));
+                        timesOptionsList.add(new int[]{0, 1});
                         atList.add(at);
                         length++;
                     }
                     if (min > 0) {
-                        timesOptionsList.add(new TimesOptions(min));
+                        timesOptionsList.add(new int[]{min});
                         atList.add(at);
                         length++;
                     }
@@ -140,19 +141,23 @@ public class PatternProcessor extends Processor {
                                 ? 0
                                 : Integer.valueOf(segments[0].substring(0, segments[0].length() - 1));
                         if (times > 0) {
-                            timesOptionsList.add(new TimesOptions(times));
+                            timesOptionsList.add(new int[]{times});
                             atList.add(at);
                             length++;
                         }
-                        timesOptionsList.add(new TimesOptions(0, MAX_TIMES));
+                        timesOptionsList.add(new int[]{0, MAX_TIMES});
                         atList.add(at);
                         length++;
                     } else {
-                        timesOptionsList.add(new TimesOptions(Integer.valueOf(segments[0])));
+                        timesOptionsList.add(new int[]{Integer.valueOf(segments[0])});
                         atList.add(at);
                         length++;
                     }
                 }
+            } else {
+                timesOptionsList.add(Arrays.stream(options).mapToInt(Integer::valueOf).toArray());
+                atList.add(at);
+                length++;
             }
 
         }
@@ -168,73 +173,60 @@ public class PatternProcessor extends Processor {
         // Returns true if the next sPos is already at the end of the sequence
         // or when the tested predicate is true
         boolean next(SequencePosition sPos, BiPredicate<ArrowType, SequencePosition> func) {
-            TimesOptions timesOptions;
-            if (sPos.times >= 2) {
-                return func.test(getArrowType(sPos), new SequencePosition(sPos.index, sPos.times - 1));
+            int[] timesOptions;
+            boolean matched = false;
+            if (--sPos.times >= 1) {
+                return func.test(getArrowType(sPos), sPos);
             } else {
+                if (sPos.isMany) {
+                    matched = func.test(getArrowType(sPos), new SequencePosition(sPos.index, 1, true));
+                }
                 int i = ++sPos.index;
                 if (i < length) {
                     timesOptions = timesOptionsList.get(i);
-                    if (timesOptions.isDefinite()) {
-                        sPos.times = timesOptions.options[0];
-                        return func.test(getArrowType(i), sPos);
-                    } else return Arrays.stream(timesOptions.options).anyMatch(times -> times > 0
-                            ? func.test(getArrowType(i), new SequencePosition(i, times))
-                            : goThroughOptional(i, func));
+                    for (int times : timesOptions) {
+                        if (times == 0) matched |= goThroughOptional(i, func);
+                        else if (times > 0)
+                            matched |= func.test(getArrowType(i), new SequencePosition(i, times, false));
+                        else matched |= func.test(getArrowType(i), new SequencePosition(i, 1, true));
+                    }
+                    return matched;
                 }
                 return true;
             }
         }
 
         boolean first(BiPredicate<ArrowType, SequencePosition> func) {
-            TimesOptions timesOptions = timesOptionsList.get(0);
-            if (timesOptions.isDefinite()) {
-                return func.test(getArrowType(0), new SequencePosition(0, timesOptions.options[0]));
-            } else return Arrays.stream(timesOptions.options).anyMatch(times -> times > 0
-                    ? func.test(getArrowType(0), new SequencePosition(0, times))
-                    : goThroughOptional(0, func));
+            return next(new SequencePosition(-1, 0, false), func);
         }
 
         boolean goThroughOptional(int index, BiPredicate<ArrowType, SequencePosition> func) {
-            boolean optional = true, tested = false;
-            TimesOptions timesOptions;
+            boolean optional = true, matched = false;
+            int[] timesOptions;
             while (optional && ++index < length) {
                 timesOptions = timesOptionsList.get(index);
-                if (timesOptions.isDefinite()) {
-                    tested |= func.test(getArrowType(index), new SequencePosition(index, timesOptions.options[0]));
-                    break;
-                } else {
-                    boolean anyOptional = false;
-                    for (int times : timesOptions.options) {
-                        if (times == 0) anyOptional = true;
-                        else tested |= func.test(getArrowType(index), new SequencePosition(index, times));
-                    }
-                    optional = anyOptional;
+                boolean anyOptional = false;
+                for (int times : timesOptions) {
+                    if (times == 0) anyOptional = true;
+                    else if (times > 0)
+                        matched |= func.test(getArrowType(index), new SequencePosition(index, times, false));
+                    else matched |= func.test(getArrowType(index), new SequencePosition(index, 1, true));
                 }
+                optional = anyOptional;
             }
-            return tested || (optional && index == length);
-        }
-    }
-
-    private static class TimesOptions {
-        final int[] options;
-
-        TimesOptions(int... options) {
-            this.options = options;
-        }
-
-        boolean isDefinite() {
-            return options.length == 1;
+            return matched || (optional && index == length);
         }
     }
 
     private static class SequencePosition {
         int index;
         int times;
+        boolean isMany;
 
-        SequencePosition(int index, int times) {
+        SequencePosition(int index, int times, boolean isMany) {
             this.index = index;
             this.times = times;
+            this.isMany = isMany;
         }
     }
 }

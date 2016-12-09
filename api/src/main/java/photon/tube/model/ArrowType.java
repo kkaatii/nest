@@ -1,21 +1,46 @@
 package photon.tube.model;
 
-// TODO to redesign as a more versatile class
 public enum ArrowType {
-    PARENT_OF, CHILD_OF,
-    TAGGED_BY, TAGGING,
-    KEYWORD_OF, HAVING_KEYWORD,
-    TYPE, DEPENDED_BY,
+    /*------- Be careful when editing this part as the two arrow types within ------*/
+    /*------- each line is deemed automatically as the reverse to one another ------*/
+    //
+    // General arrow types
+    //
+    PARENT_OF       (Group.GENERAL),    CHILD_OF        (Group.GENERAL),
 
-    ANY, PAIRED,;
+    //
+    // Search-related arrow types
+    //
+    KEYWORD_OF      (Group.SEARCH),     WITH_KEYWORD    (Group.SEARCH),
+
+    //
+    // Directory-related arrow types
+    //
+    DIRECTORY_OF    (Group.DIRECTORY),  IN_DIRECTORY    (Group.DIRECTORY),
+    TAGGED_BY       (Group.DIRECTORY),  TAGGING         (Group.DIRECTORY),
+
+    //
+    // Schedule-related arrow types
+    //
+    DEPENDANT_ON    (Group.SCHEDULE),   DEPENDED_BY     (Group.SCHEDULE),
+
+    /*------- End of automatic reverse pairing                                ------*/
+
+    ANY             (Group.GENERAL),    PAIRING         (Group.GENERAL),;
+
+    private Group group;
+
+    ArrowType(Group group) {
+        this.group = group;
+    }
 
     public ArrowType reverse() {
         int ord = ordinal();
         switch (this) {
             case ANY:
                 return ANY;
-            case PAIRED:
-                return PAIRED;
+            case PAIRING:
+                return PAIRING;
             default:
                 return (ord % 2 == 0) ?
                         ArrowType.values()[ord + 1] :
@@ -26,14 +51,22 @@ public enum ArrowType {
     @Override
     public String toString() {
         switch (this) {
-            case PAIRED:
+            case PAIRING:
                 return "~";
             default:
                 return super.toString().toLowerCase();
         }
     }
 
+    public Group group() {
+        return group;
+    }
+
     public boolean isType(ArrowType at) {
         return this.equals(ANY) || at.equals(ANY) || this.equals(at);
+    }
+
+    public enum Group {
+        GENERAL, DIRECTORY, SCHEDULE, SEARCH,
     }
 }
