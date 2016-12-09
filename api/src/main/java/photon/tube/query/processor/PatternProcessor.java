@@ -49,11 +49,11 @@ public class PatternProcessor extends Processor {
             testingSet = new HashSet<>();
             nodeIdToDepth = new HashMap<>();
             patternSequence = new PatternSequence();
-            for (int i = 0; i < seqString.length; i++) {
-                if (i < seqString.length - 1 && seqString[i + 1].matches("\\d*|\\*|\\?|\\+")) {
-                    patternSequence.append(seqString[i++], seqString[i]);
-                } else {
+            for (int i = 0; i < seqString.length - 1; i++) {
+                if (i + 1 == seqString.length || Character.isLetter(seqString[i + 1].charAt(0))) {
                     patternSequence.append(seqString[i], "1");
+                } else {
+                    patternSequence.append(seqString[i++], seqString[i]);
                 }
             }
             for (Integer origin : origins) {
@@ -76,10 +76,7 @@ public class PatternProcessor extends Processor {
         }
     }
 
-    private boolean testMatch(Integer originId,
-                              ArrowType at,
-                              SequencePosition sPos,
-                              int nextDepth) {
+    private boolean testMatch(Integer originId, ArrowType at, SequencePosition sPos, int nextDepth) {
         boolean originMatched = false;
         Integer candidateDepth;
         List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(originId, at);
@@ -110,33 +107,54 @@ public class PatternProcessor extends Processor {
     }
 
     private static class PatternSequence {
-        static final int ONE_OR_MORE_TIMES = -1;
-        static final int ZERO_OR_MORE_TIMES = -2;
-        static final int ZERO_OR_ONE_TIME = -3;
+        private final int MAX_TIMES = Integer.MAX_VALUE - 1;
 
         private final List<ArrowType> atList = new ArrayList<>();
-        private final List<Integer> rawTimesList = new ArrayList<>();
-        private int count = 0;
+        private final List<TimesOptions> timesOptionsList = new ArrayList<>();
+        private int length = 0;
 
         void append(String atName, String timeString) {
+            ArrowType at;
             if (atName.startsWith("^"))
-                atList.add(ArrowType.valueOf(atName.substring(1)).reverse());
+                at = ArrowType.valueOf(atName.substring(1)).reverse();
             else
-                atList.add(ArrowType.valueOf(atName));
-            switch (timeString) {
-                case "*":
-                    rawTimesList.add(ZERO_OR_MORE_TIMES);
-                    break;
-                case "!":
-                    rawTimesList.add(ONE_OR_MORE_TIMES);
-                    break;
-                case "?":
-                    rawTimesList.add(ZERO_OR_ONE_TIME);
-                    break;
-                default:
-                    rawTimesList.add(Integer.valueOf(timeString));
+                at = ArrowType.valueOf(atName);
+            String[] options = timeString.split(",");
+            for (String optionStr : options) {
+                String[] segments = optionStr.split("-");
+                if (segments.length > 1) {
+                    int min = Integer.valueOf(segments[0]), max = Integer.valueOf(segments[1]);
+                    for (int i = min; i < max; i++) {
+                        timesOptionsList.add(new TimesOptions(0, 1));
+                        atList.add(at);
+                        length++;
+                    }
+                    if (min > 0) {
+                        timesOptionsList.add(new TimesOptions(min));
+                        atList.add(at);
+                        length++;
+                    }
+                } else {
+                    if (segments[0].endsWith("*")) {
+                        int times = segments[0].equals("*")
+                                ? 0
+                                : Integer.valueOf(segments[0].substring(0, segments[0].length() - 1));
+                        if (times > 0) {
+                            timesOptionsList.add(new TimesOptions(times));
+                            atList.add(at);
+                            length++;
+                        }
+                        timesOptionsList.add(new TimesOptions(0, MAX_TIMES));
+                        atList.add(at);
+                        length++;
+                    } else {
+                        timesOptionsList.add(new TimesOptions(Integer.valueOf(segments[0])));
+                        atList.add(at);
+                        length++;
+                    }
+                }
             }
-            count++;
+
         }
 
         ArrowType getArrowType(int index) {
@@ -150,61 +168,64 @@ public class PatternProcessor extends Processor {
         // Returns true if the next sPos is already at the end of the sequence
         // or when the tested predicate is true
         boolean next(SequencePosition sPos, BiPredicate<ArrowType, SequencePosition> func) {
-            boolean tested = false;
+            TimesOptions timesOptions;
             if (sPos.times >= 2) {
                 return func.test(getArrowType(sPos), new SequencePosition(sPos.index, sPos.times - 1));
             } else {
-                if (isMany(sPos.index)) {
-                    tested = func.test(getArrowType(sPos), new SequencePosition(sPos.index, 1));
-                }
-                int i = sPos.index + 1;
-                if (i < count) {
-                    tested |= func.test(getArrowType(i), new SequencePosition(i, getTimes(i)));
-                    return tested || goThroughOptional(i, func);
+                int i = ++sPos.index;
+                if (i < length) {
+                    timesOptions = timesOptionsList.get(i);
+                    if (timesOptions.isDefinite()) {
+                        sPos.times = timesOptions.options[0];
+                        return func.test(getArrowType(i), sPos);
+                    } else return Arrays.stream(timesOptions.options).anyMatch(times -> times > 0
+                            ? func.test(getArrowType(i), new SequencePosition(i, times))
+                            : goThroughOptional(i, func));
                 }
                 return true;
             }
         }
 
         boolean first(BiPredicate<ArrowType, SequencePosition> func) {
-            boolean tested = func.test(getArrowType(0), new SequencePosition(0, getTimes(0)));
-            return tested || goThroughOptional(0, func);
+            TimesOptions timesOptions = timesOptionsList.get(0);
+            if (timesOptions.isDefinite()) {
+                return func.test(getArrowType(0), new SequencePosition(0, timesOptions.options[0]));
+            } else return Arrays.stream(timesOptions.options).anyMatch(times -> times > 0
+                    ? func.test(getArrowType(0), new SequencePosition(0, times))
+                    : goThroughOptional(0, func));
         }
 
         boolean goThroughOptional(int index, BiPredicate<ArrowType, SequencePosition> func) {
-            int rawTimes;
-            boolean optional = isOptional(index);
-            boolean tested = false;
-            while (optional && ++index < count) {
-                rawTimes = rawTimesList.get(index);
-                tested |= func.test(getArrowType(index), new SequencePosition(index, rawTimes > 0 ? rawTimes : 1));
-                optional = isOptionalRawTimes(rawTimes);
+            boolean optional = true, tested = false;
+            TimesOptions timesOptions;
+            while (optional && ++index < length) {
+                timesOptions = timesOptionsList.get(index);
+                if (timesOptions.isDefinite()) {
+                    tested |= func.test(getArrowType(index), new SequencePosition(index, timesOptions.options[0]));
+                    break;
+                } else {
+                    boolean anyOptional = false;
+                    for (int times : timesOptions.options) {
+                        if (times == 0) anyOptional = true;
+                        else tested |= func.test(getArrowType(index), new SequencePosition(index, times));
+                    }
+                    optional = anyOptional;
+                }
             }
-            return (optional && index == count) || tested;
+            return tested || (optional && index == length);
+        }
+    }
+
+    private static class TimesOptions {
+        final int[] options;
+
+        TimesOptions(int... options) {
+            this.options = options;
         }
 
-        int getTimes(int index) {
-            int rawTimes = rawTimesList.get(index);
-            return rawTimes > 0 ? rawTimes : 1;
+        boolean isDefinite() {
+            return options.length == 1;
         }
-
-        int getTimes(SequencePosition sPos) {
-            return getTimes(sPos.index);
-        }
-
-        boolean isOptional(int index) {
-            return isOptionalRawTimes(rawTimesList.get(index));
-        }
-
-        boolean isOptionalRawTimes(int rawTimes) {
-            return (ZERO_OR_MORE_TIMES == rawTimes) || (ZERO_OR_ONE_TIME == rawTimes);
-        }
-
-        boolean isMany(int index) {
-            int rawTimes = rawTimesList.get(index);
-            return (ONE_OR_MORE_TIMES == rawTimes) || (ZERO_OR_MORE_TIMES == rawTimes);
-        }
-
     }
 
     private static class SequencePosition {
