@@ -5,6 +5,6 @@ package photon.tube.query;
  */
 public class FailedQueryException extends RuntimeException {
     public FailedQueryException(Throwable cause) {
-        super("Failed query:", cause);
+        super("Failed query: " + cause.getMessage(), cause);
     }
 }

@@ -16,7 +16,7 @@ public enum ArrowType {
     //
     // Directory-related arrow types
     //
-    DIRECTORY_OF    (Group.DIRECTORY),  IN_DIRECTORY    (Group.DIRECTORY),
+    FOLDER_OF       (Group.DIRECTORY),  IN_FOLDER       (Group.DIRECTORY),
     TAGGED_BY       (Group.DIRECTORY),  TAGGING         (Group.DIRECTORY),
 
     //
@@ -26,9 +26,10 @@ public enum ArrowType {
 
     /*------- End of automatic reverse pairing                                ------*/
 
-    ANY             (Group.GENERAL),    PAIRING         (Group.GENERAL),;
+    ANY             (Group.GENERAL),    PAIRING         (Group.GENERAL),
+    ;
 
-    private Group group;
+    private final Group group;
 
     ArrowType(Group group) {
         this.group = group;

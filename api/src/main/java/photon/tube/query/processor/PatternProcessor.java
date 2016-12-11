@@ -7,6 +7,7 @@ import photon.tube.query.GraphContainer;
 
 import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.stream.IntStream;
 
 import static photon.tube.query.GraphContainer.INIT_DEPTH;
 
@@ -24,7 +25,7 @@ public class PatternProcessor extends Processor {
 
     @Override
     public GraphContainer process(Owner owner, Object... args)
-            throws QueryArgumentClassMismatchException, UnauthorizedActionException {
+            throws QueryArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] origins = (Integer[]) args[0];
             String[] seqString = (String[]) args[1];
@@ -72,7 +73,7 @@ public class PatternProcessor extends Processor {
             gc.addArrow(arrowSet);
             return gc.sort();
         } catch (ClassCastException cce) {
-            throw new QueryArgumentClassMismatchException();
+            throw new QueryArgumentClassException();
         }
     }
 
@@ -124,22 +125,15 @@ public class PatternProcessor extends Processor {
                 String optionStr = options[0];
                 String[] segments = optionStr.split("-");
                 if (segments.length > 1) {
-                    int min = Integer.valueOf(segments[0]), max = Integer.valueOf(segments[1]);
-                    for (int i = min; i < max; i++) {
-                        timesOptionsList.add(new int[]{0, 1});
-                        atList.add(at);
-                        length++;
-                    }
-                    if (min > 0) {
-                        timesOptionsList.add(new int[]{min});
-                        atList.add(at);
-                        length++;
-                    }
+                    int min = Integer.parseInt(segments[0]), max = Integer.parseInt(segments[1]);
+                    timesOptionsList.add(IntStream.rangeClosed(min, max).toArray());
+                    atList.add(at);
+                    length++;
                 } else {
                     if (segments[0].endsWith("*")) {
                         int times = segments[0].equals("*")
                                 ? 0
-                                : Integer.valueOf(segments[0].substring(0, segments[0].length() - 1));
+                                : Integer.parseInt(segments[0].substring(0, segments[0].length() - 1));
                         if (times > 0) {
                             timesOptionsList.add(new int[]{times});
                             atList.add(at);
@@ -149,13 +143,13 @@ public class PatternProcessor extends Processor {
                         atList.add(at);
                         length++;
                     } else {
-                        timesOptionsList.add(new int[]{Integer.valueOf(segments[0])});
+                        timesOptionsList.add(new int[]{Integer.parseInt(segments[0])});
                         atList.add(at);
                         length++;
                     }
                 }
             } else {
-                timesOptionsList.add(Arrays.stream(options).mapToInt(Integer::valueOf).toArray());
+                timesOptionsList.add(Arrays.stream(options).mapToInt(Integer::parseInt).toArray());
                 atList.add(at);
                 length++;
             }
@@ -174,23 +168,23 @@ public class PatternProcessor extends Processor {
         // or when the tested predicate is true
         boolean next(SequencePosition sPos, BiPredicate<ArrowType, SequencePosition> func) {
             int[] timesOptions;
-            boolean matched = false;
+            boolean tested = false;
             if (--sPos.times >= 1) {
                 return func.test(getArrowType(sPos), sPos);
             } else {
                 if (sPos.isMany) {
-                    matched = func.test(getArrowType(sPos), new SequencePosition(sPos.index, 1, true));
+                    tested = func.test(getArrowType(sPos), new SequencePosition(sPos.index, 1, true));
                 }
                 int i = ++sPos.index;
                 if (i < length) {
                     timesOptions = timesOptionsList.get(i);
                     for (int times : timesOptions) {
-                        if (times == 0) matched |= goThroughOptional(i, func);
+                        if (times == 0) tested |= goThroughOptional(i, func);
                         else if (times > 0)
-                            matched |= func.test(getArrowType(i), new SequencePosition(i, times, false));
-                        else matched |= func.test(getArrowType(i), new SequencePosition(i, 1, true));
+                            tested |= func.test(getArrowType(i), new SequencePosition(i, times, false));
+                        else tested |= func.test(getArrowType(i), new SequencePosition(i, 1, true));
                     }
-                    return matched;
+                    return tested;
                 }
                 return true;
             }
@@ -201,7 +195,7 @@ public class PatternProcessor extends Processor {
         }
 
         boolean goThroughOptional(int index, BiPredicate<ArrowType, SequencePosition> func) {
-            boolean optional = true, matched = false;
+            boolean optional = true, tested = false;
             int[] timesOptions;
             while (optional && ++index < length) {
                 timesOptions = timesOptionsList.get(index);
@@ -209,12 +203,12 @@ public class PatternProcessor extends Processor {
                 for (int times : timesOptions) {
                     if (times == 0) anyOptional = true;
                     else if (times > 0)
-                        matched |= func.test(getArrowType(index), new SequencePosition(index, times, false));
-                    else matched |= func.test(getArrowType(index), new SequencePosition(index, 1, true));
+                        tested |= func.test(getArrowType(index), new SequencePosition(index, times, false));
+                    else tested |= func.test(getArrowType(index), new SequencePosition(index, 1, true));
                 }
                 optional = anyOptional;
             }
-            return matched || (optional && index == length);
+            return tested || (optional && index == length);
         }
     }
 

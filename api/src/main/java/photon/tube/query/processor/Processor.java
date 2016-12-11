@@ -17,6 +17,6 @@ public abstract class Processor {
     }
 
     public abstract GraphContainer process(Owner owner, Object... args)
-            throws QueryArgumentClassMismatchException, UnauthorizedActionException;
+            throws QueryArgumentClassException, UnauthorizedActionException;
 
 }

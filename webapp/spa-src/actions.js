@@ -1,6 +1,6 @@
 import {batchActions} from 'redux-batched-actions';
 import {Graph, Editor, Context} from './reducers/actionTypes'
-import {MOCK_TARGET, NULL_FRAME, REMOTE_SERVER} from "./constants";
+import {MOCK_TARGET, DEFAULT_FRAME, REMOTE_SERVER} from "./constants";
 import {viewToNodeType} from "./constants";
 
 const TUBE_API_URL = REMOTE_SERVER + '/api/tube';
@@ -158,7 +158,7 @@ export const EditorActions = {
   fetchFrameChoices: function () {
     return dispatch => fetch(`${OAF_API_URL}/frames-readable`, {credentials: 'include'})
       .then(response => response.json())
-      .then(json => dispatch(EditorActions.setFrameChoices([NULL_FRAME, ...json])));
+      .then(json => dispatch(EditorActions.setFrameChoices(json)));
   }
 
 };

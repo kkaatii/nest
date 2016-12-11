@@ -19,7 +19,7 @@ public class ChainProcessor extends Processor {
 
     @Override
     public GraphContainer process(Owner owner, Object... args)
-            throws QueryArgumentClassMismatchException, UnauthorizedActionException {
+            throws QueryArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] origins = (Integer[]) args[0];
             ArrowType at = (ArrowType) args[1];
@@ -62,7 +62,7 @@ public class ChainProcessor extends Processor {
             return gc.sort();
 
         } catch (ClassCastException e) {
-            throw new QueryArgumentClassMismatchException();
+            throw new QueryArgumentClassException();
         }
     }
 }

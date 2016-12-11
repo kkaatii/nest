@@ -21,7 +21,7 @@ public class CompleteProcessor extends Processor {
 
     @Override
     public GraphContainer process(Owner owner, Object... args)
-            throws QueryArgumentClassMismatchException, UnauthorizedActionException {
+            throws QueryArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] ids = (Integer[]) args[0];
             int length = ids.length;
@@ -47,7 +47,7 @@ public class CompleteProcessor extends Processor {
             return GraphContainer.fixateWith(ensureList(null), arrows);
 
         } catch (ClassCastException e) {
-            throw new QueryArgumentClassMismatchException();
+            throw new QueryArgumentClassException();
         }
     }
 }

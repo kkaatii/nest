@@ -1,6 +1,6 @@
 export const NICKNAME = document.getElementById('api').getAttribute('nickname');
 export const REMOTE_SERVER = document.getElementById('api').getAttribute('server');
-export const NULL_FRAME = `<Private>@${NICKNAME}`;
+export const DEFAULT_FRAME = `<Private>@${NICKNAME}`;
 export const VIEW_CHOICES = ['Articles', ]//'Map'];
 export const viewToNodeType = view => {
   let map = {
@@ -16,7 +16,7 @@ export const MOCK_TARGET = {
   id: null,
   name: "",
   content: "",
-  frame: NULL_FRAME,
+  frame: DEFAULT_FRAME,
   type: viewToNodeType(defaultView),
 };
 
@@ -24,7 +24,7 @@ export const INIT_STORE = {
   graph: {pointMap: {}},
   editor: {
     fetching: false,
-    frameChoices: [NULL_FRAME],
+    frameChoices: [DEFAULT_FRAME],
     target: MOCK_TARGET,
   },
   context: {
