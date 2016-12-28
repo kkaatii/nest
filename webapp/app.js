@@ -10,7 +10,7 @@ var Auth0Strategy = require('passport-auth0');
 var request = require('request');
 var compiler = require('webpack')(require('./webpack.config.js'));
 
-compiler.run(function (err, stats) {});
+//compiler.run(function (err, stats) {});
 /*compiler.watch({
   aggregateTimeout: 300,
   poll: true

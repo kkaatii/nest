@@ -217,4 +217,4 @@ pip-log.txt
 
 .env
 mybatis.properties
-tube.js
+tube.js*

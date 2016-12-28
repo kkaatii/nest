@@ -29,6 +29,7 @@ var paths = {
 };
 
 module.exports = {
+  devtool: 'source-map',
   entry: ['babel-polyfill', paths.appIndexJs],
   output: {
     path: 'public',
@@ -86,6 +87,11 @@ module.exports = {
     /*new ProgressPlugin(function (percentage, msg) {
       console.log((percentage * 100) + '%', msg);
     }),*/
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    }),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",
