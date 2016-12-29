@@ -49,7 +49,7 @@ function appendParameter(url, params) {
 
 /* GET home page. */
 router.get('/', auth, function (req, res) {
-  res.render('tube', {server: REMOTE_API_SERVER, nickname: req.user.tube.nickname});
+  res.render('tube', {nickname: req.user.tube.nickname});
 });
 
 router.get('/login', function (req, res) {

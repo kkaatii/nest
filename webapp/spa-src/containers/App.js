@@ -102,8 +102,8 @@ class App extends React.Component {
     });
   }
 
-  handleEditorContentChange(e) {
-    this.props.dispatch(EditorActions.changeTargetContent(e.target.getContent()));
+  handleEditorContentChange(content) {
+    this.props.dispatch(EditorActions.changeTargetContent(content));
   }
 
   handleEditorNameChange(e) {
@@ -167,28 +167,17 @@ class App extends React.Component {
   }
 }
 
-App
-  .propTypes = {
-  editor: PropTypes.object.isRequired,
-  graph: PropTypes.object.isRequired,
-  context: PropTypes.object.isRequired,
+App.propTypes = {
+  editor: PropTypes.object,
+  graph: PropTypes.object,
+  context: PropTypes.object,
 };
 
-function
-
-mapStateToProps(state) {
+function mapStateToProps(state) {
   const {editor, graph, context} = state;
   return {
     editor, graph, context
   }
 }
 
-export
-default
-
-connect(mapStateToProps)
-
-(
-  App
-)
-;
+export default connect(mapStateToProps)(App);

@@ -1,5 +1,5 @@
-export const NICKNAME = document.getElementById('api').getAttribute('nickname');
-export const REMOTE_SERVER = document.getElementById('api').getAttribute('server');
+export const NICKNAME = document.getElementById('context').getAttribute('nickname');
+export const REMOTE_SERVER = process.env.API_URL;
 export const DEFAULT_FRAME = `<Private>@${NICKNAME}`;
 export const VIEW_CHOICES = ['Articles', ]//'Map'];
 export const viewToNodeType = view => {

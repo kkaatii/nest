@@ -1,6 +1,6 @@
 import {batchActions} from 'redux-batched-actions';
 import {Graph, Editor, Context} from './reducers/actionTypes'
-import {MOCK_TARGET, DEFAULT_FRAME, REMOTE_SERVER} from "./constants";
+import {MOCK_TARGET, REMOTE_SERVER} from "./constants";
 import {viewToNodeType} from "./constants";
 
 const TUBE_API_URL = REMOTE_SERVER + '/api/tube';

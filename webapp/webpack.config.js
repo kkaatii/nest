@@ -6,6 +6,9 @@ var ProgressPlugin = require('webpack/lib/ProgressPlugin');
 var path = require('path');
 var fs = require('fs');
 var webpack = require('webpack');
+var dotenv = require('dotenv');
+
+dotenv.load();
 
 var appDirectory = fs.realpathSync(process.cwd());
 function resolveApp(relativePath) {
@@ -29,15 +32,19 @@ var paths = {
 };
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: process.env.NODE_ENV === 'production' ? 'source-map' : 'eval',
   entry: ['babel-polyfill', paths.appIndexJs],
   output: {
     path: 'public',
     pathinfo: true,
     filename: 'js/tube.js',
   },
-  externals: { 'tinymce':'tinymce' },
+  //externals: { 'tinymce':'tinymce' },
   module: {
+    noParse: [
+      path.resolve('node_modules/react-quill/node_modules/quill/dist/quill.js'), //npm 2
+      path.resolve('node_modules/quill/dist/quill.js') //npm 3
+    ],
     // First, run the linter.
     // It's important to do this before Babel processes the JS.
     preLoaders: [
@@ -59,7 +66,7 @@ module.exports = {
         include: paths.appPublic,
         loader: 'style!css?importLoaders=1'
       },
-      {
+      /*{
         test: require.resolve('tinymce/tinymce'),
         loaders: [
           'imports?this=>window',
@@ -71,8 +78,8 @@ module.exports = {
         loaders: [
           'imports?this=>window'
         ]
-      }
-    ]
+      }*/
+    ],
   },
   eslint: {
     configFile: path.join(__dirname, '.eslintrc'),
@@ -89,9 +96,11 @@ module.exports = {
     }),*/
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('production')
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
+        API_URL: JSON.stringify(process.env.REMOTE_API_SERVER),
       }
     }),
+    new webpack.optimize.UglifyJsPlugin(),
     new webpack.ProvidePlugin({
       $: "jquery",
       jQuery: "jquery",

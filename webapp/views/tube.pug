@@ -2,8 +2,9 @@ extends layout
 
 block head
   title= 'Artificy'
+  link(rel='stylesheet', href='//cdn.quilljs.com/1.1.8/quill.snow.css')
 
 block content
-  #api(style="display:none;", server= server, nickname= nickname)
+  #context(style="display:none;", nickname= nickname)
   #root
   script(src='/js/tube.js')

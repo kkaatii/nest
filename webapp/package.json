@@ -43,6 +43,7 @@
     "promise": "^7.1.1",
     "pug": "^2.0.0-beta6",
     "pug-loader": "^2.3.0",
+    "quill": "^1.1.8",
     "react": "^15.4.0",
     "react-dom": "^15.4.0",
     "react-redux": "^4.4.6",
@@ -53,7 +54,6 @@
     "redux-thunk": "^2.1.0",
     "request": "^2.75.0",
     "style-loader": "^0.13.1",
-    "tinymce": "^4.5.0",
     "whatwg-fetch": "^2.0.1"
   },
   "devDependencies": {

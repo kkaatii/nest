@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react'
 import {displayCSS, NICKNAME} from '../constants'
-import MyTinyMCE from './MyTinyMCE'
+import MyQuill from '../containers/MyQuill'
+//import MyTinyMCE from './MyTinyMCE'
 
 const FrameDropdownMenu = ({choices, setFrame}) => {
   let a = [], h = {};
@@ -60,11 +61,7 @@ const Editor = ({
       <div className="form-group">
         <div className="col-lg-12">
           <label htmlFor="node-content">Content</label>
-          <MyTinyMCE
-            id='node-content'
-            content={target.content}
-            onChange={handleContentChange}
-          />
+          <MyQuill content={target.content} onChange={handleContentChange}/>
         </div>
       </div>
       <div className="btn-toolbar">
