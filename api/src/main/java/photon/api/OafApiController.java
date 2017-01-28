@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import photon.tube.auth.AccessLevel;
 import photon.tube.model.Owner;
-import photon.tube.model.mybatis.OwnerAndFrameMapper;
-import photon.tube.auth.AuthService;
+import photon.tube.auth.OafService;
 
 import java.util.List;
 
@@ -16,21 +15,21 @@ import java.util.List;
 @RequestMapping("/api/oaf")
 public class OafApiController {
 
-    private final AuthService authService;
+    private final OafService oafService;
 
     @Autowired
-    public OafApiController(AuthService authService) {
-        this.authService = authService;
+    public OafApiController(OafService oafService) {
+        this.oafService = oafService;
     }
 
     @RequestMapping(value = "/owner", method = RequestMethod.GET)
     public Owner owner(@RequestParam String aid) {
-        return authService.getOwnerByAuthId(aid);
+        return oafService.getOwnerByAuthId(aid);
     }
 
     @RequestMapping("/frames-readable")
     public List<String> readableFrames(@RequestParam Integer oid, @RequestParam String on) {
-        return authService.getAccessibleFrames(new Owner(oid, on), AccessLevel.READ);
+        return oafService.getAccessibleFrames(new Owner(oid, on), AccessLevel.READ);
     }
 
 }

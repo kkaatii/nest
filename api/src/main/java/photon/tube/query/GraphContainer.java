@@ -3,7 +3,7 @@ package photon.tube.query;
 import photon.tube.model.Arrow;
 import photon.tube.model.Point;
 import photon.util.AbstractDepthSorter;
-import photon.util.Util;
+import photon.util.Utils;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -108,7 +108,7 @@ public class GraphContainer extends AbstractDepthSorter<Point> {
             // There is inconsistency in the ways of computing rank and depth of an arrow:
             // rank is defined as the larger of ranks of its two endpoints, while depth is
             // defined as the depth of the origin node.
-            rankToArrowIndexes[Util.maxOf(
+            rankToArrowIndexes[Utils.maxOf(
                     originRank,
                     targetRank
             )].add(ai);
@@ -200,8 +200,8 @@ public class GraphContainer extends AbstractDepthSorter<Point> {
         return result;
     }
 
-    public Section export() {
-        return new Section(points(), arrows(), depthToIndexes);
+    public SectionGraph export() {
+        return new SectionGraph(points(), arrows(), depthToIndexes);
     }
 
     public GraphInfo info() {

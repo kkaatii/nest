@@ -9,13 +9,13 @@ import java.util.Arrays;
  */
 public class QueryContext {
     public Owner owner;
-    public String type;
+    public String handler;
     public Object[] args;
     public SectionConfig sectionConfig;
 
-    private QueryContext(Owner owner, String type, Object[] args, SectionConfig sectionConfig) {
+    private QueryContext(Owner owner, String handler, Object[] args, SectionConfig sectionConfig) {
         this.owner = owner;
-        this.type = type;
+        this.handler = handler;
         this.args = args;
         this.sectionConfig = sectionConfig;
     }
@@ -28,26 +28,26 @@ public class QueryContext {
         QueryContext context = (QueryContext) o;
 
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(args, context.args) && type.equals(context.type) && owner.equals(context.owner);
+        return Arrays.equals(args, context.args) && handler.equals(context.handler) && owner.equals(context.owner);
 
     }
 
     @Override
     public int hashCode() {
         int result = Arrays.hashCode(args);
-        result = 31 * result + type.hashCode();
+        result = 31 * result + handler.hashCode();
         result = 31 * result + owner.hashCode();
         return result;
     }
 
     public static class Builder {
-        private String type;
+        private String handler;
         private Object[] args;
         private SectionConfig sectionConfig;
         private Owner owner;
 
-        public Builder type(String type) {
-            this.type = type;
+        public Builder handler(String handler) {
+            this.handler = handler;
             return this;
         }
 
@@ -67,7 +67,7 @@ public class QueryContext {
         }
 
         public QueryContext build() {
-            return new QueryContext(owner, type, args, sectionConfig);
+            return new QueryContext(owner, handler, args, sectionConfig);
         }
     }
 }

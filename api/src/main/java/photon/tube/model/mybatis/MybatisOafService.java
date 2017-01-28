@@ -1,9 +1,10 @@
-package photon.tube.auth;
+package photon.tube.model.mybatis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import photon.tube.auth.AccessLevel;
+import photon.tube.auth.OafService;
 import photon.tube.model.Owner;
-import photon.tube.model.mybatis.OwnerAndFrameMapper;
 
 import java.util.List;
 
@@ -13,27 +14,25 @@ import java.util.List;
  * layer.
  */
 @Service
-public class DefaultAuthService implements AuthService {
+public class MybatisOafService implements OafService {
     private final OwnerAndFrameMapper oafMapper;
 
     @Autowired
-    public DefaultAuthService(OwnerAndFrameMapper oafMapper) {
+    public MybatisOafService(OwnerAndFrameMapper oafMapper) {
         this.oafMapper = oafMapper;
     }
 
     @Override
-    public boolean authorizedRead(Owner owner, String frame) {
-        return frame != null && (hasAccess(AccessLevel.READ, owner, frame) || (oafMapper.selectAccess(GUEST_ID, frame) != null));
-    }
-
-    @Override
-    public boolean authorizedConnect(Owner owner, String frame) {
-        return hasAccess(AccessLevel.CONNECT, owner, frame);
-    }
-
-    @Override
-    public boolean authorizedWrite(Owner owner, String frame) {
-        return hasAccess(AccessLevel.WRITE, owner, frame);
+    public boolean authorized(AccessLevel accessLevel, Owner owner, String frame) {
+        switch (accessLevel) {
+            case READ:
+                return frame != null && (hasAccess(accessLevel, owner, frame) || (oafMapper.selectAccess(GUEST_ID, frame) != null));
+            case CONNECT:
+            case WRITE:
+                return hasAccess(accessLevel, owner, frame);
+            default:
+                return false;
+        }
     }
 
     @Override

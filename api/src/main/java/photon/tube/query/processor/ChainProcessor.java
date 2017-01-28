@@ -1,7 +1,6 @@
 package photon.tube.query.processor;
 
-
-import photon.tube.auth.AuthService;
+import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.*;
 import photon.tube.query.GraphContainer;
@@ -10,11 +9,12 @@ import photon.util.PQueue;
 import java.util.*;
 
 import static photon.tube.query.GraphContainer.INIT_DEPTH;
+import static photon.tube.auth.AccessLevel.READ;
 
 public class ChainProcessor extends Processor {
 
-    public ChainProcessor(CrudService crudService, AuthService authService) {
-        super(crudService, authService);
+    public ChainProcessor(CrudService crudService, OafService oafService) {
+        super(crudService, oafService);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ChainProcessor extends Processor {
             Set<Arrow> arrowSet = new HashSet<>();
             Map<Integer, Integer> nodeIdToDepth = new HashMap<>();
             for (Integer origin : origins) {
-                if (!authService.authorizedRead(owner, crudService.getNodeFrame(origin)))
+                if (!oafService.authorized(READ, owner, crudService.getNodeFrame(origin)))
                     throw new UnauthorizedActionException();
                 nodeIdToDepth.put(origin, INIT_DEPTH);
                 queue.enqueue(origin);
@@ -42,7 +42,7 @@ public class ChainProcessor extends Processor {
                 originDepth = nodeIdToDepth.get(newOrigin);
                 arrows = crudService.getAllArrowsStartingFrom(newOrigin, at);
                 for (FrameArrow a : arrows) {
-                    if (!authService.authorizedRead(owner, a.getTargetFrame())) continue;
+                    if (!oafService.authorized(READ, owner, a.getTargetFrame())) continue;
                     candidate = a.getTarget();
                     candidateDepth = nodeIdToDepth.get(candidate);
                     if (candidateDepth == null) {

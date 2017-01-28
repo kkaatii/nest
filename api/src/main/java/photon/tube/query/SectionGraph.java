@@ -9,14 +9,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * The most simply representation of part of a graph to be sent back to the client side.
+ * The most simple representation of part of a graph to be sent back to the client side.
  */
-class Section {
+class SectionGraph {
     public final List<Point> points;
     public final List<Arrow> arrows;
     public final Map<Integer, List<Integer>> depthToIds;
 
-    Section(List<Point> points, List<Arrow> arrows, Map<Integer, List<Integer>> depthToIndexes) {
+    SectionGraph(List<Point> points, List<Arrow> arrows, Map<Integer, List<Integer>> depthToIndexes) {
         this.points = points;
         this.arrows = arrows;
         depthToIds = new HashMap<>();

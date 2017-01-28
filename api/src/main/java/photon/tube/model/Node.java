@@ -1,7 +1,7 @@
 package photon.tube.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import photon.util.Util;
+import photon.util.Utils;
 
 import java.util.Date;
 
@@ -111,7 +111,7 @@ public class Node {
             digest = null;
             return;
         }
-        String strippedText = Util.html2text(content);
+        String strippedText = Utils.html2text(content);
         digest = (strippedText.length() > DIGEST_LENGTH) ? strippedText.substring(0, DIGEST_LENGTH - 3) + "..." : strippedText;
     }
 

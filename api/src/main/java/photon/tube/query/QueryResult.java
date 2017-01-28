@@ -4,25 +4,13 @@ public class QueryResult {
     private QueryContext context;
     private GraphInfo graphInfo;
     private GraphInfo sectionInfo;
-    private Section section;
+    private SectionGraph section;
 
-    public QueryResult(QueryContext context) {
+    public QueryResult(QueryContext context, GraphInfo graphInfo, GraphInfo sectionInfo, SectionGraph section) {
         this.context = context;
-    }
-
-    public QueryResult withGraphInfo(GraphInfo graphInfo) {
         this.graphInfo = graphInfo;
-        return this;
-    }
-
-    public QueryResult withSectionInfo(GraphInfo sectionInfo) {
         this.sectionInfo = sectionInfo;
-        return this;
-    }
-
-    public QueryResult withSection(Section section) {
         this.section = section;
-        return this;
     }
 
     public QueryContext getContext() {
@@ -37,7 +25,7 @@ public class QueryResult {
         return sectionInfo;
     }
 
-    public Section getSection() {
+    public SectionGraph getSection() {
         return section;
     }
 }

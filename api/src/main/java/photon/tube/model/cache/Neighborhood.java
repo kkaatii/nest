@@ -7,7 +7,7 @@ import photon.tube.model.FrameArrow;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static photon.util.Util.ensureList;
+import static photon.util.Utils.ensureList;
 
 class Neighborhood {
 	

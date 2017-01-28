@@ -79,13 +79,14 @@ router.get('/mfw',
   });
 
 router.get('/api/*', auth, function (req, res) {
-  request({
-      url: appendParameter(
-        LOCAL_API_SERVER + cleanseUrl(req.url),
-        ['oid', req.user.tube.id, 'on', req.user.tube.nickname]
-      ),
-      method: req.method
-    },
+  var reques = {
+    url: appendParameter(
+      LOCAL_API_SERVER + cleanseUrl(req.url),
+      ['oid', req.user.tube.id, 'on', req.user.tube.nickname]
+    ),
+    method: req.method
+  };
+  request(reques ,
     function (error, response, data) {
       if (!error && response.statusCode == 200) {
         res.send(data);

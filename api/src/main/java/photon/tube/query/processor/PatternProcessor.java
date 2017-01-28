@@ -1,6 +1,6 @@
 package photon.tube.query.processor;
 
-import photon.tube.auth.AuthService;
+import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.*;
 import photon.tube.query.GraphContainer;
@@ -10,6 +10,7 @@ import java.util.function.BiPredicate;
 import java.util.stream.IntStream;
 
 import static photon.tube.query.GraphContainer.INIT_DEPTH;
+import static photon.tube.auth.AccessLevel.READ;
 
 public class PatternProcessor extends Processor {
 
@@ -19,8 +20,8 @@ public class PatternProcessor extends Processor {
     private Set<Integer> testingSet = null;
     private PatternSequence patternSequence = null;
 
-    public PatternProcessor(CrudService crudService, AuthService authService) {
-        super(crudService, authService);
+    public PatternProcessor(CrudService crudService, OafService oafService) {
+        super(crudService, oafService);
     }
 
     @Override
@@ -38,8 +39,9 @@ public class PatternProcessor extends Processor {
             if (seqString.length == 0) {
                 List<Point> points = crudService.getPoints(Arrays.asList(origins));
                 points.forEach(point -> {
-                    if (!authService.authorizedRead(owner, point.getFrame()))
+                    if (!oafService.authorized(READ, owner, point.getFrame())) {
                         throw new UnauthorizedActionException();
+                    }
                 });
                 gc.addAll(points);
                 return gc;
@@ -60,11 +62,13 @@ public class PatternProcessor extends Processor {
             for (Integer origin : origins) {
                 // If any of the queried origins is not readable then it must be an illegal query request and an
                 // exception is thrown
-                if (!authService.authorizedRead(owner, crudService.getNodeFrame(origin)))
+                if (!oafService.authorized(READ, owner, crudService.getNodeFrame(origin))) {
                     throw new UnauthorizedActionException();
+                }
                 testingSet.add(origin);
-                if (patternSequence.first((_at, _sPos) -> testMatch(origin, _at, _sPos, INIT_DEPTH + 1)))
+                if (patternSequence.first((_at, _sPos) -> testMatch(origin, _at, _sPos, INIT_DEPTH + 1))) {
                     nodeIdToDepth.put(origin, INIT_DEPTH);
+                }
                 testingSet.remove(origin);
             }
 
@@ -82,7 +86,7 @@ public class PatternProcessor extends Processor {
         Integer candidateDepth;
         List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(originId, at);
         for (FrameArrow a : arrows) {
-            if (!authService.authorizedRead(owner, a.getTargetFrame())) continue;
+            if (!oafService.authorized(READ, owner, a.getTargetFrame())) continue;
             Integer candidate = a.getTarget();
             if (testingSet.contains(candidate)) continue;
             candidateDepth = nodeIdToDepth.get(candidate);
@@ -98,8 +102,12 @@ public class PatternProcessor extends Processor {
                 }
                 testingSet.remove(candidate);
             } else {
-                if (candidateDepth > nextDepth)
+                // TODO fix the logic
+                // Cannot assume that the remaining patterns can be matched automatically when encountering a
+                // recorded node, as the node, when matched, was on a different pattern sequence branch
+                if (candidateDepth > nextDepth) {
                     nodeIdToDepth.put(candidate, nextDepth);
+                }
                 arrowSet.add(a.reverse());
                 originMatched = true;
             }
@@ -108,7 +116,7 @@ public class PatternProcessor extends Processor {
     }
 
     private static class PatternSequence {
-        private final int MAX_TIMES = -1;
+        private final int MANY_TIMES = -1;
 
         private final List<ArrowType> atList = new ArrayList<>();
         private final List<int[]> timesOptionsList = new ArrayList<>();
@@ -116,10 +124,11 @@ public class PatternProcessor extends Processor {
 
         void append(String atName, String timeString) {
             ArrowType at;
-            if (atName.startsWith("^"))
+            if (atName.startsWith("^")) {
                 at = ArrowType.valueOf(atName.substring(1)).reverse();
-            else
+            } else {
                 at = ArrowType.valueOf(atName);
+            }
             String[] options = timeString.split("\\|");
             if (options.length == 1) {
                 String optionStr = options[0];
@@ -139,7 +148,7 @@ public class PatternProcessor extends Processor {
                             atList.add(at);
                             length++;
                         }
-                        timesOptionsList.add(new int[]{0, MAX_TIMES});
+                        timesOptionsList.add(new int[]{0, MANY_TIMES});
                         atList.add(at);
                         length++;
                     } else {
@@ -178,11 +187,17 @@ public class PatternProcessor extends Processor {
                 int i = ++sPos.index;
                 if (i < length) {
                     timesOptions = timesOptionsList.get(i);
-                    for (int times : timesOptions) {
-                        if (times == 0) tested |= goThroughOptional(i, func);
-                        else if (times > 0)
+                    int times;
+                    // Start with the largest number of times
+                    for (int j = timesOptions.length; j > 0; j--) {
+                        times = timesOptions[j - 1];
+                        if (times == 0) {
+                            tested |= goThroughOptional(i, func);
+                        } else if (times > 0) {
                             tested |= func.test(getArrowType(i), new SequencePosition(i, times, false));
-                        else tested |= func.test(getArrowType(i), new SequencePosition(i, 1, true));
+                        } else if (times < 0) {
+                            tested |= func.test(getArrowType(i), new SequencePosition(i, 1, true));
+                        }
                     }
                     return tested;
                 }
@@ -201,10 +216,13 @@ public class PatternProcessor extends Processor {
                 timesOptions = timesOptionsList.get(index);
                 boolean anyOptional = false;
                 for (int times : timesOptions) {
-                    if (times == 0) anyOptional = true;
-                    else if (times > 0)
+                    if (times == 0) {
+                        anyOptional = true;
+                    } else if (times > 0) {
                         tested |= func.test(getArrowType(index), new SequencePosition(index, times, false));
-                    else tested |= func.test(getArrowType(index), new SequencePosition(index, 1, true));
+                    } else if (times < 0) {
+                        tested |= func.test(getArrowType(index), new SequencePosition(index, 1, true));
+                    }
                 }
                 optional = anyOptional;
             }

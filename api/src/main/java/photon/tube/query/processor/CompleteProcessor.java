@@ -1,6 +1,6 @@
 package photon.tube.query.processor;
 
-import photon.tube.auth.AuthService;
+import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
@@ -11,12 +11,13 @@ import photon.tube.query.GraphContainer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static photon.util.Util.ensureList;
+import static photon.util.Utils.ensureList;
+import static photon.tube.auth.AccessLevel.READ;
 
 public class CompleteProcessor extends Processor {
 
-    public CompleteProcessor(CrudService crudService, AuthService authService) {
-        super(crudService, authService);
+    public CompleteProcessor(CrudService crudService, OafService oafService) {
+        super(crudService, oafService);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class CompleteProcessor extends Processor {
             List<Arrow> arrows = new ArrayList<>();
             Arrow tmp;
             for (Integer id : ids) {
-                if (!authService.authorizedRead(owner, crudService.getNodeFrame(id)))
+                if (!oafService.authorized(READ, owner, crudService.getNodeFrame(id)))
                     throw new UnauthorizedActionException();
             }
             for (int i = 0; i < length; i++) {

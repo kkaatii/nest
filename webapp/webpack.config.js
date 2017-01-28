@@ -23,9 +23,9 @@ var nodePaths = (process.env.NODE_PATH || '')
 var paths = {
   appBuild: resolveApp('dist'),
   appPublic: resolveApp('public'),
-  appIndexJs: resolveApp('spa-src/entry.js'),
+  appIndexJs: resolveApp('spa/entry.js'),
   appPackageJson: resolveApp('package.json'),
-  appSrc: resolveApp('spa-src'),
+  appSrc: resolveApp('spa'),
   appNodeModules: resolveApp('node_modules'),
   ownNodeModules: resolveApp('node_modules'),
   nodePaths: nodePaths

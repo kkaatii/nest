@@ -22,7 +22,6 @@ public class QueryApiController {
         this.qs = qs;
     }
 
-
     @RequestMapping(value = "/pattern/{ids}", method = RequestMethod.GET)
     public QueryResult patternQuery(@PathVariable Integer[] ids,
                                     @RequestParam(name = "oid") Integer ownerId,
@@ -35,7 +34,7 @@ public class QueryApiController {
                                     @RequestParam(name = "ri", defaultValue = "true") boolean rightInclusive) {
         QueryContext context = new QueryContext.Builder()
                 .owner(new Owner(ownerId, ownerName))
-                .type("pattern")
+                .handler("pattern")
                 .args(new Object[]{ids, pattern})
                 .sectionConfig(new SectionConfig(sectionMode, leftLimit, rightLimit, leftInclusive, rightInclusive))
                 .build();
@@ -56,7 +55,7 @@ public class QueryApiController {
                              @RequestParam(name = "ri", defaultValue = "false") boolean rightInclusive) {
         QueryContext context = new QueryContext.Builder()
                 .owner(new Owner(ownerId, ownerName))
-                .type(graphView)
+                .handler(graphView)
                 .args(new Object[]{ids, reversed ? arrowType.reverse() : arrowType})
                 .sectionConfig(new SectionConfig(sectionMode, leftLimit, rightLimit, leftInclusive, rightInclusive))
                 .build();

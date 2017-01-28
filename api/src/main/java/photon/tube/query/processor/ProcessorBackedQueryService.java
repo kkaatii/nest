@@ -1,13 +1,10 @@
 package photon.tube.query.processor;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import photon.tube.auth.AuthService;
-import photon.tube.model.CrudService;
+import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.query.*;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,54 +16,38 @@ import java.util.Map;
 @Service
 public class ProcessorBackedQueryService implements QueryService {
 
-    private final Map<String, Processor> procMap = new HashMap<>();
     private final Map<QueryContext, GraphContainer> gcStore = new HashMap<>();
-
-    private final CrudService crudService;
-    private final AuthService authService;
+    private final ProcessorProvider provider;
 
     @Autowired
-    public ProcessorBackedQueryService(CrudService crudService, AuthService authService) {
-        this.crudService = crudService;
-        this.authService = authService;
+    public ProcessorBackedQueryService(ProcessorProvider provider) {
+        this.provider = provider;
     }
 
     private QueryResult processContext(QueryContext context) {
         try {
-            GraphContainer gc = gcStore.computeIfAbsent(context,
-                    k -> findProcessor(context.type).process(context.owner, context.args));
-            GraphContainer sectionContainer = context.sectionConfig.applyOn(gc);
-            return new QueryResult(context)
-                    .withGraphInfo(gc.info())
-                    .withSectionInfo(sectionContainer.info())
-                    .withSection(sectionContainer.export());
+            GraphContainer graphContainer = gcStore.computeIfAbsent(
+                    context,
+                    ctx -> provider.getProcessor(ctx.handler).process(ctx.owner, ctx.args)
+            );
+            GraphContainer sectionContainer = context.sectionConfig.applyOn(graphContainer);
+            return new QueryResult(context, graphContainer.info(), sectionContainer.info(), sectionContainer.export());
+        } catch (UnauthorizedActionException uae) {
+            throw uae;
         } catch (Exception e) {
             throw new FailedQueryException(e);
         }
     }
 
-    private Processor findProcessor(String procName) {
-        return procMap.computeIfAbsent(procName, k -> {
-            try {
-                Class<?> clazz = Class.forName(completeProcName(procName));
-                Constructor<?> ctor = clazz.getConstructor(CrudService.class, AuthService.class);
-                return (Processor) ctor.newInstance(crudService, authService);
-            } catch (Exception e) {
-                throw new ProcessorNotFoundException(e);
-            }
-        });
-    }
-
-    private static String completeProcName(String name) {
-        return String.format("photon.tube.query.processor.%sProcessor", WordUtils.capitalizeFully(name));
-    }
-
     @Override
     public Query createQuery(QueryContext context) {
         return new Query(context) {
+            private QueryResult result;
+
             @Override
             public QueryResult result() {
-                return processContext(context);
+                if (result == null) result = processContext(context);
+                return result;
             }
         };
     }

@@ -4,7 +4,7 @@ import org.jsoup.Jsoup;
 
 import java.util.*;
 
-public class Util {
+public final class Utils {
 	
 	public static <T> List<T> ensureList(List<T> list) {
 		return (list == null) ? Collections.emptyList() : list;
