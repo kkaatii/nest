@@ -4,21 +4,25 @@ import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.*;
 import photon.tube.query.GraphContainer;
+import photon.util.ImmutableTuple;
 
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.stream.IntStream;
 
-import static photon.tube.query.GraphContainer.INIT_DEPTH;
 import static photon.tube.auth.AccessLevel.READ;
+import static photon.tube.query.GraphContainer.INIT_DEPTH;
+
+// TODO there are other bugs related to this class, esp. when parsing a circular pattern
 
 public class PatternProcessor extends Processor {
 
     private Owner owner = null;
     private Map<Integer, Integer> nodeIdToDepth = null;
+    private Set<ImmutableTuple<Integer, PatternElement>> matchedSet = null;
     private Set<Arrow> arrowSet = null;
-    private Set<Integer> testingSet = null;
-    private PatternSequence patternSequence = null;
+    private Set<ImmutableTuple<Integer, PatternElement>> testingSet = null;
+    private Pattern pattern = null;
 
     public PatternProcessor(CrudService crudService, OafService oafService) {
         super(crudService, oafService);
@@ -51,12 +55,13 @@ public class PatternProcessor extends Processor {
             arrowSet = new HashSet<>();
             testingSet = new HashSet<>();
             nodeIdToDepth = new HashMap<>();
-            patternSequence = new PatternSequence();
-            for (int i = 0; i < seqString.length - 1; i++) {
+            matchedSet = new HashSet<>();
+            pattern = new Pattern();
+            for (int i = 0; i < seqString.length; i++) {
                 if (i + 1 == seqString.length || Character.isLetter(seqString[i + 1].charAt(0))) {
-                    patternSequence.append(seqString[i], "1");
+                    pattern.append(seqString[i], "1");
                 } else {
-                    patternSequence.append(seqString[i++], seqString[i]);
+                    pattern.append(seqString[i++], seqString[i]);
                 }
             }
             for (Integer origin : origins) {
@@ -65,11 +70,7 @@ public class PatternProcessor extends Processor {
                 if (!oafService.authorized(READ, owner, crudService.getNodeFrame(origin))) {
                     throw new UnauthorizedActionException();
                 }
-                testingSet.add(origin);
-                if (patternSequence.first((_at, _sPos) -> testMatch(origin, _at, _sPos, INIT_DEPTH + 1))) {
-                    nodeIdToDepth.put(origin, INIT_DEPTH);
-                }
-                testingSet.remove(origin);
+                pattern.first((nextAT, nextElem) -> testMatch(origin, nextAT, nextElem, INIT_DEPTH));
             }
 
             Map<Integer, Point> pointMap = crudService.getPointMap(nodeIdToDepth.keySet());
@@ -81,41 +82,47 @@ public class PatternProcessor extends Processor {
         }
     }
 
-    private boolean testMatch(Integer originId, ArrowType at, SequencePosition sPos, int nextDepth) {
+    private boolean testMatch(Integer originId, ArrowType at, PatternElement element, int depth) {
         boolean originMatched = false;
-        Integer candidateDepth;
-        List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(originId, at);
-        for (FrameArrow a : arrows) {
-            if (!oafService.authorized(READ, owner, a.getTargetFrame())) continue;
-            Integer candidate = a.getTarget();
-            if (testingSet.contains(candidate)) continue;
-            candidateDepth = nodeIdToDepth.get(candidate);
-            if (candidateDepth == null) {
-                testingSet.add(candidate);
-                boolean matched = patternSequence.next(sPos, (_at, _sPos) ->
-                        testMatch(candidate, _at, _sPos, nextDepth + 1)
-                );
-                if (matched) {
-                    nodeIdToDepth.put(candidate, nextDepth);
-                    arrowSet.add(a);
-                    originMatched = true;
+        if (matchedSet.contains(new ImmutableTuple<>(originId, element))) {
+            Integer prevDepth = nodeIdToDepth.get(originId);
+            if (prevDepth > depth) {
+                nodeIdToDepth.put(originId, depth);
+            }
+            originMatched = true;
+        } else {
+            if (element != null) {
+                if (element.isMany && !testingSet.add(new ImmutableTuple<>(originId, element))) {
+                    return false;
                 }
-                testingSet.remove(candidate);
+                List<FrameArrow> arrows = crudService.getAllArrowsStartingFrom(originId, at);
+                for (FrameArrow a : arrows) {
+                    if (!oafService.authorized(READ, owner, a.getTargetFrame())) continue;
+                    Integer candidate = a.getTarget();
+                    boolean matched = pattern.next(
+                            element,
+                            (nextAT, nextElem) -> testMatch(candidate, nextAT, nextElem, depth + 1)
+                    );
+                    if (matched) {
+                        arrowSet.add(a);
+                        originMatched = true;
+                    }
+                }
+                if (element.isMany) {
+                    testingSet.remove(new ImmutableTuple<>(originId, element));
+                }
             } else {
-                // TODO fix the logic
-                // Cannot assume that the remaining patterns can be matched automatically when encountering a
-                // recorded node, as the node, when matched, was on a different pattern sequence branch
-                if (candidateDepth > nextDepth) {
-                    nodeIdToDepth.put(candidate, nextDepth);
-                }
-                arrowSet.add(a.reverse());
                 originMatched = true;
+            }
+            if (originMatched) {
+                nodeIdToDepth.put(originId, depth);
+                matchedSet.add(new ImmutableTuple<>(originId, element));
             }
         }
         return originMatched;
     }
 
-    private static class PatternSequence {
+    private static class Pattern {
         private final int MANY_TIMES = -1;
 
         private final List<ArrowType> atList = new ArrayList<>();
@@ -148,7 +155,7 @@ public class PatternProcessor extends Processor {
                             atList.add(at);
                             length++;
                         }
-                        timesOptionsList.add(new int[]{0, MANY_TIMES});
+                        timesOptionsList.add(new int[]{MANY_TIMES, 0});
                         atList.add(at);
                         length++;
                     } else {
@@ -169,59 +176,63 @@ public class PatternProcessor extends Processor {
             return atList.get(index);
         }
 
-        ArrowType getArrowType(SequencePosition sPos) {
-            return atList.get(sPos.index);
+        ArrowType getArrowType(PatternElement element) {
+            return atList.get(element.index);
         }
 
-        // Returns true if the next sPos is already at the end of the sequence
+        // Returns true if the next element is already at the end of the sequence
         // or when the tested predicate is true
-        boolean next(SequencePosition sPos, BiPredicate<ArrowType, SequencePosition> func) {
+        boolean next(PatternElement element, BiPredicate<ArrowType, PatternElement> func) {
             int[] timesOptions;
             boolean tested = false;
-            if (--sPos.times >= 1) {
-                return func.test(getArrowType(sPos), sPos);
+            int i = element.index;
+            if (element.times >= 2) {
+                return func.test(getArrowType(element), new PatternElement(i, element.times - 1, false));
             } else {
-                if (sPos.isMany) {
-                    tested = func.test(getArrowType(sPos), new SequencePosition(sPos.index, 1, true));
-                }
-                int i = ++sPos.index;
+                i++;
                 if (i < length) {
                     timesOptions = timesOptionsList.get(i);
-                    int times;
+                    int times, length = timesOptions.length;
                     // Start with the largest number of times
-                    for (int j = timesOptions.length; j > 0; j--) {
+                    for (int j = length; j > 0; j--) {
                         times = timesOptions[j - 1];
                         if (times == 0) {
                             tested |= goThroughOptional(i, func);
                         } else if (times > 0) {
-                            tested |= func.test(getArrowType(i), new SequencePosition(i, times, false));
+                            tested |= func.test(getArrowType(i), new PatternElement(i, times, false));
                         } else if (times < 0) {
-                            tested |= func.test(getArrowType(i), new SequencePosition(i, 1, true));
+                            tested |= func.test(getArrowType(i), new PatternElement(i, 1, true));
                         }
                     }
-                    return tested;
+                } else {
+                    tested = func.test(null, null);
                 }
-                return true;
+                if (element.isMany) {
+                    tested |= func.test(getArrowType(element), new PatternElement(i - 1, 1, true));
+                }
+                return tested;
             }
         }
 
-        boolean first(BiPredicate<ArrowType, SequencePosition> func) {
-            return next(new SequencePosition(-1, 0, false), func);
+        boolean first(BiPredicate<ArrowType, PatternElement> func) {
+            return next(new PatternElement(-1, 0, false), func);
         }
 
-        boolean goThroughOptional(int index, BiPredicate<ArrowType, SequencePosition> func) {
+        boolean goThroughOptional(int index, BiPredicate<ArrowType, PatternElement> func) {
             boolean optional = true, tested = false;
             int[] timesOptions;
             while (optional && ++index < length) {
                 timesOptions = timesOptionsList.get(index);
                 boolean anyOptional = false;
-                for (int times : timesOptions) {
+                int times, length = timesOptions.length;
+                for (int j = length; j > 0; j--) {
+                    times = timesOptions[j - 1];
                     if (times == 0) {
                         anyOptional = true;
                     } else if (times > 0) {
-                        tested |= func.test(getArrowType(index), new SequencePosition(index, times, false));
+                        tested |= func.test(getArrowType(index), new PatternElement(index, times, false));
                     } else if (times < 0) {
-                        tested |= func.test(getArrowType(index), new SequencePosition(index, 1, true));
+                        tested |= func.test(getArrowType(index), new PatternElement(index, 1, true));
                     }
                 }
                 optional = anyOptional;
@@ -230,15 +241,25 @@ public class PatternProcessor extends Processor {
         }
     }
 
-    private static class SequencePosition {
+    private static class PatternElement {
         int index;
         int times;
         boolean isMany;
 
-        SequencePosition(int index, int times, boolean isMany) {
+        PatternElement(int index, int times, boolean isMany) {
             this.index = index;
             this.times = times;
             this.isMany = isMany;
+        }
+
+        @Override
+        public int hashCode() {
+            return index;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof PatternElement && index == ((PatternElement) o).index;
         }
     }
 }

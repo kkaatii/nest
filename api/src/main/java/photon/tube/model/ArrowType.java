@@ -26,7 +26,7 @@ public enum ArrowType {
 
     /*------- End of automatic reverse pairing                                ------*/
 
-    ANY             (Group.GENERAL),    PAIRING         (Group.GENERAL),
+    ANY             (Group.GENERAL),    PAIRING_WITH    (Group.GENERAL),
     ;
 
     private final Group group;
@@ -40,8 +40,8 @@ public enum ArrowType {
         switch (this) {
             case ANY:
                 return ANY;
-            case PAIRING:
-                return PAIRING;
+            case PAIRING_WITH:
+                return PAIRING_WITH;
             default:
                 return (ord % 2 == 0) ?
                         ArrowType.values()[ord + 1] :
@@ -52,7 +52,7 @@ public enum ArrowType {
     @Override
     public String toString() {
         switch (this) {
-            case PAIRING:
+            case PAIRING_WITH:
                 return "~";
             default:
                 return super.toString().toLowerCase();

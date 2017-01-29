@@ -9,13 +9,13 @@ import java.util.Arrays;
  */
 public class QueryContext {
     public Owner owner;
-    public String handler;
+    public String queryType;
     public Object[] args;
     public SectionConfig sectionConfig;
 
-    private QueryContext(Owner owner, String handler, Object[] args, SectionConfig sectionConfig) {
+    private QueryContext(Owner owner, String queryType, Object[] args, SectionConfig sectionConfig) {
         this.owner = owner;
-        this.handler = handler;
+        this.queryType = queryType;
         this.args = args;
         this.sectionConfig = sectionConfig;
     }
@@ -28,14 +28,14 @@ public class QueryContext {
         QueryContext context = (QueryContext) o;
 
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(args, context.args) && handler.equals(context.handler) && owner.equals(context.owner);
+        return Arrays.equals(args, context.args) && queryType.equals(context.queryType) && owner.equals(context.owner);
 
     }
 
     @Override
     public int hashCode() {
         int result = Arrays.hashCode(args);
-        result = 31 * result + handler.hashCode();
+        result = 31 * result + queryType.hashCode();
         result = 31 * result + owner.hashCode();
         return result;
     }

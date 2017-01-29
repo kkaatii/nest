@@ -9,9 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The core service as a proxy to process queries.<br>
- * After receiving a <tt>Query</tt>, it will find corresponding <tt>Processor</tt> to process it and cache the result <tt>GraphContainer</tt>
- * for the same query in the future.
+ * Dispatches a query to the designated <tt>Processor</tt> to process it and caches the <tt>GraphContainer</tt>
+ * result for repeated queries.
  */
 @Service
 public class ProcessorBackedQueryService implements QueryService {
@@ -28,7 +27,7 @@ public class ProcessorBackedQueryService implements QueryService {
         try {
             GraphContainer graphContainer = gcStore.computeIfAbsent(
                     context,
-                    ctx -> provider.getProcessor(ctx.handler).process(ctx.owner, ctx.args)
+                    ctx -> provider.getProcessor(ctx.queryType).process(ctx.owner, ctx.args)
             );
             GraphContainer sectionContainer = context.sectionConfig.applyOn(graphContainer);
             return new QueryResult(context, graphContainer.info(), sectionContainer.info(), sectionContainer.export());

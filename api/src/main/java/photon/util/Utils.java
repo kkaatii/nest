@@ -45,4 +45,27 @@ public final class Utils {
     public static String html2text(String html) {
         return Jsoup.parse(html).text();
     }
+
+    public static String obj2json(Object... args) {
+	    int length = args.length;
+	    assert (length % 2 == 0);
+	    StringBuilder sb = new StringBuilder("{");
+        for (int i = 0; i < length; i += 2) {
+            sb.append("\"");
+            sb.append(args[i]);
+            sb.append("\":");
+            Object o = args[i+1];
+            if (o instanceof String) {
+                sb.append("\"");
+                sb.append(o);
+                sb.append("\"");
+            } else {
+                sb.append(o);
+            }
+            sb.append(",");
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        sb.append("}");
+        return sb.toString();
+    }
 }

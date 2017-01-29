@@ -1,7 +1,9 @@
 package photon.tube.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import photon.util.Utils;
+
+import static photon.util.Utils.html2text;
+import static photon.util.Utils.obj2json;
 
 import java.util.Date;
 
@@ -111,11 +113,25 @@ public class Node {
             digest = null;
             return;
         }
-        String strippedText = Utils.html2text(content);
+        String strippedText = html2text(content);
         digest = (strippedText.length() > DIGEST_LENGTH) ? strippedText.substring(0, DIGEST_LENGTH - 3) + "..." : strippedText;
     }
 
     private void stampUpdate() {
         this.updated = new Date();
     }
+
+    public String toJson() {
+        return obj2json(
+                "id", id,
+                "name", name,
+                "ownerId", ownerId,
+                "frame", frame,
+                "type", type.toString(),
+                // "created", created.toString(),
+                // "updated", updated.toString(),
+                "content", content
+        );
+    }
+
 }
