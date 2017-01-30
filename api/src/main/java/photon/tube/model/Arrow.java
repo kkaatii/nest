@@ -6,10 +6,10 @@ public class Arrow {
 
     private Integer id;
 
-    private Integer origin;
-    private Integer target;
-    private boolean active;
-    private ArrowType type;
+    protected Integer origin;
+    protected Integer target;
+    protected boolean active;
+    protected ArrowType type;
 
     protected Arrow() {
     }
@@ -59,7 +59,7 @@ public class Arrow {
 
     @Override
     public String toString() {
-        return String.format("%d %s %d", origin, type.toString(), target);
+        return String.format("[%d]> %s [%d]", origin, type.toString(), target);
     }
 
     @Override

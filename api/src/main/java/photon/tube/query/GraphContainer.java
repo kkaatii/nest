@@ -200,7 +200,7 @@ public class GraphContainer extends AbstractDepthSorter<Point> {
         return result;
     }
 
-    public SectionGraph export() {
+    public SectionGraph exportSection() {
         return new SectionGraph(points(), arrows(), depthToIndexes);
     }
 

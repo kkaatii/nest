@@ -53,8 +53,8 @@ public class CrudApiController {
     }
 
     @RequestMapping("/point-get-frame")
-    public List<Point> getFrame(@RequestParam String frame) {
-        return cs.getAllPointsFromFrame(frame);
+    public List<Point> getPointInFrame(@RequestParam String frame) {
+        return cs.getAllPointsInFrame(frame);
     }
 
     @RequestMapping("/pointmap-get-owner")

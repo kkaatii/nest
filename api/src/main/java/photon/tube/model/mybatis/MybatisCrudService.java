@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import photon.tube.model.*;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public Map<Integer, Point> getPointMap(Iterable<Integer> ids) {
+    public Map<Integer, Point> getPointMap(Collection<Integer> ids) {
         return nodeMapper.preselectMap(ids);
     }
 
@@ -118,7 +119,7 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<Point> getAllPointsFromFrame(String f) {
+    public List<Point> getAllPointsInFrame(String f) {
         return nodeMapper.preselectFromFrame(f);
     }
 

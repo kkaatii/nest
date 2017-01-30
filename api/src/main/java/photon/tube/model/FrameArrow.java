@@ -10,6 +10,19 @@ public class FrameArrow extends Arrow {
         super();
     }
 
+    public FrameArrow(Integer origin, ArrowType type, Integer target) {
+        super(origin, type, target);
+        this.targetFrame = null;
+    }
+
+    public FrameArrow(Arrow a) {
+        this.origin = a.origin;
+        this.type = a.type;
+        this.target = a.target;
+        this.active = a.active;
+        this.targetFrame = null;
+    }
+
     public String getTargetFrame() {
         return targetFrame;
     }

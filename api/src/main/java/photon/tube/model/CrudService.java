@@ -1,5 +1,6 @@
 package photon.tube.model;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -9,12 +10,10 @@ import java.util.Map;
  */
 public interface CrudService {
 
-    // Save/update a node into db
     Node putNode(Node n);
 
     Node updateNode(Node n);
 
-    // Retrieve a node by its qid of db
     Node getNode(Integer id);
 
     String getNodeFrame(Integer id);
@@ -23,14 +22,12 @@ public interface CrudService {
 
     List<Point> getPoints(Iterable<Integer> ids);
 
-    Map<Integer, Point> getPointMap(Iterable<Integer> ids);
+    Map<Integer, Point> getPointMap(Collection<Integer> ids);
 
-    // Delete a node by its qid
     void deleteNode(Integer id);
 
     void activateNode(Integer id, boolean active);
 
-    // Draw an arrow between two nodes
     void putArrow(Arrow a);
 
     List<FrameArrow> getAllArrowsBetween(Integer origin, Integer target);
@@ -39,10 +36,9 @@ public interface CrudService {
 
     List<FrameArrow> getAllArrowsStartingFrom(Integer origin, ArrowType at);
 
-    // Erase the arrow between two nodes
     void deleteArrow(Arrow a);
 
-    List<Point> getAllPointsFromFrame(String f);
+    List<Point> getAllPointsInFrame(String f);
 
     Map<Integer, Point> getPointMapOwnedBy(Integer oid);
 

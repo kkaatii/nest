@@ -20,9 +20,14 @@ public final class ProcessorProvider {
     public ProcessorProvider(CrudService crudService, OafService oafService) {
         this.crudService = crudService;
         this.oafService = oafService;
+        //manuallyRegisterProcessors();
     }
 
-    Processor getProcessor(String abbrProcessorName) {
+    private void manuallyRegisterProcessors() {
+        procMap.put("nrpattern", new PatternProcessor(crudService, oafService));
+    }
+
+    public Processor getProcessor(String abbrProcessorName) {
         return procMap.computeIfAbsent(abbrProcessorName, k -> {
             synchronized (procMap) {
                 if (procMap.containsKey(abbrProcessorName)) {

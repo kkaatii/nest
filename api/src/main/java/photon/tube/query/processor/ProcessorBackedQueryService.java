@@ -30,7 +30,7 @@ public class ProcessorBackedQueryService implements QueryService {
                     ctx -> provider.getProcessor(ctx.queryType).process(ctx.owner, ctx.args)
             );
             GraphContainer sectionContainer = context.sectionConfig.applyOn(graphContainer);
-            return new QueryResult(context, graphContainer.info(), sectionContainer.info(), sectionContainer.export());
+            return new QueryResult(context, graphContainer.info(), sectionContainer.info(), sectionContainer.exportSection());
         } catch (UnauthorizedActionException uae) {
             throw uae;
         } catch (Exception e) {

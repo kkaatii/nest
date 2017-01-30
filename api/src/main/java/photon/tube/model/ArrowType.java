@@ -22,7 +22,7 @@ public enum ArrowType {
     //
     // Schedule-related arrow types
     //
-    DEPENDANT_ON    (Group.SCHEDULE),   DEPENDED_BY     (Group.SCHEDULE),
+    DEPENDENT_ON    (Group.SCHEDULE),   PREREQUISITE_OF (Group.SCHEDULE),
 
     /*------- End of automatic reverse pairing                                ------*/
 
@@ -51,12 +51,7 @@ public enum ArrowType {
 
     @Override
     public String toString() {
-        switch (this) {
-            case PAIRING_WITH:
-                return "~";
-            default:
-                return super.toString().toLowerCase();
-        }
+        return super.toString().toLowerCase();
     }
 
     public Group group() {

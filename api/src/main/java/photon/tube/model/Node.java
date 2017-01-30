@@ -26,6 +26,11 @@ public class Node {
     protected Node() {
     }
 
+    public Node(int id, String name) {
+        this(name);
+        this.id = id;
+    }
+
     public Node(String name) {
         this(NodeType.ARTICLE, name, "");
     }
