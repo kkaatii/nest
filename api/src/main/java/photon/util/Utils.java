@@ -5,14 +5,14 @@ import org.jsoup.Jsoup;
 import java.util.*;
 
 public final class Utils {
-	
-	public static <T> List<T> ensureList(List<T> list) {
-		return (list == null) ? Collections.emptyList() : list;
-	}
 
-	public static <T> Set<T> ensureSet(Set<T> set) {
-		return (set == null) ? Collections.emptySet() : set;
-	}
+    public static <T> List<T> ensureList(List<T> list) {
+        return (list == null) ? Collections.emptyList() : list;
+    }
+
+    public static <T> Set<T> ensureSet(Set<T> set) {
+        return (set == null) ? Collections.emptySet() : set;
+    }
 
     public static <T extends Comparable<T>> T maxOf(T... ts) {
         int size = ts.length;
@@ -47,14 +47,15 @@ public final class Utils {
     }
 
     public static String obj2json(Object... args) {
-	    int length = args.length;
-	    assert (length % 2 == 0);
-	    StringBuilder sb = new StringBuilder("{");
+        int length = args.length;
+        if (length % 2 != 0)
+            throw new RuntimeException("Field name and value failed to pair");
+        StringBuilder sb = new StringBuilder("{");
         for (int i = 0; i < length; i += 2) {
             sb.append("\"");
             sb.append(args[i]);
             sb.append("\":");
-            Object o = args[i+1];
+            Object o = args[i + 1];
             if (o instanceof String) {
                 sb.append("\"");
                 sb.append(o);

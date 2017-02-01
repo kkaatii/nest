@@ -29,6 +29,7 @@ public enum ArrowType {
     ANY             (Group.GENERAL),    PAIRING_WITH    (Group.GENERAL),
     ;
 
+    public static final String REVERSE_SIGN = "^";
     private final Group group;
 
     ArrowType(Group group) {

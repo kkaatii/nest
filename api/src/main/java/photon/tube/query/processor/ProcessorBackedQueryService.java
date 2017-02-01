@@ -15,8 +15,9 @@ import java.util.Map;
 @Service
 public class ProcessorBackedQueryService implements QueryService {
 
-    private final Map<QueryContext, GraphContainer> gcStore = new HashMap<>();
     private final ProcessorProvider provider;
+    private final Map<QueryContext, GraphContainer> gcStore = new HashMap<>();
+    private final QueryStringParser queryStringParser = new QueryStringParser();
 
     @Autowired
     public ProcessorBackedQueryService(ProcessorProvider provider) {
@@ -52,8 +53,9 @@ public class ProcessorBackedQueryService implements QueryService {
     }
 
     @Override
-    public Query createQuery(String string) {
-        return new Query(new QueryContext.Builder().build()) {
+    public Query createQuery(String queryString) {
+        QueryContext context = queryStringParser.parse(queryString);
+        return new Query(context) {
             @Override
             public QueryResult result() {
                 return null;

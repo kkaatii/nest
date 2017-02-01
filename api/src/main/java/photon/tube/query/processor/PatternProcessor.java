@@ -56,7 +56,9 @@ public class PatternProcessor extends Processor {
                     s = seqString[i++];
                     n = seqString[i];
                 }
-                ArrowType unit = s.startsWith("^") ? ArrowType.valueOf(s.substring(1)).reverse() : ArrowType.valueOf(s);
+                ArrowType unit = s.startsWith(ArrowType.REVERSE_SIGN)
+                        ? ArrowType.valueOf(s.substring(1)).reverse()
+                        : ArrowType.valueOf(s);
                 pattern.append(unit, n);
             }
 

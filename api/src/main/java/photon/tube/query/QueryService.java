@@ -4,6 +4,6 @@ public interface QueryService {
 
     Query createQuery(QueryContext context);
 
-    Query createQuery(String string);
+    Query createQuery(String queryString);
 
 }

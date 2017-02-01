@@ -83,8 +83,10 @@ public class CrudApiController {
     }
 
     @RequestMapping(value = "/arrow-create", method = RequestMethod.POST)
-    public void createArrow(@RequestParam Integer[] nid, @RequestParam ArrowType at) {
-        cs.putArrow(new Arrow(nid[0], at, nid[1]));
+    public Arrow createArrow(@RequestParam Integer[] nid, @RequestParam ArrowType at) {
+        Arrow a = new Arrow(nid[0], at, nid[1]);
+        cs.putArrow(a);
+        return a;
     }
 
     @RequestMapping("/arrows-between")
