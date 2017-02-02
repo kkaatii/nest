@@ -63,6 +63,12 @@ public enum ArrowType {
         return this.equals(ANY) || at.equals(ANY) || this.equals(at);
     }
 
+    public static ArrowType enhancedValueOf(String atString) {
+        return atString.startsWith(REVERSE_SIGN)
+                ? valueOf(atString.substring(1)).reverse()
+                : valueOf(atString);
+    }
+
     public enum Group {
         GENERAL, DIRECTORY, SCHEDULE, SEARCH,
     }

@@ -4,12 +4,16 @@ import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.*;
 import photon.tube.query.GraphContainer;
+import photon.tube.query.pattern.MatchingRecord;
+import photon.tube.query.pattern.Pattern;
+import photon.tube.query.pattern.PatternSegment;
 import photon.util.ImmutableTuple;
 import photon.util.PStack;
 
-import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.IntStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static photon.tube.auth.AccessLevel.READ;
 import static photon.tube.query.GraphContainer.INIT_DEPTH;
@@ -139,161 +143,4 @@ public class PatternProcessor extends Processor {
         }
     }
 
-    private static class Pattern<T> {
-        private final int MANY_TIMES = -1;
-
-        private final List<T> unitList = new ArrayList<>();
-        private final List<int[]> timesOptionsList = new ArrayList<>();
-        private int length = 0;
-
-        void append(T unit, String timeString) {
-            String[] options = timeString.split("\\|");
-            if (options.length == 1) {
-                String optionStr = options[0];
-                String[] segments = optionStr.split("-");
-                if (segments.length > 1) {
-                    int min = Integer.parseInt(segments[0]), max = Integer.parseInt(segments[1]);
-                    timesOptionsList.add(IntStream.rangeClosed(min, max).toArray());
-                    unitList.add(unit);
-                    length++;
-                } else {
-                    if (segments[0].endsWith("*")) {
-                        int times = segments[0].equals("*")
-                                ? 0
-                                : Integer.parseInt(segments[0].substring(0, segments[0].length() - 1));
-                        if (times > 0) {
-                            timesOptionsList.add(new int[]{times});
-                            unitList.add(unit);
-                            length++;
-                        }
-                        timesOptionsList.add(new int[]{MANY_TIMES, 0});
-                        unitList.add(unit);
-                        length++;
-                    } else {
-                        timesOptionsList.add(new int[]{Integer.parseInt(segments[0])});
-                        unitList.add(unit);
-                        length++;
-                    }
-                }
-            } else {
-                timesOptionsList.add(Arrays.stream(options).mapToInt(Integer::parseInt).toArray());
-                unitList.add(unit);
-                length++;
-            }
-
-        }
-
-        T getUnit(int index) {
-            return unitList.get(index);
-        }
-
-        T getUnit(PatternSegment element) {
-            return unitList.get(element.index);
-        }
-
-        void next(PatternSegment<T> element, Consumer<PatternSegment<T>> func) {
-            int[] timesOptions;
-            int i = element.index;
-            if (element.times >= 2) {
-                func.accept(new PatternSegment<>(i, element.times - 1, false, getUnit(element)));
-            } else {
-                i++;
-                if (i < length) {
-                    timesOptions = timesOptionsList.get(i);
-                    int times, length = timesOptions.length;
-                    // Start with the largest number of times
-                    for (int j = length; j > 0; j--) {
-                        times = timesOptions[j - 1];
-                        if (times == 0) {
-                            goThroughOptional(i, func);
-                        } else if (times > 0) {
-                            func.accept(new PatternSegment<>(i, times, false, getUnit(i)));
-                        } else if (times == MANY_TIMES) {
-                            func.accept(new PatternSegment<>(i, 1, true, getUnit(i)));
-                        }
-                    }
-                } else {
-                    func.accept(null);
-                }
-                if (element.isMany) {
-                    func.accept(new PatternSegment<>(i - 1, 1, true, element.unit));
-                }
-            }
-        }
-
-        void first(Consumer<PatternSegment<T>> func) {
-            next(new PatternSegment<>(-1, 0, false, null), func);
-        }
-
-        void goThroughOptional(int index, Consumer<PatternSegment<T>> func) {
-            boolean optional = true;
-            int[] timesOptions;
-            while (optional && ++index < length) {
-                timesOptions = timesOptionsList.get(index);
-                boolean anyOptional = false;
-                int times, length = timesOptions.length;
-                for (int j = length; j > 0; j--) {
-                    times = timesOptions[j - 1];
-                    if (times == 0) {
-                        anyOptional = true;
-                    } else if (times > 0) {
-                        func.accept(new PatternSegment<>(index, times, false, getUnit(index)));
-                    } else if (times == MANY_TIMES) {
-                        func.accept(new PatternSegment<>(index, 1, true, getUnit(index)));
-                    }
-                }
-                optional = anyOptional;
-            }
-            if (index == length) {
-                func.accept(null);
-            }
-        }
-    }
-
-    private static class PatternSegment<T> {
-        int index;
-        int times;
-        boolean isMany;
-        T unit;
-
-        PatternSegment(int index, int times, boolean isMany, T unit) {
-            this.index = index;
-            this.times = times;
-            this.isMany = isMany;
-            this.unit = unit;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            PatternSegment<?> that = (PatternSegment<?>) o;
-
-            return index == that.index && times == that.times && isMany == that.isMany && unit.equals(that.unit);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = index;
-            result = 31 * result + times;
-            result = 31 * result + (isMany ? 1 : 0);
-            result = 31 * result + unit.hashCode();
-            return result;
-        }
-    }
-
-    private class MatchingRecord<T> {
-        int id;
-        int depth;
-        PatternSegment<T> segment;
-        List<MatchingRecord<T>> parents;
-
-        MatchingRecord(int id, int depth, PatternSegment<T> segment) {
-            this.id = id;
-            this.depth = depth;
-            this.segment = segment;
-            this.parents = new ArrayList<>();
-        }
-    }
 }

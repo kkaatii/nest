@@ -21,10 +21,7 @@ public class ApiControllerAdvice {
 
             @Override
             public void setAsText(String atString) throws IllegalArgumentException {
-                ArrowType at = atString.startsWith(ArrowType.REVERSE_SIGN)
-                        ? ArrowType.valueOf(atString.substring(1)).reverse()
-                        : ArrowType.valueOf(atString);
-                setValue(at);
+                setValue(ArrowType.enhancedValueOf(atString));
             }
         };
         binder.registerCustomEditor(ArrowType.class, arrowTypeEditor);

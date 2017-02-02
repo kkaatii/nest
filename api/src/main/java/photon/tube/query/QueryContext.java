@@ -20,6 +20,7 @@ public class QueryContext {
         this.sectionConfig = sectionConfig;
     }
 
+    // SectionConfig is irrelevant to QueryContext equivalency
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
