@@ -29,7 +29,7 @@ public enum ArrowType {
     ANY             (Group.GENERAL),    PAIRING_WITH    (Group.GENERAL),
     ;
 
-    public static final String REVERSE_SIGN = "^";
+    public static final char REVERSE_SIGN = '^';
     private final Group group;
 
     ArrowType(Group group) {
@@ -63,8 +63,8 @@ public enum ArrowType {
         return this.equals(ANY) || at.equals(ANY) || this.equals(at);
     }
 
-    public static ArrowType enhancedValueOf(String atString) {
-        return atString.startsWith(REVERSE_SIGN)
+    public static ArrowType extendedValueOf(String atString) {
+        return atString.startsWith(Character.toString(REVERSE_SIGN))
                 ? valueOf(atString.substring(1)).reverse()
                 : valueOf(atString);
     }

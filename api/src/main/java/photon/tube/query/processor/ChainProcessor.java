@@ -3,12 +3,12 @@ package photon.tube.query.processor;
 import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.*;
-import photon.tube.query.GraphContainer;
+import photon.tube.query.SortedGraphContainer;
 import photon.util.PQueue;
 
 import java.util.*;
 
-import static photon.tube.query.GraphContainer.INIT_DEPTH;
+import static photon.tube.query.SortedGraphContainer.INIT_DEPTH;
 import static photon.tube.auth.AccessLevel.READ;
 
 public class ChainProcessor extends Processor {
@@ -18,7 +18,7 @@ public class ChainProcessor extends Processor {
     }
 
     @Override
-    public GraphContainer process(Owner owner, Object... args)
+    public SortedGraphContainer process(Owner owner, Object... args)
             throws QueryArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] origins = (Integer[]) args[0];
@@ -55,7 +55,7 @@ public class ChainProcessor extends Processor {
                 }
             }
 
-            GraphContainer gc = new GraphContainer();
+            SortedGraphContainer gc = new SortedGraphContainer();
             Map<Integer, Point> pointMap = crudService.getPointMap(nodeIdToDepth.keySet());
             pointMap.forEach((id, point) -> gc.add(point, nodeIdToDepth.get(id)));
             gc.addArrow(arrowSet);

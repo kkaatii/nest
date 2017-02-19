@@ -4,7 +4,7 @@ import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.CrudService;
 import photon.tube.model.Owner;
-import photon.tube.query.GraphContainer;
+import photon.tube.query.SortedGraphContainer;
 
 public abstract class Processor {
 
@@ -16,7 +16,7 @@ public abstract class Processor {
         this.oafService = oafService;
     }
 
-    public abstract GraphContainer process(Owner owner, Object... args)
+    public abstract SortedGraphContainer process(Owner owner, Object... args)
             throws QueryArgumentClassException, UnauthorizedActionException;
 
 }

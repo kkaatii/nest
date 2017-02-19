@@ -22,6 +22,11 @@ public class Sort {
     }
 
     private static int partitionInt2(int[] n, int[] p, int left, int right) {
+        while (left < right && n[left] <= n[left + 1])
+            left++;
+        if (left == right) {
+            return left;
+        }
         int pivot = n[left];
         int shadow = 0;
         boolean sync = p.length > 0;

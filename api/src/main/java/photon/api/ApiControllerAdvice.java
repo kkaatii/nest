@@ -21,7 +21,7 @@ public class ApiControllerAdvice {
 
             @Override
             public void setAsText(String atString) throws IllegalArgumentException {
-                setValue(ArrowType.enhancedValueOf(atString));
+                setValue(ArrowType.extendedValueOf(atString));
             }
         };
         binder.registerCustomEditor(ArrowType.class, arrowTypeEditor);

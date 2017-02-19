@@ -7,29 +7,29 @@ import java.util.Arrays;
 /**
  * Stores contextual information for a specific query request.
  */
-public class QueryContext {
+public class QueryRequest {
     public Owner owner;
     public String queryType;
     public Object[] args;
-    public SectionConfig sectionConfig;
+    public SegmentSpec segmentSpec;
 
-    private QueryContext(Owner owner, String queryType, Object[] args, SectionConfig sectionConfig) {
+    private QueryRequest(Owner owner, String queryType, Object[] args, SegmentSpec segmentSpec) {
         this.owner = owner;
         this.queryType = queryType;
         this.args = args;
-        this.sectionConfig = sectionConfig;
+        this.segmentSpec = segmentSpec;
     }
 
-    // SectionConfig is irrelevant to QueryContext equivalency
+    // SegmentSpec is irrelevant to QueryRequest equivalency
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        QueryContext context = (QueryContext) o;
+        QueryRequest request = (QueryRequest) o;
 
         // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(args, context.args) && queryType.equals(context.queryType) && owner.equals(context.owner);
+        return Arrays.equals(args, request.args) && queryType.equals(request.queryType) && owner.equals(request.owner);
 
     }
 
@@ -44,7 +44,7 @@ public class QueryContext {
     public static class Builder {
         private String handler;
         private Object[] args;
-        private SectionConfig sectionConfig;
+        private SegmentSpec segmentSpec;
         private Owner owner;
 
         public Builder handler(String handler) {
@@ -57,8 +57,8 @@ public class QueryContext {
             return this;
         }
 
-        public Builder sectionConfig(SectionConfig sectionConfig) {
-            this.sectionConfig = sectionConfig;
+        public Builder segmentSpec(SegmentSpec segmentSpec) {
+            this.segmentSpec = segmentSpec;
             return this;
         }
 
@@ -67,8 +67,8 @@ public class QueryContext {
             return this;
         }
 
-        public QueryContext build() {
-            return new QueryContext(owner, handler, args, sectionConfig);
+        public QueryRequest build() {
+            return new QueryRequest(owner, handler, args, segmentSpec);
         }
     }
 }

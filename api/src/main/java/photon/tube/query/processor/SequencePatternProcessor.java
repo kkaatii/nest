@@ -3,10 +3,10 @@ package photon.tube.query.processor;
 import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
 import photon.tube.model.*;
-import photon.tube.query.GraphContainer;
+import photon.tube.query.SortedGraphContainer;
 import photon.tube.query.pattern.MatchingRecord;
-import photon.tube.query.pattern.Pattern;
-import photon.tube.query.pattern.PatternSegment;
+import photon.tube.query.pattern.SequencePattern;
+import photon.tube.query.pattern.SequencePatternElement;
 import photon.util.ImmutableTuple;
 import photon.util.PStack;
 
@@ -16,25 +16,28 @@ import java.util.List;
 import java.util.Map;
 
 import static photon.tube.auth.AccessLevel.READ;
-import static photon.tube.query.GraphContainer.INIT_DEPTH;
+import static photon.tube.query.SortedGraphContainer.INIT_DEPTH;
 
-public class PatternProcessor extends Processor {
+public class SequencePatternProcessor extends Processor {
 
-    public PatternProcessor(CrudService crudService, OafService oafService) {
+    private int MAX_QUERY_DEPTH = 255;
+
+    public SequencePatternProcessor(CrudService crudService, OafService oafService) {
         super(crudService, oafService);
     }
 
     @Override
-    public GraphContainer process(Owner owner, Object... args)
+    public SortedGraphContainer process(Owner owner, Object... args)
             throws QueryArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] origins = (Integer[]) args[0];
             String[] seqString = (String[]) args[1];
+
             if (origins.length == 0) {
-                return GraphContainer.emptyContainer();
+                return SortedGraphContainer.emptyContainer();
             }
 
-            GraphContainer gc = new GraphContainer();
+            SortedGraphContainer gc = new SortedGraphContainer();
 
             if (seqString.length == 0) {
                 List<Point> points = crudService.getPoints(Arrays.asList(origins));
@@ -47,9 +50,9 @@ public class PatternProcessor extends Processor {
                 return gc;
             }
 
-            Pattern<ArrowType> pattern = new Pattern<>();
+            SequencePattern<ArrowType> sequencePattern = new SequencePattern<>();
             Map<Integer, Integer> nodeIdToDepth = new HashMap<>();
-            Map<ImmutableTuple<Integer, PatternSegment<ArrowType>>, MatchingRecord<ArrowType>> recordMap = new HashMap<>();
+            Map<ImmutableTuple<Integer, SequencePatternElement<ArrowType>>, MatchingRecord<ArrowType>> recordMap = new HashMap<>();
             PStack<MatchingRecord<ArrowType>> stack = new PStack<>();
             for (int i = 0; i < seqString.length; i++) {
                 String s, n;
@@ -60,10 +63,8 @@ public class PatternProcessor extends Processor {
                     s = seqString[i++];
                     n = seqString[i];
                 }
-                ArrowType unit = s.startsWith(ArrowType.REVERSE_SIGN)
-                        ? ArrowType.valueOf(s.substring(1)).reverse()
-                        : ArrowType.valueOf(s);
-                pattern.append(unit, n);
+                ArrowType unit = ArrowType.extendedValueOf(s);
+                sequencePattern.append(unit, n);
             }
 
             for (Integer origin : origins) {
@@ -72,43 +73,44 @@ public class PatternProcessor extends Processor {
                 if (!oafService.authorized(READ, owner, crudService.getNodeFrame(origin))) {
                     throw new UnauthorizedActionException();
                 }
-                pattern.first(nextSeg -> {
-                    ImmutableTuple<Integer, PatternSegment<ArrowType>> rKey =
-                            new ImmutableTuple<>(origin, nextSeg);
-                    MatchingRecord<ArrowType> r = new MatchingRecord<>(origin, INIT_DEPTH, nextSeg);
+                sequencePattern.first(firstElem -> {
+                    ImmutableTuple<Integer, SequencePatternElement<ArrowType>> rKey =
+                            new ImmutableTuple<>(origin, firstElem);
+                    MatchingRecord<ArrowType> r = new MatchingRecord<>(origin, INIT_DEPTH, firstElem);
                     recordMap.put(rKey, r);
                     stack.push(r);
                 });
             }
 
-            PStack<MatchingRecord<ArrowType>> ancestors = new PStack<>();
+            PStack<MatchingRecord<ArrowType>> matchedRecords = new PStack<>();
             while (!stack.isEmpty()) {
                 MatchingRecord<ArrowType> record = stack.pop();
-                int depth = record.depth;
+                int nextDepth = record.depth + 1;
 
-                // When segment is null, it means that the record is already at the end of the pattern and shall be matched
-                if (record.segment == null) {
-                    ancestors.push(record);
+                // When patternElement is null, it means that the record is already at the
+                // end of the sequence pattern thus shall be regarded as a successful match
+                if (record.patternElement == null) {
+                    matchedRecords.push(record);
                     continue;
                 }
 
-                List<FrameArrow> farrows = crudService.getAllArrowsStartingFrom(record.id, record.segment.unit);
+                List<FrameArrow> farrows = crudService.getAllArrowsStartingFrom(record.id, record.patternElement.unit);
                 for (FrameArrow fa : farrows) {
                     if (!oafService.authorized(READ, owner, fa.getTargetFrame())) continue;
                     Integer candidate = fa.getTarget();
-                    pattern.next(
-                            record.segment,
-                            nextSeg -> {
-                                ImmutableTuple<Integer, PatternSegment<ArrowType>> rKey =
-                                        new ImmutableTuple<>(candidate, nextSeg);
+                    sequencePattern.next(
+                            record.patternElement,
+                            nextElem -> {
+                                ImmutableTuple<Integer, SequencePatternElement<ArrowType>> rKey =
+                                        new ImmutableTuple<>(candidate, nextElem);
                                 MatchingRecord<ArrowType> r = recordMap.get(rKey);
                                 if (r != null) {
                                     r.parents.add(record);
-                                    if (r.depth > depth + 1) {
-                                        r.depth = depth + 1;
+                                    if (r.depth > nextDepth) {
+                                        r.depth = nextDepth;
                                     }
                                 } else {
-                                    r = new MatchingRecord<>(candidate, depth + 1, nextSeg);
+                                    r = new MatchingRecord<>(candidate, nextDepth, nextElem);
                                     r.parents.add(record);
                                     recordMap.put(rKey, r);
                                     stack.push(r);
@@ -119,19 +121,15 @@ public class PatternProcessor extends Processor {
             }
 
             // Back-dyeing: traverse back from a matched node along the pattern
-            while (!ancestors.isEmpty()) {
-                MatchingRecord<ArrowType> r = ancestors.pop();
+            while (!matchedRecords.isEmpty()) {
+                MatchingRecord<ArrowType> r = matchedRecords.pop();
                 Integer prevDepth = nodeIdToDepth.get(r.id);
-                if (prevDepth != null) {
-                    if (prevDepth > r.depth) {
-                        nodeIdToDepth.put(r.id, r.depth);
-                    }
-                } else {
+                if (prevDepth == null || prevDepth > r.depth) {
                     nodeIdToDepth.put(r.id, r.depth);
-                    for (MatchingRecord<ArrowType> parent : r.parents) {
-                        ancestors.push(parent);
-                        gc.addArrow(new Arrow(parent.id, parent.segment.unit, r.id));
-                    }
+                }
+                for (MatchingRecord<ArrowType> parent : r.parents) {
+                    matchedRecords.push(parent);
+                    gc.addArrow(new Arrow(parent.id, parent.patternElement.unit, r.id));
                 }
             }
 

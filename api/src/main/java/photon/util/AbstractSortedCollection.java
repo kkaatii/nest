@@ -7,7 +7,7 @@ import java.util.stream.IntStream;
  * A container class of a <tt>depth</tt> assigned to each entry inside. The key method is <tt>sort</tt>, which can
  * sort all entries by their depths thus allows pagination. <p>
  */
-public abstract class AbstractDepthSorter<T> {
+public abstract class AbstractSortedCollection<T> {
 
     public static final int INIT_DEPTH = 0;
     protected final List<T> _entries = new ArrayList<>();
@@ -102,7 +102,7 @@ public abstract class AbstractDepthSorter<T> {
         return rankToDepth[r];
     }
 
-    public AbstractDepthSorter<T> sort() {
+    public AbstractSortedCollection<T> sort() {
         if (sorted)
             return this;
 
@@ -117,16 +117,14 @@ public abstract class AbstractDepthSorter<T> {
         rankToIndex = IntStream.range(0, currentIndex).toArray();
         indexToRank = rankToIndex.clone();
 
-        if (!Sort.isSorted(rankToDepth)) {
-            Sort.qsortInt2(rankToDepth, rankToIndex, 0, currentIndex - 1);
-            Sort.qsortInt2(rankToIndex.clone(), indexToRank, 0, currentIndex - 1);
-        }
+        Sort.qsortInt2(rankToDepth, rankToIndex, 0, currentIndex - 1);
+        Sort.qsortInt2(rankToIndex.clone(), indexToRank, 0, currentIndex - 1);
 
         sorted = true;
         return this;
     }
 
-    public abstract AbstractDepthSorter<T> sectionByRank(int smaller, int larger);
+    public abstract AbstractSortedCollection<T> segmentByRank(int smaller, int larger);
 
-    public abstract AbstractDepthSorter<T> sectionByDepth(int smaller, int larger);
+    public abstract AbstractSortedCollection<T> segmentByDepth(int smaller, int larger);
 }

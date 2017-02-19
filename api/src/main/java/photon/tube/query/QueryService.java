@@ -2,7 +2,7 @@ package photon.tube.query;
 
 public interface QueryService {
 
-    Query createQuery(QueryContext context);
+    Query createQuery(QueryRequest queryRequest);
 
     Query createQuery(String queryString);
 

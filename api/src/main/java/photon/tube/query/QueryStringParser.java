@@ -10,7 +10,7 @@ public class QueryStringParser {
     private final static char SPACE = ' ';
 
 
-    public QueryContext parse(String queryString) {
+    public QueryRequest parse(String queryString) {
         return null;
     }
 }

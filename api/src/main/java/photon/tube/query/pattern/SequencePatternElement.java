@@ -1,15 +1,15 @@
 package photon.tube.query.pattern;
 
-public class PatternSegment<T> {
-    int index;
-    int times;
-    boolean isInfinite;
+public class SequencePatternElement<T> {
+    final int index;
+    final int times;
+    final boolean isIndefinite;
     public final T unit;
 
-    PatternSegment(int index, int times, boolean isInfinite, T unit) {
+    SequencePatternElement(int index, T unit, int times, boolean isIndefinite) {
         this.index = index;
         this.times = times;
-        this.isInfinite = isInfinite;
+        this.isIndefinite = isIndefinite;
         this.unit = unit;
     }
 
@@ -17,15 +17,15 @@ public class PatternSegment<T> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PatternSegment<?> that = (PatternSegment<?>) o;
-        return index == that.index && times == that.times && isInfinite == that.isInfinite && unit.equals(that.unit);
+        SequencePatternElement<?> that = (SequencePatternElement<?>) o;
+        return index == that.index && times == that.times && isIndefinite == that.isIndefinite && unit.equals(that.unit);
     }
 
     @Override
     public int hashCode() {
         int result = index;
         result = 31 * result + times;
-        result = 31 * result + (isInfinite ? 1 : 0);
+        result = 31 * result + (isIndefinite ? 1 : 0);
         result = 31 * result + unit.hashCode();
         return result;
     }

@@ -19,7 +19,7 @@ public class ArrowCacheCatalog {
 	@Override
 	public String toString() {
 		String linesep = System.getProperty("line.separator", "\n");
-		StringBuilder value = new StringBuilder("GraphContainer" + linesep + "{" + linesep);
+		StringBuilder value = new StringBuilder("SortedGraphContainer" + linesep + "{" + linesep);
 		for (Integer id : records.keySet()) {
 			value.append("    ");
 			Neighborhood ac = records.get(id);

@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 /**
  * The simplest representation of part of a graph to be sent back to the client side.
  */
-public class SectionGraph {
+public class SegmentGraph {
     public final List<Point> points;
-    public final List<Arrow> arrows;
-    public final Map<Integer, List<Integer>> depthToIds;
+    public final Collection<Arrow> arrows;
+    public final Map<Integer, List<Object>> depthToIds;
 
-    SectionGraph(List<Point> points, List<Arrow> arrows, Map<Integer, List<Integer>> depthToIndexes) {
+    SegmentGraph(List<Point> points, Collection<Arrow> arrows, Map<Integer, List<Integer>> depthToIndexes) {
         this.points = points;
         this.arrows = arrows;
         depthToIds = new HashMap<>();
@@ -27,15 +27,21 @@ public class SectionGraph {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
         Set<Integer> depths = depthToIds.keySet().stream().sorted().collect(Collectors.toSet());
+        StringBuilder sb = new StringBuilder();
+        sb.append("---------------- Sorted Graph Segment ----------------\nNodes:\n");
         for (Integer depth:depths) {
-            sb.append("Level ").append(depth).append(":\n  ");
-            List<Integer> ids = depthToIds.get(depth);
-            for (Integer id : ids) {
-                sb.append(id).append(", ");
+            sb.append("  D").append(depth).append(":");
+            List<Object> ids = depthToIds.get(depth);
+            for (Object id : ids) {
+                sb.append(" [").append(id).append("],");
             }
+            sb.deleteCharAt(sb.length() - 1);
             sb.append("\n");
+        }
+        sb.append("Arrows:\n");
+        for (Arrow a: arrows) {
+            sb.append("  ").append(a.toString()).append("\n");
         }
         return sb.toString();
     }

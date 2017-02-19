@@ -1,6 +1,5 @@
 package photon.tube.query.processor;
 
-import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import photon.tube.auth.OafService;
@@ -24,7 +23,7 @@ public final class ProcessorProvider {
     }
 
     private void manuallyRegisterProcessors() {
-        procMap.put("nrpattern", new PatternProcessor(crudService, oafService));
+        procMap.put("nrpattern", new SequencePatternProcessor(crudService, oafService));
     }
 
     public Processor getProcessor(String abbrProcessorName) {
@@ -47,6 +46,6 @@ public final class ProcessorProvider {
     }
 
     private static String completeProcName(String name) {
-        return String.format("photon.tube.query.processor.%sProcessor", WordUtils.capitalizeFully(name));
+        return String.format("photon.tube.query.processor.%sProcessor", name);
     }
 }

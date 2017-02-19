@@ -6,7 +6,7 @@ import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
 import photon.tube.model.CrudService;
 import photon.tube.model.Owner;
-import photon.tube.query.GraphContainer;
+import photon.tube.query.SortedGraphContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +21,12 @@ public class CompleteProcessor extends Processor {
     }
 
     @Override
-    public GraphContainer process(Owner owner, Object... args)
+    public SortedGraphContainer process(Owner owner, Object... args)
             throws QueryArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] ids = (Integer[]) args[0];
             int length = ids.length;
-            if (length == 0) return GraphContainer.emptyContainer();
+            if (length == 0) return SortedGraphContainer.emptyContainer();
 
             ArrowType arrowType = (ArrowType) args[1];
             List<Arrow> arrows = new ArrayList<>();
@@ -45,7 +45,7 @@ public class CompleteProcessor extends Processor {
                         arrows.add(tmp);
                 }
             }
-            return GraphContainer.fixateWith(ensureList(null), arrows);
+            return SortedGraphContainer.fixateWith(ensureList(null), arrows);
 
         } catch (ClassCastException e) {
             throw new QueryArgumentClassException();

@@ -1,31 +1,31 @@
 package photon.tube.query;
 
 public class QueryResult {
-    private QueryContext context;
+    private QueryRequest request;
     private GraphInfo graphInfo;
-    private GraphInfo sectionInfo;
-    private SectionGraph section;
+    private GraphInfo segmentInfo;
+    private SegmentGraph segment;
 
-    public QueryResult(QueryContext context, GraphInfo graphInfo, GraphInfo sectionInfo, SectionGraph section) {
-        this.context = context;
+    public QueryResult(QueryRequest request, GraphInfo graphInfo, GraphInfo segmentInfo, SegmentGraph segment) {
+        this.request = request;
         this.graphInfo = graphInfo;
-        this.sectionInfo = sectionInfo;
-        this.section = section;
+        this.segmentInfo = segmentInfo;
+        this.segment = segment;
     }
 
-    public QueryContext getContext() {
-        return context;
+    public QueryRequest getRequest() {
+        return request;
     }
 
     public GraphInfo getGraphInfo() {
         return graphInfo;
     }
 
-    public GraphInfo getSectionInfo() {
-        return sectionInfo;
+    public GraphInfo getSegmentInfo() {
+        return segmentInfo;
     }
 
-    public SectionGraph getSection() {
-        return section;
+    public SegmentGraph getSegment() {
+        return segment;
     }
 }
