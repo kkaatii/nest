@@ -67,7 +67,7 @@ public abstract class Action<T, R> implements Actionable {
         subsequent.waitFor(this);
     }
 
-    public void perform() {
+    public final void perform() {
         if (!isQueueing()) {
             if (!isDone() || PerformStrategy.FORCE_UPDATE.equals(performStrategy)) {
                 if (antecedent != null && !antecedent.isDone()) {

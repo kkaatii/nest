@@ -16,7 +16,7 @@ public class ActionTest {
                 System.out.println("Preparing the 0...");
                 Thread.sleep(1000L);
                 System.out.println("0 prepared after one second");
-                throw new RuntimeException();
+                return 0;
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

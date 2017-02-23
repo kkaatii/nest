@@ -7,11 +7,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created by Dun Liu on 2/21/2017.
+ * The <tt>ActionManager</tt> is responsible for executing all actions in a thread pool. It will run those
+ * <tt>ImmediatelyRunnable</tt> actions right when the <tt>schedule()</tt> method is called, and
+ * put the other actions into the thread pool.
  */
-public class ActionManager {
+class ActionManager {
 
-    public static final ActionManager INSTANCE = new ActionManager();
+    static final ActionManager INSTANCE = new ActionManager();
     private final AtomicLong nextActionId = new AtomicLong(0);
     private final Set<Long> scheduled = ConcurrentHashMap.newKeySet();
     private final ExecutorService executor = Executors.newWorkStealingPool();
@@ -19,11 +21,20 @@ public class ActionManager {
     private ActionManager() {
     }
 
-    public long newActionId() {
+    long newActionId() {
         return nextActionId.getAndIncrement();
     }
 
-    public void schedule(Actionable action) {
+    void schedule(Actionable action) {
+        if (action != null && action instanceof ImmediatelyRunnable) {
+            try {
+                ((ImmediatelyRunnable) action).runImmediately();
+                action = tryRunningSubsequentImmediately(action);
+            } catch (Exception e) {
+                onAbort(action);
+                throw new ActionRuntimeException(e);
+            }
+        }
         if (action != null) {
             Long id = action.id();
             if (!scheduled.contains(id)) {
@@ -31,6 +42,14 @@ public class ActionManager {
                 executor.submit(new ActionAbortNotifier(action));
             }
         }
+
+    }
+
+    private Actionable tryRunningSubsequentImmediately(Actionable action) {
+        while ((action = action.subsequent()) != null && action instanceof ImmediatelyRunnable) {
+            ((ImmediatelyRunnable) action).runImmediately();
+        }
+        return action;
     }
 
     private void onAbort(Actionable action) {
@@ -53,9 +72,7 @@ public class ActionManager {
             long originalActionId = action.id();
             try {
                 action.run();
-                while ((action = action.subsequent()) != null && action instanceof ImmediatelyRunnable ) {
-                    ((ImmediatelyRunnable) action).runImmediately();
-                }
+                action = tryRunningSubsequentImmediately(action);
                 schedule(action);
             } catch (Exception e) {
                 onAbort(action);
