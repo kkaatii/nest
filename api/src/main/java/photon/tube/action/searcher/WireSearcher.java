@@ -1,4 +1,4 @@
-package photon.tube.query.processor;
+package photon.tube.action.searcher;
 
 import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
@@ -11,18 +11,18 @@ import photon.tube.query.SortedGraphContainer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static photon.util.Utils.ensureList;
 import static photon.tube.auth.AccessLevel.READ;
+import static photon.util.Utils.ensureList;
 
-public class CompleteProcessor extends Processor {
+public class WireSearcher extends Searcher {
 
-    public CompleteProcessor(CrudService crudService, OafService oafService) {
+    public WireSearcher(CrudService crudService, OafService oafService) {
         super(crudService, oafService);
     }
 
     @Override
-    public SortedGraphContainer process(Owner owner, Object... args)
-            throws QueryArgumentClassException, UnauthorizedActionException {
+    public SortedGraphContainer search(Owner owner, Object... args)
+            throws GraphSearchArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] ids = (Integer[]) args[0];
             int length = ids.length;
@@ -48,7 +48,7 @@ public class CompleteProcessor extends Processor {
             return SortedGraphContainer.fixateWith(ensureList(null), arrows);
 
         } catch (ClassCastException e) {
-            throw new QueryArgumentClassException();
+            throw new GraphSearchArgumentClassException();
         }
     }
 }

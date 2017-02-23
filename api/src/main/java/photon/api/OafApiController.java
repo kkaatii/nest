@@ -28,8 +28,8 @@ public class OafApiController {
     }
 
     @RequestMapping("/frames-readable")
-    public List<String> readableFrames(@RequestParam Integer oid, @RequestParam String on) {
-        return oafService.getAccessibleFrames(new Owner(oid, on), AccessLevel.READ);
+    public List<String> readableFrames(@RequestParam Integer _oid, @RequestParam String _on) {
+        return oafService.getAccessibleFrames(new Owner(_oid, _on), AccessLevel.READ);
     }
 
 }

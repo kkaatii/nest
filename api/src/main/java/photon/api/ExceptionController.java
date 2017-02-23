@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import photon.tube.auth.UnauthorizedActionException;
 
 @ControllerAdvice
-public class TubeExceptionHandler {
+public class ExceptionController {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedActionException.class)
     public void handleUnauthorized() {}

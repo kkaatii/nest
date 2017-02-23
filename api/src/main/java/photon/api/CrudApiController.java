@@ -58,13 +58,13 @@ public class CrudApiController {
     }
 
     @RequestMapping("/pointmap-get-owner")
-    public Map<Integer, Point> getPointMapByOwner(@RequestParam Integer oid) {
-        return cs.getPointMapOwnedBy(oid);
+    public Map<Integer, Point> getPointMapByOwner(@RequestParam Integer _oid) {
+        return cs.getPointMapOwnedBy(_oid);
     }
 
     @RequestMapping("/point-get-owner")
-    public List<Point> getPointByOwner(@RequestParam Integer oid) {
-        return cs.getPointsOwnedBy(oid);
+    public List<Point> getPointByOwner(@RequestParam Integer _oid) {
+        return cs.getPointsOwnedBy(_oid);
     }
 
     @RequestMapping("/point-get")

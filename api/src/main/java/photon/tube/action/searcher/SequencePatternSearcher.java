@@ -1,4 +1,4 @@
-package photon.tube.query.processor;
+package photon.tube.action.searcher;
 
 import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
@@ -16,19 +16,22 @@ import java.util.List;
 import java.util.Map;
 
 import static photon.tube.auth.AccessLevel.READ;
-import static photon.tube.query.SortedGraphContainer.INIT_DEPTH;
+import static photon.util.AbstractSortedCollection.INIT_DEPTH;
 
-public class SequencePatternProcessor extends Processor {
+/**
+ * Created by Dun Liu on 2/20/2017.
+ */
+public class SequencePatternSearcher extends Searcher {
 
     private int MAX_QUERY_DEPTH = 255;
 
-    public SequencePatternProcessor(CrudService crudService, OafService oafService) {
+    public SequencePatternSearcher(CrudService crudService, OafService oafService) {
         super(crudService, oafService);
     }
 
     @Override
-    public SortedGraphContainer process(Owner owner, Object... args)
-            throws QueryArgumentClassException, UnauthorizedActionException {
+    public SortedGraphContainer search(Owner owner, Object... args)
+            throws GraphSearchArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] origins = (Integer[]) args[0];
             String[] seqString = (String[]) args[1];
@@ -137,8 +140,7 @@ public class SequencePatternProcessor extends Processor {
             pointMap.forEach((id, point) -> gc.add(point, nodeIdToDepth.get(id)));
             return gc.sort();
         } catch (ClassCastException cce) {
-            throw new QueryArgumentClassException();
+            throw new GraphSearchArgumentClassException();
         }
     }
-
 }

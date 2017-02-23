@@ -26,14 +26,14 @@ import java.util.NoSuchElementException;
  *  @param <Item> the generic type of an item in this queue
  */
 public class PQueue<Item> implements Iterable<Item> {
-    private Node<Item> first;    // beginning of queue
-    private Node<Item> last;     // end of queue
-    private int N;               // number of elements on queue
+    protected Node<Item> first;    // beginning of queue
+    protected Node<Item> last;     // end of queue
+    protected int N;               // number of elements on queue
 
     // helper linked list class
-    private static class Node<Item> {
-        private Item item;
-        private Node<Item> next;
+    protected static class Node<Item> {
+        Item item;
+        Node<Item> next;
     }
 
     /**

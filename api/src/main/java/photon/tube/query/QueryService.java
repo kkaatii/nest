@@ -1,9 +1,9 @@
 package photon.tube.query;
 
+import photon.tube.action.ActionListener;
+
 public interface QueryService {
 
-    Query createQuery(QueryRequest queryRequest);
-
-    Query createQuery(String queryString);
+    void executeQuery(QueryRequest request, ActionListener<QueryResult> listener);
 
 }

@@ -6,6 +6,10 @@ public class QueryResult {
     private GraphInfo segmentInfo;
     private SegmentGraph segment;
 
+    public QueryResult(Object actionOutcome) {
+
+    }
+
     public QueryResult(QueryRequest request, GraphInfo graphInfo, GraphInfo segmentInfo, SegmentGraph segment) {
         this.request = request;
         this.graphInfo = graphInfo;

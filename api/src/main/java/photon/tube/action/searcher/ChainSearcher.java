@@ -1,4 +1,4 @@
-package photon.tube.query.processor;
+package photon.tube.action.searcher;
 
 import photon.tube.auth.OafService;
 import photon.tube.auth.UnauthorizedActionException;
@@ -11,15 +11,15 @@ import java.util.*;
 import static photon.tube.query.SortedGraphContainer.INIT_DEPTH;
 import static photon.tube.auth.AccessLevel.READ;
 
-public class ChainProcessor extends Processor {
+public class ChainSearcher extends Searcher {
 
-    public ChainProcessor(CrudService crudService, OafService oafService) {
+    public ChainSearcher(CrudService crudService, OafService oafService) {
         super(crudService, oafService);
     }
 
     @Override
-    public SortedGraphContainer process(Owner owner, Object... args)
-            throws QueryArgumentClassException, UnauthorizedActionException {
+    public SortedGraphContainer search(Owner owner, Object... args)
+            throws GraphSearchArgumentClassException, UnauthorizedActionException {
         try {
             Integer[] origins = (Integer[]) args[0];
             ArrowType at = (ArrowType) args[1];
@@ -62,7 +62,7 @@ public class ChainProcessor extends Processor {
             return gc.sort();
 
         } catch (ClassCastException e) {
-            throw new QueryArgumentClassException();
+            throw new GraphSearchArgumentClassException();
         }
     }
 }

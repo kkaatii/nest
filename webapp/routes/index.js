@@ -19,8 +19,8 @@ function cleanseUrl(url) {
   var urlparts = url.split('?');
   if (urlparts.length >= 2) {
 
-    var prefix1 = 'oid=';
-    var prefix2 = 'on=';
+    var prefix1 = '_oid=';
+    var prefix2 = '_on=';
     var pars = urlparts[1].split(/[&;]/g);
 
     //reverse iteration as may be destructive
@@ -73,7 +73,7 @@ router.get('/mfw',
   function (req, res) {
     if (typeof req.user !== 'undefined') request.get(appendParameter(
       LOCAL_API_SERVER + '/api/mfw/init',
-      ['oid', req.user.tube.id, 'on', req.user.tube.nickname]
+      ['_oid', req.user.tube.id, '_on', req.user.tube.nickname]
     ));
     res.render('mfw', {server: REMOTE_API_SERVER});
   });
@@ -82,7 +82,7 @@ router.get('/api/*', auth, function (req, res) {
   var reques = {
     url: appendParameter(
       LOCAL_API_SERVER + cleanseUrl(req.url),
-      ['oid', req.user.tube.id, 'on', req.user.tube.nickname]
+      ['_oid', req.user.tube.id, '_on', req.user.tube.nickname]
     ),
     method: req.method
   };
