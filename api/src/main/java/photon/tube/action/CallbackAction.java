@@ -6,13 +6,14 @@ import javax.validation.constraints.NotNull;
 /**
  * Created by Dun Liu on 2/22/2017.
  */
-public class ActionListenerAction<Result> extends Action<Result, Void> implements ImmediatelyRunnable {
+public class CallbackAction<Result> extends Action<Result, Void> implements ImmediatelyActionable {
 
-    private final ActionListener<? super Result> listener;
+    private final Callback<? super Result> listener;
 
-    protected ActionListenerAction(ActionManager manager, @NotNull ActionListener<? super Result> listener) {
+    protected CallbackAction(ActionManager manager, @NotNull Callback<? super Result> listener) {
         super(manager);
         this.listener = listener;
+        this.performStrategy = PerformStrategy.CACHE_FIRST;
     }
 
     @Override

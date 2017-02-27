@@ -6,7 +6,7 @@ import photon.tube.query.SortedGraphContainer;
 /**
  * Created by Dun Liu on 2/20/2017.
  */
-public class SegmentAction extends Action<SortedGraphContainer, SegmentGraph> {
+public class SegmentAction extends Action<SortedGraphContainer, SegmentGraph> implements ImmediatelyActionable {
 
     public static final String NONE = "none";
     public static final String BY_RANK = "rank";

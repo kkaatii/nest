@@ -1,10 +1,10 @@
 package photon.tube.action;
 
-/**
- * Created by Dun Liu on 2/23/2017.
- */
 public class ActionRuntimeException extends RuntimeException {
-    public ActionRuntimeException(Throwable throwable) {
+    private final Actionable action;
 
+    public ActionRuntimeException(Actionable action, Exception e) {
+        super(e);
+        this.action = action;
     }
 }

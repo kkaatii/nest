@@ -1,5 +1,7 @@
 package photon.tube.action;
 
+import photon.tube.query.Query;
+
 /**
  * Created by Dun Liu on 2/20/2017.
  */
@@ -9,10 +11,12 @@ public abstract class Action<T, R> implements Actionable {
     private final long id;
     protected R result;
 
-    protected Action<?, ? extends T> antecedent;
-    protected Action<? super R, ?> subsequent;
+    protected Query query;
+    protected Action<?, ? extends T> predecessor;
+    protected Action<? super R, ?> successor;
+    // TODO why volatile???
+    protected RunningStatus status = RunningStatus.NOT_STARTED;
     protected PerformStrategy performStrategy = PerformStrategy.CACHE_FIRST;
-    protected volatile RunningStatus status = RunningStatus.NOT_STARTED;
 
     protected enum RunningStatus {
         DONE, QUEUEING, ABORTED, NOT_STARTED
@@ -33,13 +37,12 @@ public abstract class Action<T, R> implements Actionable {
     }
 
     @Override
-    public Action<?, ? extends T> antecedent() {
-        return antecedent;
+    public Action<? super R, ?> successor() {
+        return successor;
     }
 
-    @Override
-    public Action<? super R, ?> subsequent() {
-        return subsequent;
+    public Action<?, ? extends T> predecessor() {
+        return predecessor;
     }
 
     public final PerformStrategy performStrategy() {
@@ -54,42 +57,65 @@ public abstract class Action<T, R> implements Actionable {
         return result;
     }
 
-    public void waitFor(Action<?, ? extends T> antecedent) {
-        if (this.equals(antecedent))
+    public void waitFor(Action<?, ? extends T> predecessor) {
+        if (this.equals(predecessor))
             throw new RuntimeException("Action " + id + " cannot wait for itself!");
-        this.antecedent = antecedent;
-        antecedent.subsequent = this;
+        if (this.predecessor != null)
+            this.predecessor.successor = null;
+        this.predecessor = predecessor;
+        if (predecessor != null)
+            predecessor.successor = this;
+        status = RunningStatus.NOT_STARTED;
+        Action<?, ?> then = this;
+        while ((then = then.successor) != null) {
+            then.status = RunningStatus.NOT_STARTED;
+        }
     }
 
-    public void then(Action<? super R, ?> subsequent) {
-        if (this.equals(subsequent))
+    public void then(Action<? super R, ?> successor) {
+        if (this.equals(successor))
             throw new RuntimeException("Action " + id + " cannot wait for itself!");
-        subsequent.waitFor(this);
-    }
-
-    public final void perform() {
-        if (!isQueueing()) {
-            if (!isDone() || PerformStrategy.FORCE_UPDATE.equals(performStrategy)) {
-                if (antecedent != null && !antecedent.isDone()) {
-                    antecedent.perform();
-                } else {
-                    manager.schedule(this);
-                }
+        if (this.successor != null)
+            this.successor.predecessor = null;
+        this.successor = successor;
+        if (successor != null) {
+            successor.predecessor = this;
+            successor.status = RunningStatus.NOT_STARTED;
+            Action<?, ?> then = successor;
+            while ((then = then.successor) != null) {
+                then.status = RunningStatus.NOT_STARTED;
             }
         }
     }
 
-    @Override
+    public final void perform() {
+        if (!isQueueing() && (!isDone() || PerformStrategy.FORCE_UPDATE.equals(performStrategy))) {
+            boolean queued = false;
+            if (predecessor != null) {
+                switch (predecessor.status) {
+                    case QUEUEING:
+                        return;
+                    case DONE:
+                        break;
+                    default:
+                        predecessor.perform();
+                        queued = true;
+                }
+            }
+            if (!queued) {
+                manager.schedule(this);
+            }
+        }
+    }
+
     public final boolean isDone() {
         return RunningStatus.DONE.equals(status);
     }
 
-    @Override
     public final boolean isAborted() {
         return RunningStatus.ABORTED.equals(status);
     }
 
-    @Override
     public final boolean isQueueing() {
         return RunningStatus.QUEUEING.equals(status);
     }
@@ -99,7 +125,7 @@ public abstract class Action<T, R> implements Actionable {
      */
     @Override
     public void run() {
-        result = doRun(antecedent == null ? null : antecedent.result);
+        result = doRun(predecessor == null ? null : predecessor.result);
         status = RunningStatus.DONE;
     }
 
@@ -120,7 +146,17 @@ public abstract class Action<T, R> implements Actionable {
     }
 
     /**
-     * This method gets called only when the antecedent is successfully done.
+     * This method shall be called only by the <tt>ActionManager</tt>
+     */
+    @Override
+    public void onException(Exception e) {
+        if (query != null) {
+            query.onException(new ActionRuntimeException(this, e));
+        }
+    }
+
+    /**
+     * This method gets called only when the predecessor is successfully done.
      *
      * @param input input of the action
      * @return output of the action

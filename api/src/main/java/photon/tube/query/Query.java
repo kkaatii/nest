@@ -13,16 +13,16 @@ import java.util.List;
  * Each {@link QueryService} implementation shall be able to create a subclass of <tt>Query</tt>
  * which specifies how the <tt>result()</tt> method works.
  */
-public abstract class Query {
+public abstract class Query implements ActionExceptionHandler<Exception> {
 
     private final Owner owner;
-    private ActionListenerAction<QueryResult> listenerAction;
+    private CallbackAction<QueryResult> listener;
     private Action<?, QueryResult> lastAction;
     private List<ActionRequest> actionRequests;
 
-    protected Query(Owner owner, ActionListenerAction<QueryResult> listenerAction) {
+    protected Query(Owner owner, CallbackAction<QueryResult> listener) {
         this.owner = owner;
-        this.listenerAction = listenerAction;
+        this.listener = listener;
     }
 
     public Owner owner() {
@@ -37,8 +37,8 @@ public abstract class Query {
     }
 
     public void perform() {
-        listenerAction.waitFor(lastAction);
-        listenerAction.perform();
+        listener.waitFor(lastAction);
+        listener.perform();
     }
 
     public boolean isDone() {
@@ -53,4 +53,8 @@ public abstract class Query {
         }
     }
 
+    @Override
+    public void onException(Exception e) {
+
+    }
 }

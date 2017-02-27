@@ -28,8 +28,8 @@ abstract class SearchAction extends Action<Void, SortedGraphContainer> {
     }
 
     @Override
-    public void waitFor(Action<?, ? extends Void> antecedent) {
-        throw new RuntimeException("Search action needs no antecedent!");
+    public void waitFor(Action<?, ? extends Void> predecessor) {
+        throw new RuntimeException("Search action needs no predecessor!");
     }
 
 }
