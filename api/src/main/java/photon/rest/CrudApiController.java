@@ -1,4 +1,4 @@
-package photon.api;
+package photon.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -54,17 +54,17 @@ public class CrudApiController {
 
     @RequestMapping("/point-get-frame")
     public List<Point> getPointInFrame(@RequestParam String frame) {
-        return cs.getAllPointsInFrame(frame);
+        return cs.listPointsInFrame(frame);
     }
 
     @RequestMapping("/pointmap-get-owner")
     public Map<Integer, Point> getPointMapByOwner(@RequestParam Integer _oid) {
-        return cs.getPointMapOwnedBy(_oid);
+        return cs.pointMapOwnedBy(_oid);
     }
 
     @RequestMapping("/point-get-owner")
     public List<Point> getPointByOwner(@RequestParam Integer _oid) {
-        return cs.getPointsOwnedBy(_oid);
+        return cs.listPointsOwnedBy(_oid);
     }
 
     @RequestMapping("/point-get")
@@ -74,12 +74,12 @@ public class CrudApiController {
 
     @RequestMapping("/point-get-multiple")
     public List<Point> getPoints(@RequestParam Integer[] pid) {
-        return cs.getPoints(Arrays.asList(pid));
+        return cs.listPoints(Arrays.asList(pid));
     }
 
     @RequestMapping("/point-map-get")
     public Map<Integer, Point> getPointMap(@RequestParam Integer[] pid) {
-        return cs.getPointMap(Arrays.asList(pid));
+        return cs.pointMapOf(Arrays.asList(pid));
     }
 
     @RequestMapping(value = "/arrow-create", method = RequestMethod.POST)
@@ -91,7 +91,7 @@ public class CrudApiController {
 
     @RequestMapping("/arrows-between")
     public List<FrameArrow> arrowsBetween(@RequestParam Integer f, @RequestParam Integer t) {
-        return cs.getAllArrowsBetween(f, t);
+        return cs.listArrowsBetween(f, t);
     }
 
     @RequestMapping("/arrow-delete")

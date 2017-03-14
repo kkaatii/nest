@@ -1,4 +1,4 @@
-package photon.tube.action.searcher;
+package photon.tube.action.search;
 
 /**
  * Created by Dun Liu on 5/29/2016.

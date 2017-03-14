@@ -1,9 +1,9 @@
 package photon.tube.action;
 
 public class ActionRuntimeException extends RuntimeException {
-    private final Actionable action;
+    private final Action action;
 
-    public ActionRuntimeException(Actionable action, Exception e) {
+    public ActionRuntimeException(Action action, Exception e) {
         super(e);
         this.action = action;
     }

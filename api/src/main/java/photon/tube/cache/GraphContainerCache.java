@@ -1,7 +1,7 @@
 package photon.tube.cache;
 
 import org.springframework.stereotype.Component;
-import photon.tube.query.SortedGraphContainer;
+import photon.tube.graph.SortedGraphContainer;
 import photon.tube.action.ActionRequest;
 
 /**

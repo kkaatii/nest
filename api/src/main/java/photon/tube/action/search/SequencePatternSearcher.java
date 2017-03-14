@@ -1,19 +1,21 @@
-package photon.tube.action.searcher;
+package photon.tube.action.search;
 
 import photon.tube.auth.OafService;
-import photon.tube.auth.UnauthorizedActionException;
+import photon.tube.auth.UnauthorizedQueryException;
 import photon.tube.model.*;
-import photon.tube.query.SortedGraphContainer;
+import photon.tube.graph.SortedGraphContainer;
 import photon.tube.query.pattern.MatchingRecord;
 import photon.tube.query.pattern.SequencePattern;
 import photon.tube.query.pattern.SequencePatternElement;
 import photon.util.ImmutableTuple;
 import photon.util.PStack;
+import photon.util.GenericDict;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static photon.tube.auth.AccessLevel.READ;
 import static photon.util.AbstractSortedCollection.INIT_DEPTH;
@@ -30,11 +32,12 @@ public class SequencePatternSearcher extends Searcher {
     }
 
     @Override
-    public SortedGraphContainer search(Owner owner, Object... args)
-            throws GraphSearchArgumentClassException, UnauthorizedActionException {
+    public SortedGraphContainer search(Owner owner, GenericDict params)
+            throws GraphSearchArgumentClassException, UnauthorizedQueryException {
         try {
-            Integer[] origins = (Integer[]) args[0];
-            String[] seqString = (String[]) args[1];
+            int[] origins = params.get(int[].class, "origins");
+            String[] seqStrings = params.get(String[].class, "sequence");
+
 
             if (origins.length == 0) {
                 return SortedGraphContainer.emptyContainer();
@@ -42,39 +45,28 @@ public class SequencePatternSearcher extends Searcher {
 
             SortedGraphContainer gc = new SortedGraphContainer();
 
-            if (seqString.length == 0) {
-                List<Point> points = crudService.getPoints(Arrays.asList(origins));
+            if (seqStrings.length == 0) {
+                List<Point> points = crudService.listPoints(Arrays.stream(origins).boxed().collect(Collectors.toList()));
                 points.forEach(point -> {
                     if (!oafService.authorized(READ, owner, point.getFrame())) {
-                        throw new UnauthorizedActionException();
+                        throw new UnauthorizedQueryException();
                     }
                 });
                 gc.addAll(points);
                 return gc;
             }
 
-            SequencePattern<ArrowType> sequencePattern = new SequencePattern<>();
+            SequencePattern<ArrowType> sequencePattern = parseSeq(seqStrings);
+
             Map<Integer, Integer> nodeIdToDepth = new HashMap<>();
             Map<ImmutableTuple<Integer, SequencePatternElement<ArrowType>>, MatchingRecord<ArrowType>> recordMap = new HashMap<>();
             PStack<MatchingRecord<ArrowType>> stack = new PStack<>();
-            for (int i = 0; i < seqString.length; i++) {
-                String s, n;
-                if (i + 1 == seqString.length || Character.isLetter(seqString[i + 1].charAt(0))) {
-                    s = seqString[i];
-                    n = "1";
-                } else {
-                    s = seqString[i++];
-                    n = seqString[i];
-                }
-                ArrowType unit = ArrowType.extendedValueOf(s);
-                sequencePattern.append(unit, n);
-            }
 
             for (Integer origin : origins) {
                 // If any of the queried origins is not readable then it must be an illegal query request thus an
                 // exception is thrown
                 if (!oafService.authorized(READ, owner, crudService.getNodeFrame(origin))) {
-                    throw new UnauthorizedActionException();
+                    throw new UnauthorizedQueryException();
                 }
                 sequencePattern.first(firstElem -> {
                     ImmutableTuple<Integer, SequencePatternElement<ArrowType>> rKey =
@@ -97,7 +89,7 @@ public class SequencePatternSearcher extends Searcher {
                     continue;
                 }
 
-                List<FrameArrow> farrows = crudService.getAllArrowsStartingFrom(record.id, record.patternElement.unit);
+                List<FrameArrow> farrows = crudService.listArrowsStartingFrom(record.id, record.patternElement.unit);
                 for (FrameArrow fa : farrows) {
                     if (!oafService.authorized(READ, owner, fa.getTargetFrame())) continue;
                     Integer candidate = fa.getTarget();
@@ -136,11 +128,28 @@ public class SequencePatternSearcher extends Searcher {
                 }
             }
 
-            Map<Integer, Point> pointMap = crudService.getPointMap(nodeIdToDepth.keySet());
+            Map<Integer, Point> pointMap = crudService.pointMapOf(nodeIdToDepth.keySet());
             pointMap.forEach((id, point) -> gc.add(point, nodeIdToDepth.get(id)));
             return gc.sort();
         } catch (ClassCastException cce) {
             throw new GraphSearchArgumentClassException();
         }
+    }
+
+    private static SequencePattern<ArrowType> parseSeq(String[] seqStrings) {
+        SequencePattern<ArrowType> sequencePattern = new SequencePattern<>();
+        for (int i = 0; i < seqStrings.length; i++) {
+            String s, n;
+            if (i + 1 == seqStrings.length || Character.isLetter(seqStrings[i + 1].charAt(0))) {
+                s = seqStrings[i];
+                n = "1";
+            } else {
+                s = seqStrings[i++];
+                n = seqStrings[i];
+            }
+            ArrowType unit = ArrowType.extendedValueOf(s);
+            sequencePattern.append(unit, n);
+        }
+        return sequencePattern;
     }
 }

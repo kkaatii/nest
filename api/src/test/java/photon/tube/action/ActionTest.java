@@ -15,31 +15,29 @@ import java.util.function.Supplier;
  */
 public class ActionTest {
 
-    static class NumProvider extends Action<Void, Integer> implements ImmediatelyActionable {
+    static class NumProvider extends BeginAction<Integer> {
         private int n;
 
-        public NumProvider(ActionManager manager, int n) {
-            super(manager);
+        public NumProvider(int n) {
             this.n = n;
         }
 
         @Override
-        public Integer doRun(Void _void) {
+        public Integer transform(Void _void) {
             return n;
         }
     }
 
-    static class PiCalculator extends Action<Void, Double> {
+    static class PiCalculator extends Transformation<Void, Double> {
         private final int n;
 
-        public PiCalculator(ActionManager manager, int n) {
-            super(manager);
+        public PiCalculator(int n) {
             this.n = n;
             setPerformStrategy(PerformStrategy.FORCE_UPDATE);
         }
 
         @Override
-        public Double doRun(Void _void) {
+        public Double transform(Void _void) {
             double sum = 0;
             Random random = new SecureRandom();
             for (int i = 0; i < n; i++) {
@@ -51,30 +49,31 @@ public class ActionTest {
             return sum / n;
         }
 
-        @Override
-        public void onException(Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
-    static class PredecessorInspector extends Action<Void, Void> implements ImmediatelyActionable {
-        protected PredecessorInspector(ActionManager manager) {
-            super(manager);
+    static class PredecessorInspector extends Transformation<Void, Void> {
+        protected PredecessorInspector() {
+
         }
 
         @Override
-        public void abort() {
-            super.abort();
-            Action<?, ?> prev = predecessor;
+        public void abort(ActionRuntimeException e) {
+            super.abort(e);
+            Action prev = predecessor;
             while (prev != null) {
-                System.out.println(prev.status);
+                System.out.println(prev.state);
                 prev = prev.predecessor;
             }
         }
 
         @Override
-        protected Void doRun(Void input) {
+        protected Void transform(Void input) {
             return null;
+        }
+
+        @Override
+        public final boolean isImmediate() {
+            return true;
         }
     }
 
@@ -110,7 +109,7 @@ public class ActionTest {
             //System.out.println("The average is " + total / size * 4);
 
             count = 0;
-           // System.out.println("The actions " + id + " take " + watch.getTime() + " milliseconds");
+            // System.out.println("The actions " + id + " take " + watch.getTime() + " milliseconds");
         }
     }
 
@@ -121,6 +120,7 @@ public class ActionTest {
         public PiCalc(int n) {
             N = n;
         }
+
         @Override
         public Double get() {
             double sum = 0;
@@ -138,16 +138,16 @@ public class ActionTest {
 
     public void test() throws Exception {
         int N = 20000;
-        int times = 4;
-        List<Action<Void, Double>> numList = new ArrayList<>();
+        int times = 6;
+        List<BeginAction<Void>> numList = new ArrayList<>();
 
         StopWatch watch = new StopWatch();
         Average average = new Average(0, times, watch);
 
         for (int i = 0; i < times; i++) {
-            Action<Void, Integer> num = new NumProvider(ActionManager.INSTANCE, N);
-            Action<Void, Double> piCalc = new PiCalculator(ActionManager.INSTANCE, N);
-            CallbackAction<Double> write = new CallbackAction<>(ActionManager.INSTANCE, new Callback<Double>() {
+
+            Transformation<Void, Double> piCalc = new PiCalculator(N);
+            CallbackAction<Double> write = new CallbackAction<>(new Callback<Double>() {
                 @Override
                 public void onSuccess(Double value) {
                     average.addValue(value);
@@ -157,41 +157,36 @@ public class ActionTest {
                 public void onFailure() {
                 }
             });
-            PredecessorInspector inspector = new PredecessorInspector(ActionManager.INSTANCE);
+            PredecessorInspector inspect = new PredecessorInspector();
             piCalc.then(write);
-            numList.add(piCalc);
+            numList.add(BeginAction.wrap(piCalc));
         }
 
         // Warm-up JVM
         System.out.println(calculatePi(N * times));
 
         // Warm-up again
-        for (int i = 0; i < 3; i++) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    calculatePi(N*10);
-                }
-            }).start();
+        for (int i = 0; i < 10; i++) {
+            new Thread(() -> calculatePi(N * 10)).start();
         }
         Thread.sleep(2000L);
 
         // Test actions
         watch.start();
         watch.suspend();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 100; i++) {
             watch.resume();
-            for (Action<?, ?> actionable : numList) {
+            for (BeginAction<?> actionable : numList) {
                 actionable.perform();
             }
-            Thread.sleep(100L);
+            Thread.sleep(250L);
         }
         watch.stop();
         System.out.println(watch.getTime());
         numList.get(0).manager().shutdown();
 
         // Test plain calculation
-        /*ExecutorService executor = Executors.newFixedThreadPool(2);
+        /*ExecutorService executor = Executors.newFixedThreadPool(4);
         StopWatch watch1 = new StopWatch();
         Average average1 = new Average(1, times, watch1);
         Supplier<Double> supplier = new PiCalc(N);
@@ -201,7 +196,7 @@ public class ActionTest {
         }
         watch1.start();
         watch1.suspend();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 1000; i++) {
             watch1.resume();
             for (Supplier<Double> supplier1 : funcList) {
                 executor.submit(new Runnable() {
@@ -211,7 +206,7 @@ public class ActionTest {
                     }
                 });
             }
-            Thread.sleep(100L);
+            Thread.sleep(250L);
         }
         watch1.stop();
         System.out.println(watch1.getTime());

@@ -1,4 +1,4 @@
-package photon.api;
+package photon.rest;
 
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;

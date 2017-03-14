@@ -1,31 +1,32 @@
 package photon.tube.action;
 
 
-import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
-/**
- * Created by Dun Liu on 2/22/2017.
- */
-public class CallbackAction<Result> extends Action<Result, Void> implements ImmediatelyActionable {
+public class CallbackAction<Result> extends Transformation<Result, Void> {
 
     private final Callback<? super Result> listener;
 
-    protected CallbackAction(ActionManager manager, @NotNull Callback<? super Result> listener) {
-        super(manager);
+    public CallbackAction(Callback<? super Result> listener) {
+        Objects.requireNonNull(listener);
         this.listener = listener;
-        this.performStrategy = PerformStrategy.CACHE_FIRST;
     }
 
     @Override
-    public void abort() {
-        status = RunningStatus.NOT_STARTED;
+    public void abort(ActionRuntimeException e) {
+        super.abort(e);
         listener.onFailure();
     }
 
     @Override
-    protected Void doRun(Result input) {
+    protected Void transform(Result input) {
         listener.onSuccess(input);
         return null;
+    }
+
+    @Override
+    public boolean isImmediate() {
+        return true;
     }
 
 }

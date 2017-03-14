@@ -111,37 +111,37 @@ public class MockCrudService implements CrudService {
     }
 
     @Override
-    public Node getNode(Integer id) {
+    public Node getNode(int id) {
         return null;
     }
 
     @Override
-    public String getNodeFrame(Integer id) {
+    public String getNodeFrame(int id) {
         return null;
     }
 
     @Override
-    public Point getPoint(Integer id) {
+    public Point getPoint(int id) {
         return null;
     }
 
     @Override
-    public List<Point> getPoints(Iterable<Integer> ids) {
+    public List<Point> listPoints(Iterable<Integer> ids) {
         return null;
     }
 
     @Override
-    public Map<Integer, Point> getPointMap(Collection<Integer> ids) {
+    public Map<Integer, Point> pointMapOf(Collection<Integer> ids) {
         return ids.stream().collect(Collectors.toMap(Function.identity(), pointMap()::get));
     }
 
     @Override
-    public void deleteNode(Integer id) {
+    public void deleteNode(int id) {
 
     }
 
     @Override
-    public void activateNode(Integer id, boolean active) {
+    public void activateNode(int id, boolean active) {
 
     }
 
@@ -154,7 +154,7 @@ public class MockCrudService implements CrudService {
     }
 
     @Override
-    public List<FrameArrow> getAllArrowsBetween(Integer origin, Integer target) {
+    public List<FrameArrow> listArrowsBetween(int origin, int target) {
         List<FrameArrow> neighborhood = neighbors().get(origin);
         if (neighborhood == null)
             return new ArrayList<>();
@@ -162,12 +162,12 @@ public class MockCrudService implements CrudService {
     }
 
     @Override
-    public Arrow getArrow(Integer origin, ArrowType at, Integer target) {
+    public Arrow getArrow(int origin, ArrowType at, int target) {
         return null;
     }
 
     @Override
-    public List<FrameArrow> getAllArrowsStartingFrom(Integer origin, ArrowType at) {
+    public List<FrameArrow> listArrowsStartingFrom(int origin, ArrowType at) {
         List<FrameArrow> neighborhood = neighbors().get(origin);
         if (neighborhood == null)
             return new ArrayList<>();
@@ -180,17 +180,17 @@ public class MockCrudService implements CrudService {
     }
 
     @Override
-    public List<Point> getAllPointsInFrame(String f) {
+    public List<Point> listPointsInFrame(String f) {
         return null;
     }
 
     @Override
-    public Map<Integer, Point> getPointMapOwnedBy(Integer oid) {
+    public Map<Integer, Point> pointMapOwnedBy(int oid) {
         return null;
     }
 
     @Override
-    public List<Point> getPointsOwnedBy(Integer oid) {
+    public List<Point> listPointsOwnedBy(int oid) {
         return null;
     }
 }

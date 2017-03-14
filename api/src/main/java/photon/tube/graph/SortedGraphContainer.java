@@ -1,4 +1,4 @@
-package photon.tube.query;
+package photon.tube.graph;
 
 import photon.tube.model.Arrow;
 import photon.tube.model.Point;

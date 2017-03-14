@@ -1,12 +1,8 @@
-package photon.tube.query;
+package photon.tube.graph;
 
-/**
- * Created by Dun Liu on 5/29/2016.
- */
 public class GraphInfo {
     public int minDepth;
     public int maxDepth;
     public int pointCount;
     public int arrowCount;
-
 }

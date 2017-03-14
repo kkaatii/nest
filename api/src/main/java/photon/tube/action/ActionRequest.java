@@ -1,18 +1,27 @@
 package photon.tube.action;
 
 import photon.tube.model.Owner;
+import photon.util.GenericDict;
 
-import java.util.HashMap;
-import java.util.Map;
+public class ActionRequest extends GenericDict {
 
-// TODO differentiate attributes from params?
-public class ActionRequest {
-    public final Owner owner;
-    public final Map<String, String> attributes;
-    public Object[] params;
+    private final Owner owner;
+    private String actionName;
 
     public ActionRequest(Owner owner) {
         this.owner = owner;
-        attributes = new HashMap<>();
     }
+
+    public Owner owner() {
+        return owner;
+    }
+
+    public void setActionName(String actionName) {
+        this.actionName = actionName;
+    }
+
+    public String actionName() {
+        return actionName;
+    }
+
 }

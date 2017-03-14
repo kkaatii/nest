@@ -1,63 +1,49 @@
 package photon.tube.action;
 
-import photon.tube.query.Query;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Created by Dun Liu on 2/20/2017.
+ * Basic component which comprises a {@code Query}. Each action will be handled by an {@code ActionManager}.
  */
-public abstract class Action<T, R> implements Actionable {
+public abstract class Action {
 
-    private final ActionManager manager;
-    private final long id;
-    protected R result;
+    private static final AtomicLong LAST_ID = new AtomicLong();
 
-    protected Query query;
-    protected Action<?, ? extends T> predecessor;
-    protected Action<? super R, ?> successor;
-    // TODO why volatile???
-    protected RunningStatus status = RunningStatus.NOT_STARTED;
-    protected PerformStrategy performStrategy = PerformStrategy.CACHE_FIRST;
+    private static long _generateId() {
+        long now = System.currentTimeMillis();
+        while (true) {
+            long lastTime = LAST_ID.get();
+            if (lastTime >= now)
+                now = lastTime + 1;
+            if (LAST_ID.compareAndSet(lastTime, now))
+                return now;
+        }
+    }
 
-    protected enum RunningStatus {
+    protected enum RunningState {
         DONE, QUEUEING, ABORTED, NOT_STARTED
     }
 
-    protected Action(ActionManager manager) {
-        this.manager = manager;
-        this.id = manager.newActionId();
-    }
+    private final long id = _generateId();
+    protected Action predecessor;
+    protected Action successor;
+    protected RunningState state = RunningState.NOT_STARTED;
+    protected PerformStrategy performStrategy = PerformStrategy.CACHE_FIRST;
+    protected ExceptionAlert<ActionRuntimeException> exceptionAlert;
 
-    protected final ActionManager manager() {
-        return manager;
-    }
-
-    @Override
-    public final long id() {
+    final long id() {
         return id;
     }
 
-    @Override
-    public Action<? super R, ?> successor() {
-        return successor;
-    }
-
-    public Action<?, ? extends T> predecessor() {
+    public Action predecessor() {
         return predecessor;
     }
 
-    public final PerformStrategy performStrategy() {
-        return performStrategy;
+    public Action successor() {
+        return successor;
     }
 
-    public final void setPerformStrategy(PerformStrategy performStrategy) {
-        this.performStrategy = performStrategy;
-    }
-
-    public R result() {
-        return result;
-    }
-
-    public void waitFor(Action<?, ? extends T> predecessor) {
+    public <ActionType extends Action> ActionType waitFor(ActionType predecessor) {
         if (this.equals(predecessor))
             throw new RuntimeException("Action " + id + " cannot wait for itself!");
         if (this.predecessor != null)
@@ -65,14 +51,15 @@ public abstract class Action<T, R> implements Actionable {
         this.predecessor = predecessor;
         if (predecessor != null)
             predecessor.successor = this;
-        status = RunningStatus.NOT_STARTED;
-        Action<?, ?> then = this;
+        state = RunningState.NOT_STARTED;
+        Action then = this;
         while ((then = then.successor) != null) {
-            then.status = RunningStatus.NOT_STARTED;
+            then.state = RunningState.NOT_STARTED;
         }
+        return predecessor;
     }
 
-    public void then(Action<? super R, ?> successor) {
+    public <ActionType extends Action> ActionType then(ActionType successor) {
         if (this.equals(successor))
             throw new RuntimeException("Action " + id + " cannot wait for itself!");
         if (this.successor != null)
@@ -80,25 +67,34 @@ public abstract class Action<T, R> implements Actionable {
         this.successor = successor;
         if (successor != null) {
             successor.predecessor = this;
-            successor.status = RunningStatus.NOT_STARTED;
-            Action<?, ?> then = successor;
+            successor.state = RunningState.NOT_STARTED;
+            Action then = successor;
             while ((then = then.successor) != null) {
-                then.status = RunningStatus.NOT_STARTED;
+                then.state = RunningState.NOT_STARTED;
             }
         }
+        return successor;
     }
 
-    public final void perform() {
+    public final void setPerformStrategy(PerformStrategy strategy) {
+        performStrategy = strategy;
+    }
+
+    public final void setExceptionAlert(ExceptionAlert<ActionRuntimeException> alert) {
+        exceptionAlert = alert;
+    }
+
+    public void perform(ActionManager manager) {
         if (!isQueueing() && (!isDone() || PerformStrategy.FORCE_UPDATE.equals(performStrategy))) {
             boolean queued = false;
             if (predecessor != null) {
-                switch (predecessor.status) {
+                switch (predecessor.state) {
                     case QUEUEING:
                         return;
                     case DONE:
                         break;
                     default:
-                        predecessor.perform();
+                        predecessor.perform(manager);
                         queued = true;
                 }
             }
@@ -108,59 +104,46 @@ public abstract class Action<T, R> implements Actionable {
         }
     }
 
-    public final boolean isDone() {
-        return RunningStatus.DONE.equals(status);
+    abstract void run();
+
+    void queue() {
+        state = RunningState.QUEUEING;
     }
 
-    public final boolean isAborted() {
-        return RunningStatus.ABORTED.equals(status);
+    void abort() {
+        state = RunningState.ABORTED;
     }
 
-    public final boolean isQueueing() {
-        return RunningStatus.QUEUEING.equals(status);
-    }
-
-    /**
-     * This method shall be called only by the <tt>ActionManager</tt>
-     */
-    @Override
-    public void run() {
-        result = doRun(predecessor == null ? null : predecessor.result);
-        status = RunningStatus.DONE;
-    }
-
-    /**
-     * This method shall be called only by the <tt>ActionManager</tt>
-     */
-    @Override
-    public void abort() {
-        status = RunningStatus.ABORTED;
-    }
-
-    /**
-     * This method shall be called only by the <tt>ActionManager</tt>
-     */
-    @Override
-    public void queue() {
-        status = RunningStatus.QUEUEING;
-    }
-
-    /**
-     * This method shall be called only by the <tt>ActionManager</tt>
-     */
-    @Override
-    public void onException(Exception e) {
-        if (query != null) {
-            query.onException(new ActionRuntimeException(this, e));
+    void abort(ActionRuntimeException e) {
+        state = RunningState.ABORTED;
+        if (e != null && exceptionAlert != null) {
+            exceptionAlert.onException(e);
         }
     }
 
-    /**
-     * This method gets called only when the predecessor is successfully done.
-     *
-     * @param input input of the action
-     * @return output of the action
-     */
-    protected abstract R doRun(T input);
+    boolean isImmediate() {
+        return false;
+    }
+
+    boolean isDone() {
+        return RunningState.DONE.equals(state);
+    }
+
+    boolean isQueueing() {
+        return RunningState.QUEUEING.equals(state);
+    }
+
+    boolean isAborted() {
+        return RunningState.ABORTED.equals(state);
+    }
+
+    public static Action of(Runnable runnable) {
+        return new Action() {
+            @Override
+            void run() {
+                runnable.run();
+            }
+        };
+    }
 
 }

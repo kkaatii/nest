@@ -14,34 +14,34 @@ public interface CrudService {
 
     Node updateNode(Node n);
 
-    Node getNode(Integer id);
+    Node getNode(int id);
 
-    String getNodeFrame(Integer id);
+    String getNodeFrame(int id);
 
-    Point getPoint(Integer id);
+    Point getPoint(int id);
 
-    List<Point> getPoints(Iterable<Integer> ids);
+    List<Point> listPoints(Iterable<Integer> ids);
 
-    Map<Integer, Point> getPointMap(Collection<Integer> ids);
+    Map<Integer, Point> pointMapOf(Collection<Integer> ids);
 
-    void deleteNode(Integer id);
+    void deleteNode(int id);
 
-    void activateNode(Integer id, boolean active);
+    void activateNode(int id, boolean active);
 
     void putArrow(Arrow a);
 
-    List<FrameArrow> getAllArrowsBetween(Integer origin, Integer target);
+    List<FrameArrow> listArrowsBetween(int origin, int target);
 
-    Arrow getArrow(Integer origin, ArrowType at, Integer target);
+    Arrow getArrow(int origin, ArrowType at, int target);
 
-    List<FrameArrow> getAllArrowsStartingFrom(Integer origin, ArrowType at);
+    List<FrameArrow> listArrowsStartingFrom(int origin, ArrowType at);
 
     void deleteArrow(Arrow a);
 
-    List<Point> getAllPointsInFrame(String f);
+    List<Point> listPointsInFrame(String f);
 
-    Map<Integer, Point> getPointMapOwnedBy(Integer oid);
+    Map<Integer, Point> pointMapOwnedBy(int oid);
 
-    List<Point> getPointsOwnedBy(Integer oid);
+    List<Point> listPointsOwnedBy(int oid);
 
 }

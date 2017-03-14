@@ -7,4 +7,8 @@ public class FailedQueryException extends RuntimeException {
     public FailedQueryException(Throwable cause) {
         super("Failed query: " + cause.getMessage(), cause);
     }
+
+    public FailedQueryException(String message) {
+        super(message);
+    }
 }

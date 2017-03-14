@@ -1,10 +1,11 @@
-package photon.tube.action.searcher;
+package photon.tube.action.search;
 
 import photon.tube.auth.OafService;
-import photon.tube.auth.UnauthorizedActionException;
+import photon.tube.auth.UnauthorizedQueryException;
 import photon.tube.model.CrudService;
 import photon.tube.model.Owner;
-import photon.tube.query.SortedGraphContainer;
+import photon.tube.graph.SortedGraphContainer;
+import photon.util.GenericDict;
 
 public abstract class Searcher {
 
@@ -16,7 +17,7 @@ public abstract class Searcher {
         this.oafService = oafService;
     }
 
-    public abstract SortedGraphContainer search(Owner owner, Object... args)
-            throws GraphSearchArgumentClassException, UnauthorizedActionException;
+    public abstract SortedGraphContainer search(Owner owner, GenericDict params)
+            throws GraphSearchArgumentClassException, UnauthorizedQueryException;
 
 }

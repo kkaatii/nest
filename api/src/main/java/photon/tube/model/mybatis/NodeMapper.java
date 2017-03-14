@@ -10,13 +10,13 @@ import java.util.Map;
 
 public interface NodeMapper {
 
-    Point preselectOne(Integer id);
+    Point preselectOne(int id);
 
     List<Point> preselectMany(@Param("ids") Iterable<Integer> ids);
 
-    Node selectOne(Integer id);
+    Node selectOne(int id);
 
-    String selectFrame(Integer id);
+    String selectFrame(int id);
 
     List<Point> preselectFromFrame(String frame);
 
@@ -24,9 +24,9 @@ public interface NodeMapper {
 
     int update(Node node);
 
-    void delete(Integer id);
+    void delete(int id);
 
-    int setActive(@Param("id") Integer id, @Param("active") boolean active);
+    int setActive(@Param("id") int id, @Param("active") boolean active);
 
     List<Point> preselectInactive();
 
@@ -34,7 +34,8 @@ public interface NodeMapper {
     Map<Integer, Point> preselectMap(@Param("ids") Iterable<Integer> ids);
 
     @MapKey("id")
-    Map<Integer, Point> preselectMapByOwner(Integer ownerId);
+    Map<Integer, Point> preselectMapByOwner(int ownerId);
 
-    List<Point> preselectByOwner(Integer onwerId);
+    List<Point> preselectByOwner(int onwerId);
+
 }

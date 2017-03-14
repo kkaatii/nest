@@ -14,14 +14,14 @@ public interface OwnerAndFrameMapper {
 
     Owner selectOwnerByAuthId(String authId);
 
-    void deleteOwnerById(Integer id);
+    void deleteOwnerById(int id);
 
-    void addAlias(@Param("ownerId") Integer ownerId, @Param("authId") String authId);
+    void addAlias(@Param("ownerId") int ownerId, @Param("authId") String authId);
 
-    void deleteAlias(@Param("ownerId") Integer ownerId, @Param("authId") String authId);
+    void deleteAlias(@Param("ownerId") int ownerId, @Param("authId") String authId);
 
-    List<String> selectFramesAccessibleTo(@Param("ownerId") Integer ownerId, @Param("access") int access);
+    List<String> selectFramesAccessibleTo(@Param("ownerId") int ownerId, @Param("access") int access);
 
-    Integer selectAccess(@Param("ownerId") Integer ownerId, @Param("frame") String frame);
+    Integer selectAccess(@Param("ownerId") int ownerId, @Param("frame") String frame);
 
 }

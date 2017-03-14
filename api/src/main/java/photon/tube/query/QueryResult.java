@@ -1,7 +1,9 @@
 package photon.tube.query;
 
+import photon.tube.graph.GraphInfo;
+import photon.tube.graph.SegmentGraph;
+
 public class QueryResult {
-    private QueryRequest request;
     private GraphInfo graphInfo;
     private GraphInfo segmentInfo;
     private SegmentGraph segment;
@@ -10,15 +12,10 @@ public class QueryResult {
 
     }
 
-    public QueryResult(QueryRequest request, GraphInfo graphInfo, GraphInfo segmentInfo, SegmentGraph segment) {
-        this.request = request;
+    public QueryResult(GraphInfo graphInfo, GraphInfo segmentInfo, SegmentGraph segment) {
         this.graphInfo = graphInfo;
         this.segmentInfo = segmentInfo;
         this.segment = segment;
-    }
-
-    public QueryRequest getRequest() {
-        return request;
     }
 
     public GraphInfo getGraphInfo() {
@@ -32,4 +29,5 @@ public class QueryResult {
     public SegmentGraph getSegment() {
         return segment;
     }
+
 }

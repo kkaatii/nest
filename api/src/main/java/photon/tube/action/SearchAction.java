@@ -1,35 +1,22 @@
 package photon.tube.action;
 
-import photon.tube.action.searcher.Searcher;
-import photon.tube.cache.Cache;
-import photon.tube.model.Owner;
-import photon.tube.query.SortedGraphContainer;
+import photon.tube.action.search.Searcher;
+import photon.tube.graph.SortedGraphContainer;
 
-/**
- * Created by Dun Liu on 2/22/2017.
- */
-abstract class SearchAction extends Action<Void, SortedGraphContainer> {
+class SearchAction extends Transformation<SortedGraphContainer, SortedGraphContainer> {
 
-    protected final Owner owner;
-    protected final Searcher searcher;
-    protected final Cache<ActionRequest, SortedGraphContainer> cache;
-    protected final Object[] params;
+    private final Searcher searcher;
+    private final ActionRequest request;
 
-    protected SearchAction(ActionManager manager,
-                           Searcher searcher,
-                           Cache<ActionRequest, SortedGraphContainer> cache,
-                           Owner owner,
-                           Object... params) {
-        super(manager);
-        this.owner = owner;
+    public SearchAction(Searcher searcher,
+                        ActionRequest request) {
         this.searcher = searcher;
-        this.cache = cache;
-        this.params = params;
+        this.request = request;
     }
 
     @Override
-    public void waitFor(Action<?, ? extends Void> predecessor) {
-        throw new RuntimeException("Search action needs no predecessor!");
+    protected SortedGraphContainer transform(SortedGraphContainer input) {
+        return searcher.search(request.owner(), request);
     }
 
 }

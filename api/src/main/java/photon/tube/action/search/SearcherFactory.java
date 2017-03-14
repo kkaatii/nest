@@ -1,4 +1,4 @@
-package photon.tube.action.searcher;
+package photon.tube.action.search;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,6 +42,6 @@ public final class SearcherFactory {
     }
 
     private static String completeName(String name) {
-        return String.format("photon.tube.action.searcher.%sSearcher", name);
+        return String.format("photon.tube.action.search.%sSearcher", name);
     }
 }

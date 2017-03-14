@@ -44,37 +44,37 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public Node getNode(Integer id) {
+    public Node getNode(int id) {
         return nodeMapper.selectOne(id);
     }
 
     @Override
-    public String getNodeFrame(Integer id) {
+    public String getNodeFrame(int id) {
         return nodeMapper.selectFrame(id);
     }
 
     @Override
-    public Point getPoint(Integer id) {
+    public Point getPoint(int id) {
         return nodeMapper.preselectOne(id);
     }
 
     @Override
-    public List<Point> getPoints(Iterable<Integer> ids) {
+    public List<Point> listPoints(Iterable<Integer> ids) {
         return nodeMapper.preselectMany(ids);
     }
 
     @Override
-    public Map<Integer, Point> getPointMap(Collection<Integer> ids) {
+    public Map<Integer, Point> pointMapOf(Collection<Integer> ids) {
         return nodeMapper.preselectMap(ids);
     }
 
     @Override
-    public void deleteNode(Integer id) {
+    public void deleteNode(int id) {
         nodeMapper.delete(id);
     }
 
     @Override
-    public void activateNode(Integer id, boolean toBeActive) {
+    public void activateNode(int id, boolean toBeActive) {
         int c = nodeMapper.setActive(id, toBeActive);
         if (c > 0) {
             if (toBeActive) {
@@ -92,12 +92,12 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<FrameArrow> getAllArrowsBetween(Integer origin, Integer target) {
+    public List<FrameArrow> listArrowsBetween(int origin, int target) {
         return arrowMapper.selectBetween(origin, target);
     }
 
     @Override
-    public Arrow getArrow(Integer origin, ArrowType at, Integer target) {
+    public Arrow getArrow(int origin, ArrowType at, int target) {
         List<FrameArrow> candidates = arrowMapper.selectBetween(origin, target);
         if (candidates != null) {
             for (Arrow arrow : candidates) {
@@ -108,7 +108,7 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<FrameArrow> getAllArrowsStartingFrom(Integer origin, ArrowType at) {
+    public List<FrameArrow> listArrowsStartingFrom(int origin, ArrowType at) {
         return arrowMapper.selectByOrigin(origin).stream().filter(arrow -> arrow.getType().isType(at)).collect(Collectors.toList());
     }
 
@@ -119,17 +119,17 @@ public class MybatisCrudService implements CrudService {
     }
 
     @Override
-    public List<Point> getAllPointsInFrame(String f) {
+    public List<Point> listPointsInFrame(String f) {
         return nodeMapper.preselectFromFrame(f);
     }
 
     @Override
-    public Map<Integer, Point> getPointMapOwnedBy(Integer oid) {
+    public Map<Integer, Point> pointMapOwnedBy(int oid) {
         return nodeMapper.preselectMapByOwner(oid);
     }
 
     @Override
-    public List<Point> getPointsOwnedBy(Integer oid) {
+    public List<Point> listPointsOwnedBy(int oid) {
         return nodeMapper.preselectByOwner(oid);
     }
 }

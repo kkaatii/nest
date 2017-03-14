@@ -1,12 +1,13 @@
-package photon.tube.action.searcher;
+package photon.tube.action.search;
 
 import photon.tube.auth.OafService;
-import photon.tube.auth.UnauthorizedActionException;
+import photon.tube.auth.UnauthorizedQueryException;
 import photon.tube.model.Arrow;
 import photon.tube.model.ArrowType;
 import photon.tube.model.CrudService;
 import photon.tube.model.Owner;
-import photon.tube.query.SortedGraphContainer;
+import photon.tube.graph.SortedGraphContainer;
+import photon.util.GenericDict;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,27 +22,27 @@ public class WireSearcher extends Searcher {
     }
 
     @Override
-    public SortedGraphContainer search(Owner owner, Object... args)
-            throws GraphSearchArgumentClassException, UnauthorizedActionException {
+    public SortedGraphContainer search(Owner owner, GenericDict params)
+            throws GraphSearchArgumentClassException, UnauthorizedQueryException {
         try {
-            Integer[] ids = (Integer[]) args[0];
-            int length = ids.length;
+            int[] origins = params.get(int[].class, "origins");
+            int length = origins.length;
             if (length == 0) return SortedGraphContainer.emptyContainer();
 
-            ArrowType arrowType = (ArrowType) args[1];
+            ArrowType arrowType = params.get(ArrowType.class, "arrow_type");
             List<Arrow> arrows = new ArrayList<>();
             Arrow tmp;
-            for (Integer id : ids) {
+            for (int id : origins) {
                 if (!oafService.authorized(READ, owner, crudService.getNodeFrame(id)))
-                    throw new UnauthorizedActionException();
+                    throw new UnauthorizedQueryException();
             }
             for (int i = 0; i < length; i++) {
                 for (int j = i + 1; j < length; j++) {
                     if (arrowType == ArrowType.ANY)
-                        arrows.addAll(crudService.getAllArrowsBetween(ids[i], ids[j]));
-                    else if ((tmp = crudService.getArrow(ids[i], arrowType, ids[j])) != null)
+                        arrows.addAll(crudService.listArrowsBetween(origins[i], origins[j]));
+                    else if ((tmp = crudService.getArrow(origins[i], arrowType, origins[j])) != null)
                         arrows.add(tmp);
-                    else if ((tmp = crudService.getArrow(ids[i], arrowType.reverse(), ids[j])) != null)
+                    else if ((tmp = crudService.getArrow(origins[i], arrowType.reverse(), origins[j])) != null)
                         arrows.add(tmp);
                 }
             }
