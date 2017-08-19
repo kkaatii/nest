@@ -1,5 +1,6 @@
 package photon.tube.action;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -31,8 +32,14 @@ public abstract class Action {
     protected PerformStrategy performStrategy = PerformStrategy.CACHE_FIRST;
     protected ExceptionAlert<ActionRuntimeException> exceptionAlert;
 
-    final long id() {
-        return id;
+    public static Action of(Runnable runnable) {
+        Objects.requireNonNull(runnable);
+        return new Action() {
+            @Override
+            void run() {
+                runnable.run();
+            }
+        };
     }
 
     public Action predecessor() {
@@ -104,6 +111,10 @@ public abstract class Action {
         }
     }
 
+    final long id() {
+        return id;
+    }
+
     abstract void run();
 
     void queue() {
@@ -116,7 +127,7 @@ public abstract class Action {
 
     void abort(ActionRuntimeException e) {
         state = RunningState.ABORTED;
-        if (e != null && exceptionAlert != null) {
+        if (exceptionAlert != null) {
             exceptionAlert.onException(e);
         }
     }
@@ -135,15 +146,6 @@ public abstract class Action {
 
     boolean isAborted() {
         return RunningState.ABORTED.equals(state);
-    }
-
-    public static Action of(Runnable runnable) {
-        return new Action() {
-            @Override
-            void run() {
-                runnable.run();
-            }
-        };
     }
 
 }
