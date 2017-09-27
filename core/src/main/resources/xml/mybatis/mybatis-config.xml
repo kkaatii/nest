@@ -7,15 +7,11 @@
     <properties resource="mybatis.properties"/>
 
     <typeAliases>
-        <typeAlias alias="Catalog" type="photon.mfw.model.Catalog"/>
-        <typeAlias alias="ViewLog" type="photon.mfw.model.ViewLog"/>
-        <typeAlias alias="User" type="photon.mfw.model.User"/>
-        <typeAlias alias="FavoriteLog" type="photon.mfw.model.FavoriteLog"/>
-        <typeAlias alias="Node" type="photon.tube.model.Node"/>
-        <typeAlias alias="Point" type="photon.tube.model.Point"/>
-        <typeAlias alias="Arrow" type="photon.tube.model.Arrow"/>
-        <typeAlias alias="FrameArrow" type="photon.tube.model.FrameArrow"/>
-        <typeAlias alias="Owner" type="photon.tube.model.Owner"/>
+        <typeAlias alias="Node" type="photon.model.Node"/>
+        <typeAlias alias="Point" type="photon.model.Point"/>
+        <typeAlias alias="Arrow" type="photon.model.Arrow"/>
+        <typeAlias alias="FrameArrow" type="photon.model.FrameArrow"/>
+        <typeAlias alias="Owner" type="photon.model.Owner"/>
     </typeAliases>
 
     <environments default="dev">
@@ -40,12 +36,8 @@
     </environments>
 
     <mappers>
-        <mapper resource="xml/mybatis/mappers/mfw/CatalogMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/mfw/ViewLogMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/mfw/UserMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/mfw/FavoriteLogMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/tube/ArrowMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/tube/NodeMapper.xml"/>
-        <mapper resource="xml/mybatis/mappers/tube/OwnerAndFrameMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/ArrowMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/NodeMapper.xml"/>
+        <mapper resource="xml/mybatis/mappers/OwnerAndFrameMapper.xml"/>
     </mappers>
 </configuration>

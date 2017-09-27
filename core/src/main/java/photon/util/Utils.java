@@ -19,6 +19,7 @@ public final class Utils {
         return (set == null) ? Collections.emptySet() : set;
     }
 
+    @SafeVarargs
     public static <T extends Comparable<T>> T maxOf(T... ts) {
         int size = ts.length;
         if (size == 0)
@@ -33,6 +34,7 @@ public final class Utils {
         return max;
     }
 
+    @SafeVarargs
     public static <T extends Comparable<T>> T minOf(T... ts) {
         int size = ts.length;
         if (size == 0)

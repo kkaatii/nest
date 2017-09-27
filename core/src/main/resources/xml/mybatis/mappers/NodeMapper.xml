@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="photon.mybatis.NodeMapper">
+
+    <resultMap type="point" id="pointRM">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="ownerId" column="owner_id"/>
+        <result property="frame" column="frame"/>
+        <result property="type" column="type"/>
+        <result property="active" column="active"/>
+        <result property="digest" column="digest"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+    </resultMap>
+
+    <resultMap type="node" id="nodeRM">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="ownerId" column="owner_id"/>
+        <result property="frame" column="frame"/>
+        <result property="type" column="type"/>
+        <result property="active" column="active"/>
+        <result property="digest" column="digest"/>
+        <result property="content" column="content"/>
+        <result property="created" column="created"/>
+        <result property="updated" column="updated"/>
+    </resultMap>
+
+    <sql id="pointColumns">
+        id,
+        `name`,
+        owner_id,
+        frame,
+        type,
+        active,
+        digest,
+        created,
+        updated
+    </sql>
+
+    <select id="preselectOne" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE id = #{id}
+    </select>
+
+    <select id="preselectMany" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE id IN (
+        <foreach item="id" index="index" collection="ids" separator=",">
+            #{id}
+        </foreach>
+        )
+    </select>
+
+    <select id="selectOne" resultMap="nodeRM">
+        SELECT
+        <include refid="pointColumns"/>,
+        content
+        FROM tube.node
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectFrame" resultType="string">
+        SELECT frame
+        FROM tube.node
+        WHERE id = #{id}
+    </select>
+
+    <select id="preselectFromFrame" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE frame = #{frame} AND active
+        ORDER BY created DESC
+    </select>
+
+    <select id="preselectMapByOwner" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE owner_id = #{ownerId} AND active
+    </select>
+
+    <select id="preselectByOwner" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE owner_id = #{ownerId} AND active
+    </select>
+
+    <select id="preselectInactive" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE NOT active
+    </select>
+
+    <select id="preselectMap" resultMap="pointRM">
+        SELECT
+        <include refid="pointColumns"/>
+        FROM tube.node
+        WHERE id IN (
+        <foreach item="id" index="index" collection="ids" separator=",">
+            #{id}
+        </foreach>
+        )
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO tube.node (`name`, owner_id, frame, type, digest, active, content, created, updated)
+        VALUES (#{name}, #{ownerId}, #{frame}, #{type}, #{digest}, #{active}, #{content}, #{created}, #{updated})
+    </insert>
+
+    <update id="update">
+        UPDATE tube.node
+        SET
+            `name`  = #{name},
+            frame   = #{frame},
+            digest  = #{digest},
+            content = #{content},
+            updated = #{updated}
+        WHERE id = #{id} AND owner_id = #{ownerId}
+    </update>
+
+    <update id="setActive">
+        UPDATE tube.node
+        SET
+            active = #{active}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM tube.node
+        WHERE id = #{id} AND owner_id = #{ownerId}
+    </delete>
+
+</mapper>
