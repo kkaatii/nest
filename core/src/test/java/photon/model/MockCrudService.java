@@ -77,7 +77,7 @@ public class MockCrudService implements CrudService {
      * <code>
      * [0]-- parent of -->[1]<br>
      *  &nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
-     *  &nbsp;| dependent on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <br>
+     *  &nbsp;| dependent on&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| parent of<br>
      *  &nbsp;&darr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
      * [2]<---------------&#8629;<br>
      *     &nbsp;|<br>

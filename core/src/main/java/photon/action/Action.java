@@ -25,7 +25,6 @@ public abstract class Action {
     private Action predecessor;
     private Action successor;
     private ActionState state = ActionState.NOT_STARTED;
-    private boolean alwaysRerun = false;
     private boolean immediate = false;
 
     final long id() {
@@ -82,20 +81,6 @@ public abstract class Action {
     }
 
     /**
-     * Most {@code Action}s are supposed to run once only, so the default return of this method is {@code false}.
-     *
-     * @return {@code true} if the {@code Action} is designed to always re-run, {@code false} if not.
-     */
-    public final boolean shouldAlwaysRerun() {
-        return alwaysRerun;
-    }
-
-    public final Action setAlwaysRerun(boolean b) {
-        alwaysRerun = b;
-        return this;
-    }
-
-    /**
      * {@code Action}s are NOT immediate by default, which means they will NOT be executed right away.
      *
      * @return {@code true} if the {@code Action} is immediate, {@code false} if not
@@ -109,19 +94,31 @@ public abstract class Action {
         return this;
     }
 
-    synchronized final ActionState state() {
+    public final ActionState state() {
         return state;
     }
 
-    synchronized final void finish() {
+    /**
+     * Beware when overriding the state-changing methods. Removing or making modification to the original functions
+     * may lead to unpredictable {@code ActionScheduler} behavior.
+     */
+    protected void finish() {
         state = ActionState.FINISHED;
     }
 
-    synchronized final void queue() {
+    /**
+     * Beware when overriding the state-changing methods. Removing or making modification to the original functions
+     * may lead to unpredictable {@code ActionScheduler} behavior.
+     */
+    protected void queue() {
         state = ActionState.QUEUEING;
     }
 
-    synchronized final void abort() {
+    /**
+     * Beware when overriding the state-changing methods. Removing or making modification to the original functions
+     * may lead to unpredictable {@code ActionScheduler} behavior.
+     */
+    protected void abort() {
         state = ActionState.ABORTED;
     }
 

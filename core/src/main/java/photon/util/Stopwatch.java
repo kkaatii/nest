@@ -24,9 +24,9 @@ public class Stopwatch {
         return (stopMillis - startMillis) / 1000;
     }
 
-    public long stamp() {
+    public double stamp() {
         long now = System.currentTimeMillis();
-        return (now - startMillis) / 1000;
+        return (now - startMillis) / 1000.0;
     }
 
 }

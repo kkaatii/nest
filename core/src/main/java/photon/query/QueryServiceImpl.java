@@ -6,7 +6,6 @@ import photon.Callback;
 import photon.action.*;
 import photon.model.Owner;
 import photon.query.search.SearchActionFactory;
-import photon.util.Utils;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -14,8 +13,6 @@ import java.util.*;
 import java.util.concurrent.Future;
 
 import static photon.Conventions.*;
-import static photon.util.Utils.FLAG_FLOAT;
-import static photon.util.Utils.FLAG_INT;
 
 public class QueryServiceImpl implements QueryService {
 
@@ -78,55 +75,44 @@ public class QueryServiceImpl implements QueryService {
                         throw new IOException("Unknown array type of field \"" + fieldName + "\"");
                     }
                     Iterator<JsonNode> elements = fieldNode.elements();
-                    String elem = elements.next().asText();
-                    int elemFlag = Utils.isParsable(elem);
-                    switch (elemFlag) {
-                        case FLAG_INT:
-                        case FLAG_FLOAT:
-                            List<Double> list = new ArrayList<>();
-                            list.add(Double.parseDouble(elem));
-                            boolean allInt = elemFlag == FLAG_INT;
-                            while (elements.hasNext()) {
-                                elem = elements.next().asText();
-                                elemFlag = Utils.isParsable(elem);
-                                if (elemFlag == FLAG_INT) {
-                                    list.add(Double.parseDouble(elem));
-                                } else if (elemFlag == FLAG_FLOAT) {
-                                    list.add(Double.parseDouble(elem));
-                                    allInt = false;
-                                } else {
-                                    throw new IOException("Inconsistent type of array elements");
-                                }
-                            }
-                            if (allInt) {
-                                request.put(int[].class, fieldName, list.stream().mapToInt(Double::intValue).toArray());
+                    JsonNode elem = elements.next();
+                    if (elem.isNumber()) {
+                        List<Double> list = new ArrayList<>();
+                        list.add(elem.asDouble());
+                        boolean allInt = elem.isInt();
+                        while (elements.hasNext()) {
+                            elem = elements.next();
+                            if (elem.isInt()) {
+                                list.add(elem.asDouble());
+                            } else if (elem.isFloat()) {
+                                list.add(elem.asDouble());
+                                allInt = false;
                             } else {
-                                request.put(double[].class, fieldName, list.stream().mapToDouble(d -> d).toArray());
+                                throw new IOException("Inconsistent type of array elements");
                             }
-                            break;
-                        default:
-                            List<String> list1 = new ArrayList<>();
-                            list1.add(elem);
-                            while (elements.hasNext()) {
-                                elem = elements.next().asText();
-                                list1.add(elem);
-                            }
-                            request.put(String[].class, fieldName, list1.toArray(new String[0]));
+                        }
+                        if (allInt) {
+                            request.put(int[].class, fieldName, list.stream().mapToInt(Double::intValue).toArray());
+                        } else {
+                            request.put(double[].class, fieldName, list.stream().mapToDouble(d -> d).toArray());
+                        }
+                    } else {
+                        List<String> list = new ArrayList<>();
+                        list.add(elem.asText());
+                        while (elements.hasNext()) {
+                            list.add(elements.next().asText());
+                        }
+                        request.put(String[].class, fieldName, list.toArray(new String[0]));
                     }
                 } else {
-                    String field = fieldNode.asText();
-                    switch (Utils.isParsable(field)) {
-                        case Utils.FLAG_BOOL:
-                            request.put(Boolean.class, fieldName, Boolean.parseBoolean(field));
-                            break;
-                        case Utils.FLAG_INT:
-                            request.put(Integer.class, fieldName, Integer.parseInt(field));
-                            break;
-                        case Utils.FLAG_FLOAT:
-                            request.put(Double.class, fieldName, Double.parseDouble(field));
-                            break;
-                        default:
-                            request.put(String.class, fieldName, field);
+                    if (fieldNode.isInt()) {
+                        request.put(Integer.class, fieldName, fieldNode.asInt());
+                    } else if (fieldNode.isDouble()) {
+                        request.put(Double.class, fieldName, fieldNode.asDouble());
+                    } else if (fieldNode.isBoolean()) {
+                        request.put(Boolean.class, fieldName, fieldNode.asBoolean());
+                    } else {
+                        request.put(String.class, fieldName, fieldNode.asText());
                     }
                 }
             }

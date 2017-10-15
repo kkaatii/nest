@@ -57,7 +57,7 @@ public class QueryTest {
         JsonNode actions = objectMapper.readTree(json).get("actions");
         for (JsonNode action : actions) {
             ActionRequest request = new ActionRequest();
-            queryService.parseJson(action, request);
+            QueryServiceImpl.parseJson(action, request);
             System.out.println(request.toString());
             System.out.println("--------------------------------");
         }

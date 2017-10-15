@@ -2,12 +2,9 @@ package photon.action;
 
 import photon.util.Stopwatch;
 
-/**
- * Created by dan on 25/09/2017.
- */
 public class ImmediateTest {
     public static void main(String[] args) throws InterruptedException {
-        ActionScheduler scheduler = ActionScheduler.getInstance();
+        ActionScheduler scheduler = new ActionScheduler(4);
         Stopwatch stopwatch = new Stopwatch();
         Action immediate1 = new Action() {
             @Override
@@ -54,7 +51,7 @@ public class ImmediateTest {
                 }
                 System.out.println("S2 is waken up after " + stopwatch.stamp());
             }
-        }.setAlwaysRerun(true);
+        };
         Action scheduled3 = new Action() {
             @Override
             void run() {
@@ -65,7 +62,7 @@ public class ImmediateTest {
                 }
                 System.out.println("S3 is waken up after " + stopwatch.stamp());
             }
-        }.setAlwaysRerun(true);
+        };
         Action scheduled4 = new Action() {
             @Override
             void run() {
@@ -79,11 +76,18 @@ public class ImmediateTest {
         };
         stopwatch.start();
         scheduler.submit(immediate1.then(scheduled1));
-        scheduler.submit(immediate2.then(scheduled2).then(immediate3).then(scheduled4));
-        scheduler.submit(scheduled3);
-
-        Thread.sleep(10000);
+        immediate2.then(immediate4).then(immediate3).then(scheduled4);
         scheduler.submit(immediate2);
+//        System.out.println(immediate3.state());
+        scheduler.submit(immediate3);
+//        Thread.sleep(200);
+//        System.out.println(immediate3.state());
+//        Thread.sleep(2500);
+//        System.out.println(immediate3.state());
+//
+//        Thread.sleep(10000);
+//        scheduler.submit(immediate2);
+        scheduler.shutdown();
 
     }
 }

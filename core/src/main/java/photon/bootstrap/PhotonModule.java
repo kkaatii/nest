@@ -10,9 +10,6 @@ import photon.mybatis.MybatisOafService;
 import photon.query.QueryService;
 import photon.query.QueryServiceImpl;
 
-/**
- * Created by dan on 27/09/2017.
- */
 public class PhotonModule implements Module {
     @Override
     public void configure(Binder binder) {

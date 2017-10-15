@@ -13,29 +13,23 @@ import java.util.function.Consumer;
 public class QueryHandler extends SimpleChannelInboundHandler<String> {
     private final QueryService service;
 
-    public QueryHandler(QueryService service) {
+    QueryHandler(QueryService service) {
         this.service = service;
     }
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-        Consumer<String> toWriteAndFlush = s -> {
-            try {
-                ctx.writeAndFlush(s).addListener(ChannelFutureListener.CLOSE);
-            } catch (Exception e) {
-                ctx.close();
-            }
-        };
         Callback<QueryResult> callback = new Callback<QueryResult>() {
             @Override
             public void onSuccess(QueryResult outcome) {
                 System.out.println(outcome.getSegment());
-                toWriteAndFlush.accept(outcome.toString());
+                writeAndFlush(ctx, outcome.getSegment().toString());
             }
 
             @Override
             public void onException(Exception e) {
-                toWriteAndFlush.accept(e.getMessage());
+                e.printStackTrace();
+                writeAndFlush(ctx, e.getMessage());
             }
         };
 
@@ -47,6 +41,15 @@ public class QueryHandler extends SimpleChannelInboundHandler<String> {
             service.executeQuery(owner, req[2], callback);
         } catch (Exception e) {
             callback.onException(e);
+        }
+    }
+
+    private static void writeAndFlush(ChannelHandlerContext ctx, String msg) {
+        try {
+            ctx.writeAndFlush(msg).addListener(ChannelFutureListener.CLOSE);
+        } catch (Exception e) {
+            ctx.close();
+            throw e;
         }
     }
 }

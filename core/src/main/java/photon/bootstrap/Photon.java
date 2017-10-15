@@ -23,7 +23,6 @@ public class Photon {
                 new PhotonModule(),
                 new MybatisModule()
         ).startServer(port);
-        System.out.println("Photon server started running on port " + port);
     }
 
     public Photon(Module... modules) {

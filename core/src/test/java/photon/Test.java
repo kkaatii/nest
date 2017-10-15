@@ -10,16 +10,14 @@ import photon.model.MockCrudService;
 import photon.query.QueryService;
 import photon.query.QueryServiceImpl;
 import photon.query.QueryTest;
+import photon.util.Stopwatch;
 import photon.util.Utils;
 
 public class Test {
 
     public static void main(String... args) throws Exception {
 //        ActionTest actionTest = new ActionTest();
-//        QueryTest queryTest = new QueryTest();
 //        actionTest.piTest(400, 100000);
-//        queryTest.parseNumberTest();
-//        queryTest.queryTest();
 
         Module module = new AbstractModule() {
             @Override

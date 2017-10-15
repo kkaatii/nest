@@ -15,7 +15,7 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final Injector injector;
 
-    public ServerInitializer(Injector injector) {
+    ServerInitializer(Injector injector) {
         this.injector = injector;
     }
 

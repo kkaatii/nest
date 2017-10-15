@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Created by dan on 27/09/2017.
- */
 public class MybatisModule extends XMLMyBatisModule {
     @Override
     protected void initialize() {

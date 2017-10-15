@@ -12,7 +12,7 @@ public class PiEstimateAggregator {
     private final int limit;
     private final Stopwatch stopwatch;
 
-    private Lock lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
     private int _count = 0;
     private double _adder = 0;
 
