@@ -1,11 +1,9 @@
 package photon.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 
 import static photon.util.Utils.html2text;
-import static photon.util.Utils.obj2json;
-
-import java.util.Date;
+import static photon.util.Utils.kvPair2Json;
 
 public class Node {
     private static final int DIGEST_LENGTH = 200;
@@ -16,19 +14,12 @@ public class Node {
     private String frame;
     private boolean active = true;
     private NodeType type;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date created = new Date();
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updated = created;
+    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime updated = created;
     private String digest;
     private String content;
 
     protected Node() {
-    }
-
-    public Node(int id, String name) {
-        this(name);
-        this.id = id;
     }
 
     public Node(String name) {
@@ -101,11 +92,11 @@ public class Node {
         return type;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public Date getUpdated() {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
@@ -123,20 +114,27 @@ public class Node {
     }
 
     private void stampUpdate() {
-        this.updated = new Date();
+        this.updated = LocalDateTime.now();
     }
 
     public String toJson() {
-        return obj2json(
+        return kvPair2Json(
                 "id", id,
                 "name", name,
                 "ownerId", ownerId,
                 "frame", frame,
-                "type", type.toString(),
+                "type", type,
+                "active", active,
                 // "created", created.toString(),
                 // "updated", updated.toString(),
-                "content", content
+                "content", content,
+                "digest", digest
         );
+    }
+
+    @Override
+    public String toString() {
+        return toJson();
     }
 
 }

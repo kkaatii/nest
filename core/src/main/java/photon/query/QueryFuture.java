@@ -1,10 +1,8 @@
 package photon.query;
 
-import photon.Callback;
-
 import java.util.concurrent.*;
 
-public class QueryFuture implements Future<QueryResult>, Callback<QueryResult> {
+public class QueryFuture implements Future<QueryResult>, QueryCallback {
 
     private final CountDownLatch latch = new CountDownLatch(1);
     private QueryResult result;

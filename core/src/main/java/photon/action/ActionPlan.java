@@ -57,7 +57,6 @@ public class ActionPlan {
         StageNotice(StageAdapter adapter, int ord) {
             this.adapter = adapter;
             this.ord = ord;
-            setImmediate(true);
         }
 
         @Override
@@ -68,7 +67,7 @@ public class ActionPlan {
         }
     }
 
-    private class StageAdapter extends Action implements Yielder<Object[]> {
+    private class StageAdapter extends Generator<Object[]> {
         private final Object[] storage;
         private final AtomicInteger counter;
 
@@ -76,7 +75,6 @@ public class ActionPlan {
             counter = new AtomicInteger(forks);
             storage = new Object[forks];
             finish();
-            setImmediate(true);
         }
 
         /**
@@ -97,7 +95,7 @@ public class ActionPlan {
         }
 
         @Override
-        void run() {
+        protected void run() {
         }
     }
 }

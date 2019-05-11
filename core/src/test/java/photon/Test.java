@@ -1,17 +1,18 @@
 package photon;
 
 import com.google.inject.*;
-import photon.action.*;
-import photon.auth.MockOafService;
-import photon.auth.OafService;
+import org.apache.ibatis.io.Resources;
+import photon.crud.MockOafService;
+import photon.crud.OafService;
 import photon.bootstrap.Photon;
-import photon.model.CrudService;
-import photon.model.MockCrudService;
+import photon.crud.CrudService;
+import photon.crud.MockCrudService;
 import photon.query.QueryService;
 import photon.query.QueryServiceImpl;
-import photon.query.QueryTest;
-import photon.util.Stopwatch;
 import photon.util.Utils;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class Test {
 
@@ -30,12 +31,13 @@ public class Test {
             @Provides
             CrudService mockCrudService() {
                 MockCrudService service = new MockCrudService();
-                service.setAndInitTestSet("simple");
+                service.initTestSet("simple");
                 return service;
             }
         };
         Photon photon = new Photon(module);
         photon.startServer(8080);
+
     }
 
 
@@ -61,11 +63,11 @@ public class Test {
 
         String resource = "xml/mybatis/mybatis-config.xml";
         System.out.println(getClass().getClassLoader());
-//        try {
-//            InputStream inputStream = Resources.getResourceAsStream(resource);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            InputStream inputStream = Resources.getResourceAsStream(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

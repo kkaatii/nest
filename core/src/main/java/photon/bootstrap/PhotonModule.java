@@ -3,10 +3,10 @@ package photon.bootstrap;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
-import photon.auth.OafService;
-import photon.model.CrudService;
-import photon.mybatis.MybatisCrudService;
-import photon.mybatis.MybatisOafService;
+import photon.crud.OafService;
+import photon.crud.CrudService;
+import photon.crud.mybatis.MybatisCrudService;
+import photon.crud.mybatis.MybatisOafService;
 import photon.query.QueryService;
 import photon.query.QueryServiceImpl;
 

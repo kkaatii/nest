@@ -1,6 +1,5 @@
 package photon.query;
 
-import photon.Callback;
 import photon.model.Owner;
 
 import java.util.concurrent.Future;
@@ -10,7 +9,7 @@ import java.util.concurrent.Future;
  */
 public class MockQueryService implements QueryService {
     @Override
-    public void executeQuery(Owner owner, String queryString, Callback<QueryResult> callback) {
+    public void executeQuery(Owner owner, String queryString, QueryCallback callback) {
 
     }
 

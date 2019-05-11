@@ -1,15 +1,11 @@
 package photon.action;
 
-import photon.ExceptionListener;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * The <tt>ActionScheduler</tt> is responsible for executing all actions. It will run those
- * immediate actions right away when <tt>submit(Action, ExceptionListener)</tt> is called, and
- * put the other actions into a thread pool.
+ * The <tt>ActionScheduler</tt> is responsible for executing all actions.
  */
 public class ActionScheduler {
 
@@ -24,40 +20,8 @@ public class ActionScheduler {
         executor = Executors.newFixedThreadPool(poolSize);
     }
 
-    final class ActionRunnable implements Runnable {
-        private Action action;
-        private final ExceptionListener el;
-
-        ActionRunnable(Action action, ExceptionListener el) {
-            this.action = action;
-            this.el = el;
-        }
-
-        @Override
-        public void run() {
-            try {
-                action.run();
-                action.finish();
-                Action a = action;
-                while ((a = a.successor()) != null && a.isImmediate()) {
-                    action = a;
-                    a.queue();
-                    a.run();
-                    a.finish();
-                }
-                if (a != null) {
-                    internalSubmit(a, el);
-                } else {
-                    withdraw();
-                }
-            } catch (Exception e) {
-                abort(action, el, e);
-                withdraw();
-            }
-        }
-    }
-
     private static class SingletonHelper {
+
         private static final ActionScheduler INSTANCE = new ActionScheduler(4);
     }
 
@@ -79,11 +43,6 @@ public class ActionScheduler {
         }
     }
 
-    private void internalSubmit(final Action action, final ExceptionListener el) {
-        action.queue();
-        executor.submit(new ActionRunnable(action, el));
-    }
-
     private void withdraw() {
         if (submitted.decrementAndGet() == 0)
             tryShutdown();
@@ -94,28 +53,64 @@ public class ActionScheduler {
             executor.shutdown();
     }
 
-    public void submit(final Action action) {
-        submit(action, ExceptionListener.DEFAULT);
-    }
-
-    public void submit(final Action action, final ExceptionListener exceptionListener) {
-        submitted.incrementAndGet();
-        if (stage.get() == WORKING) {
-            Action a = action;
-            Action predecessor;
-            while ((predecessor = a.predecessor()) != null)
-                a = predecessor;
-            internalSubmit(a, exceptionListener);
-        } else withdraw();
-    }
-
     public void shutdown() {
-        for (;;) {
+        for (; ; ) {
             if (stage.get() == SHUTDOWN)
                 return;
             if (stage.compareAndSet(WORKING, SHUTDOWN)) {
                 tryShutdown();
                 return;
+            }
+        }
+    }
+
+    public void submit(final Action action) {
+        submit(action, ExceptionListener.DEFAULT);
+    }
+
+    public void submit(final Action action, final ExceptionListener exceptionListener) {
+        if (action == null)
+            throw new IllegalArgumentException();
+
+        submitted.incrementAndGet();
+        if (stage.get() == WORKING) {
+            Action a = action;
+            Action predecessor;
+            while ((predecessor = a.predecessor()) != null) {
+                a = predecessor;
+                a.queue();
+            }
+            _submit(a, exceptionListener);
+        } else withdraw();
+    }
+
+    private void _submit(final Action action, final ExceptionListener el) {
+        executor.submit(new ActionRunnable(action, el));
+    }
+
+    final class ActionRunnable implements Runnable {
+        private final Action headAction;
+        private final ExceptionListener el;
+
+        ActionRunnable(Action headAction, ExceptionListener el) {
+            this.headAction = headAction;
+            this.el = el;
+        }
+
+        @Override
+        public void run() {
+            Action a = headAction;
+            try {
+                a.run();
+                a.finish();
+                while ((a = a.successor()) != null) {
+                    a.run();
+                    a.finish();
+                }
+            } catch (Exception e) {
+                abort(a, el, e);
+            } finally {
+                withdraw();
             }
         }
     }

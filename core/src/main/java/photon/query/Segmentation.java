@@ -5,7 +5,7 @@ import photon.action.ActionFactory;
 import photon.action.ActionRequest;
 import photon.action.Transformation;
 
-public class Segmentation extends Transformation<GraphContainer, QueryResult> {
+public class Segmentation extends Transformation<GraphContainer, SearchResult> {
 
     public static final Factory FACTORY = new Factory();
     public static final String BY_RANK = "rank";
@@ -28,7 +28,6 @@ public class Segmentation extends Transformation<GraphContainer, QueryResult> {
         this.rightLimit = rightLimit;
         this.leftInclusive = leftInclusive;
         this.rightInclusive = rightInclusive;
-        setImmediate(true);
     }
 
     public static Segmentation none() {
@@ -36,7 +35,7 @@ public class Segmentation extends Transformation<GraphContainer, QueryResult> {
     }
 
     @Override
-    public QueryResult transform(GraphContainer container) {
+    public SearchResult transform(GraphContainer container) {
         GraphContainer graphContainer;
         if (container.isEmpty())
             graphContainer = container;
@@ -53,7 +52,7 @@ public class Segmentation extends Transformation<GraphContainer, QueryResult> {
             default:
                 throw new RuntimeException("Unsupported segment mode \"" + mode + "\"!");
         }
-        return new QueryResult(container.info(), graphContainer.info(), graphContainer.asSegment());
+        return new SearchResult(container.info(), graphContainer.info(), graphContainer.asSegment());
     }
 
     public static class Factory extends ActionFactory<Segmentation> {
@@ -65,20 +64,20 @@ public class Segmentation extends Transformation<GraphContainer, QueryResult> {
 
         @Override
         public Segmentation createAction(ActionRequest actionRequest) {
-            String mode = actionRequest.get(String.class, "mode");
+            String mode = actionRequest.get("mode", String.class);
             switch (mode) {
                 case NONE:
                     return none();
                 case BY_DEPTH:
                 case BY_RANK:
                     try {
-                        int leftLimit = actionRequest.get(Integer.class, "left_limit");
-                        int rightLimit = actionRequest.get(Integer.class, "right_limit");
-                        Boolean leftInclusive = actionRequest.get(Boolean.class, "left_inclusive");
+                        int leftLimit = actionRequest.get("left_limit", Integer.class);
+                        int rightLimit = actionRequest.get("right_limit", Integer.class);
+                        Boolean leftInclusive = actionRequest.get("left_inclusive", Boolean.class);
                         if (leftInclusive == null) {
                             leftInclusive = Boolean.TRUE;
                         }
-                        Boolean rightInclusive = actionRequest.get(Boolean.class, "right_inclusive");
+                        Boolean rightInclusive = actionRequest.get("right_inclusive", Boolean.class);
                         if (rightInclusive == null) {
                             rightInclusive = Boolean.FALSE;
                         }

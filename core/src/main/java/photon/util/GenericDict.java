@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 public class GenericDict {
     private Map<Class<?>, Map<String, Object>> store = new HashMap<>();
 
-    public <T> void put(Class<T> type, String key, T entry) {
+    public <T> void put(String key, Class<T> type, T entry) {
         Map<String, Object> shelf = store.computeIfAbsent(type, k -> new HashMap<>());
         shelf.put(key, entry);
     }
 
-    public <T> T get(Class<T> type, String key) {
+    public <T> T get(String key, Class<T> type) {
         Map<String, Object> shelf = store.get(type);
         return shelf == null ? null : type.cast(shelf.get(key));
     }

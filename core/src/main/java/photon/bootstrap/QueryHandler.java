@@ -4,11 +4,9 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import photon.model.Owner;
-import photon.Callback;
+import photon.query.QueryCallback;
 import photon.query.QueryResult;
 import photon.query.QueryService;
-
-import java.util.function.Consumer;
 
 public class QueryHandler extends SimpleChannelInboundHandler<String> {
     private final QueryService service;
@@ -19,11 +17,10 @@ public class QueryHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     public void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-        Callback<QueryResult> callback = new Callback<QueryResult>() {
+        QueryCallback callback = new QueryCallback() {
             @Override
-            public void onSuccess(QueryResult outcome) {
-                System.out.println(outcome.getSegment());
-                writeAndFlush(ctx, outcome.getSegment().toString());
+            public void onSuccess(QueryResult result) {
+                writeAndFlush(ctx, result.asJson());
             }
 
             @Override

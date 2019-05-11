@@ -3,9 +3,8 @@ package photon.action;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
-public abstract class Transformation<InputT, OutputT> extends Action implements Yielder<OutputT> {
+public abstract class Transformation<InputT, OutputT> extends Generator<OutputT> {
 
     private OutputT output;
 
@@ -35,25 +34,15 @@ public abstract class Transformation<InputT, OutputT> extends Action implements 
         };
     }
 
-    public static <V> Transformation<Void, V> of(Supplier<V> supplier) {
-        Objects.requireNonNull(supplier);
-        return new Transformation<Void, V>() {
-            @Override
-            protected V transform(Void input) {
-                return supplier.get();
-            }
-        };
-    }
-
     @SuppressWarnings("unchecked")
     @Override
-    final void run() {
+    protected final void run() {
         Action predecessor = predecessor();
-        if (predecessor == null) {
+        if (predecessor == null || !(predecessor instanceof Generator)) {
             output = transform(null);
-        } else if (predecessor instanceof Yielder) {
-            output = transform( ((Yielder<InputT>) predecessor).output() );
-        } else throw new ActionRuntimeException(predecessor, "The predecessor Action does not yield an output.");
+        } else {
+            output = transform(((Generator<? extends InputT>) predecessor).output());
+        }
     }
 
     /**

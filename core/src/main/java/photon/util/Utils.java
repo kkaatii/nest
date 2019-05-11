@@ -23,7 +23,7 @@ public final class Utils {
     public static <T extends Comparable<T>> T maxOf(T... ts) {
         int size = ts.length;
         if (size == 0)
-            throw new RuntimeException("Nothing to compare!");
+            throw new RuntimeException("Nothing to compare");
 
         T max = ts[0];
         for (int i = 1; i < size; i++) {
@@ -38,7 +38,7 @@ public final class Utils {
     public static <T extends Comparable<T>> T minOf(T... ts) {
         int size = ts.length;
         if (size == 0)
-            throw new RuntimeException("Nothing to compare!");
+            throw new RuntimeException("Nothing to compare");
 
         T min = ts[0];
         for (int i = 1; i < size; i++) {
@@ -53,10 +53,10 @@ public final class Utils {
         return Jsoup.parse(html).text();
     }
 
-    public static String obj2json(Object... args) {
+    public static String kvPair2Json(Object... args) {
         int length = args.length;
         if (length % 2 != 0)
-            throw new RuntimeException("Field name and value failed to pair");
+            throw new RuntimeException("Field key and value failed to pair");
         StringBuilder sb = new StringBuilder("{");
         for (int i = 0; i < length; i += 2) {
             sb.append("\"");

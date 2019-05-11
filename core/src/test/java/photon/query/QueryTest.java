@@ -3,11 +3,11 @@ package photon.query;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import photon.action.ActionRequest;
-import photon.auth.MockOafService;
-import photon.model.MockCrudService;
+import photon.crud.MockOafService;
+import photon.crud.MockCrudService;
+import photon.crud.NodeActionFactory;
 import photon.model.Owner;
-import photon.query.search.SearchActionFactory;
-import photon.query.search.SearcherRegistry;
+import photon.search.SearchActionFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,10 +22,11 @@ public class QueryTest {
 
     public QueryTest() {
         MockCrudService mockCrudService = new MockCrudService();
-        mockCrudService.setAndInitTestSet("simple");
+        mockCrudService.initTestSet("simple");
 
-        SearchActionFactory mockSearchActionFactory = new SearchActionFactory(new SearcherRegistry(mockCrudService, new MockOafService()));
-        queryService = new QueryServiceImpl(mockSearchActionFactory);
+        MockOafService mockOafService = new MockOafService();
+        SearchActionFactory mockSearchActionFactory = new SearchActionFactory(mockCrudService, mockOafService);
+        queryService = new QueryServiceImpl(mockSearchActionFactory,new NodeActionFactory(mockCrudService, mockOafService));
 
         StringBuilder actions = new StringBuilder();
         actions.append(",{\"action\":\"search\",\"arguments\":{\"searcher\":\"Mock\"}}");
@@ -41,14 +42,14 @@ public class QueryTest {
 //            test.executeQueryTest(args[0]);
             test.parseJsonTest(args[0]);
         } else {
-//            test.executeQueryTest(null);
-            test.parseJsonTest(null);
+            test.executeQueryTest(null);
+            test.parseJsonTest("{ \"actions\": [ { \"action\": \"node\", \"arguments\": {\"node\":{ \"id\": 123, \"name\": \"unknown\", \"content\": \"kawayi\", \"active\":true, \"frame\":null }} }] }");
         }
     }
 
     public void executeQueryTest(String s) {
         String json = s == null ? DEFAULT_JSON : s;
-        queryService.executeQuery(new Owner(0, ""), json, input -> System.out.println(input.getSegment()));
+        queryService.executeQuery(new Owner(0, ""), json, input -> System.out.println(input.asJson()));
     }
 
     public void parseJsonTest(String s) throws IOException {
@@ -57,7 +58,7 @@ public class QueryTest {
         JsonNode actions = objectMapper.readTree(json).get("actions");
         for (JsonNode action : actions) {
             ActionRequest request = new ActionRequest();
-            QueryServiceImpl.parseJson(action, request);
+            queryService.parseActionJson(action, request);
             System.out.println(request.toString());
             System.out.println("--------------------------------");
         }
@@ -75,7 +76,7 @@ public class QueryTest {
                 chainSearchQuery(
                         new int[]{0},
                         "depth", 0, 1, true, true),
-                input -> System.out.println(input.getSegment())
+                input -> System.out.println(input.asJson())
         );
 
         queryService.executeQuery(
@@ -84,7 +85,7 @@ public class QueryTest {
                         new int[]{0},
                         new String[]{"dependent_on", "2*"},
                         "depth", 0, 1, true, true),
-                input -> System.out.println(input.getSegment())
+                input -> System.out.println(input.asJson())
         );
     }
 

@@ -1,6 +1,5 @@
 package photon.action;
 
-import photon.ExceptionListener;
 import photon.util.PiEstimateAggregator;
 import photon.util.Stopwatch;
 
@@ -17,7 +16,7 @@ public class ActionTest {
 
     public static void main(String... args) throws Exception {
         ActionTest actionTest = new ActionTest();
-        actionTest.piTest(1000, 2000);
+        actionTest.piTest(1000, 20000);
         Thread.sleep(2000);
         System.out.println(actionTest.count);
     }
@@ -42,7 +41,6 @@ public class ActionTest {
 
         public NumSupplier(int n) {
             this.n = n;
-            setImmediate(true);
         }
 
         @Override
@@ -66,8 +64,8 @@ public class ActionTest {
         for (int i = 0; i < trials; i++) {
             ActionTest.NumSupplier supplier = new ActionTest.NumSupplier(roundPerTrial);
             supplier
-                    .then(Transformation.of(test::calculatePi).setImmediate(true))
-                    .then(Transformation.of(aggregator::add).setImmediate(true));
+                    .then(Transformation.of(test::calculatePi))
+                    .then(Transformation.of(aggregator::add));
             actions.add(supplier);
         }
 
@@ -99,7 +97,7 @@ public class ActionTest {
         service.shutdown();
 
         // Warm up again
-        Thread.sleep(200);
+        Thread.sleep(2000);
         stopwatchForNative.start();
         sum = 0;
         for (int i = 0; i < 1; i++) {
@@ -137,7 +135,7 @@ public class ActionTest {
                 action.run();
                 action.finish();
                 Action a = action;
-                while ((a = a.successor()) != null && a.isImmediate()) {
+                while ((a = a.successor()) != null) {
                     action = a;
                     a.queue();
                     a.run();

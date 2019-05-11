@@ -1,26 +1,14 @@
 package photon.query;
 
 public class QueryResult {
-    private GraphInfo graphInfo;
-    private GraphInfo segmentInfo;
-    private SegmentGraph segment;
+    private long id;
+    private String content;
 
-    public QueryResult(GraphInfo graphInfo, GraphInfo segmentInfo, SegmentGraph segment) {
-        this.graphInfo = graphInfo;
-        this.segmentInfo = segmentInfo;
-        this.segment = segment;
+    public QueryResult(String content) {
+        this.content = content;
     }
 
-    public GraphInfo getGraphInfo() {
-        return graphInfo;
+    public String asJson() {
+        return content;
     }
-
-    public GraphInfo getSegmentInfo() {
-        return segmentInfo;
-    }
-
-    public SegmentGraph getSegment() {
-        return segment;
-    }
-
 }

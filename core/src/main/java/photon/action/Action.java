@@ -24,8 +24,7 @@ public abstract class Action {
     private final long id = _generateId();
     private Action predecessor;
     private Action successor;
-    private ActionState state = ActionState.NOT_STARTED;
-    private boolean immediate = false;
+    private volatile ActionState state = ActionState.NOT_STARTED;
 
     final long id() {
         return id;
@@ -80,20 +79,6 @@ public abstract class Action {
         return succ;
     }
 
-    /**
-     * {@code Action}s are NOT immediate by default, which means they will NOT be executed right away.
-     *
-     * @return {@code true} if the {@code Action} is immediate, {@code false} if not
-     */
-    public final boolean isImmediate() {
-        return immediate;
-    }
-
-    public final Action setImmediate(boolean b) {
-        immediate = b;
-        return this;
-    }
-
     public final ActionState state() {
         return state;
     }
@@ -134,5 +119,5 @@ public abstract class Action {
         return ActionState.ABORTED.equals(state);
     }
 
-    abstract void run();
+    protected abstract void run();
 }

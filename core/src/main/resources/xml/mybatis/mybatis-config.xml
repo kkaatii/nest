@@ -7,11 +7,11 @@
     <properties resource="mybatis.properties"/>
 
     <typeAliases>
-        <typeAlias alias="Node" type="photon.model.Node"/>
-        <typeAlias alias="Point" type="photon.model.Point"/>
-        <typeAlias alias="Arrow" type="photon.model.Arrow"/>
-        <typeAlias alias="FrameArrow" type="photon.model.FrameArrow"/>
-        <typeAlias alias="Owner" type="photon.model.Owner"/>
+        <typeAlias alias="node" type="photon.model.Node"/>
+        <typeAlias alias="point" type="photon.model.Point"/>
+        <typeAlias alias="arrow" type="photon.model.Arrow"/>
+        <typeAlias alias="framearrow" type="photon.model.FrameArrow"/>
+        <typeAlias alias="owner" type="photon.model.Owner"/>
     </typeAliases>
 
     <environments default="dev">

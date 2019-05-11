@@ -1,8 +1,6 @@
 package photon.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class Point {
 
@@ -12,10 +10,8 @@ public class Point {
     private String frame;
     private boolean active;
     private NodeType type;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date created;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updated;
+    private LocalDateTime created;
+    private LocalDateTime updated;
     private String digest;
 
     protected Point() {
@@ -57,11 +53,11 @@ public class Point {
         return type;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public Date getUpdated() {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
