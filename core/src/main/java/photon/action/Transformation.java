@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class Transformation<InputT, OutputT> extends Generator<OutputT> {
+public abstract class Transformation<InputT, OutputT> extends Producer<OutputT> {
 
     private OutputT output;
 
@@ -38,10 +38,10 @@ public abstract class Transformation<InputT, OutputT> extends Generator<OutputT>
     @Override
     protected final void run() {
         Action predecessor = predecessor();
-        if (predecessor == null || !(predecessor instanceof Generator)) {
+        if (predecessor == null || !(predecessor instanceof Producer)) {
             output = transform(null);
         } else {
-            output = transform(((Generator<? extends InputT>) predecessor).output());
+            output = transform(((Producer<? extends InputT>) predecessor).output());
         }
     }
 

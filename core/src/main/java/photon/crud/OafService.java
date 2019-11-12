@@ -9,6 +9,8 @@ import java.util.List;
  * access to.
  */
 public interface OafService {
+    int GUEST_OWNER_ID = 1;
+
     boolean authorized(AccessLevel accessLevel, Owner owner, String frame);
 
     List<String> getAccessibleFrames(Owner owner, AccessLevel access);

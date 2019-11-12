@@ -25,7 +25,7 @@ public class ActionScheduler {
         private static final ActionScheduler INSTANCE = new ActionScheduler(4);
     }
 
-    public static ActionScheduler getInstance() {
+    public static ActionScheduler assignScheduler() {
         return SingletonHelper.INSTANCE;
     }
 
@@ -76,6 +76,9 @@ public class ActionScheduler {
         if (stage.get() == WORKING) {
             Action a = action;
             Action predecessor;
+
+            // Trace upward till the head action
+            // TODO maybe can change to tracing till some action with a "cached" state
             while ((predecessor = a.predecessor()) != null) {
                 a = predecessor;
                 a.queue();

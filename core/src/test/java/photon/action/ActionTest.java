@@ -108,7 +108,7 @@ public class ActionTest {
         System.out.println("Elapsed time (milliseconds): " + stopwatchForNative.millis());
 
         // Test on Action
-        ActionScheduler scheduler = ActionScheduler.getInstance();
+        ActionScheduler scheduler = ActionScheduler.assignScheduler();
         System.out.println("---------------  Begin test on Action  ---------------");
         aggregator.reset();
         stopwatchForAction.start();

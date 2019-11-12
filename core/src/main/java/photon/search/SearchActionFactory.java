@@ -2,7 +2,7 @@ package photon.search;
 
 import photon.action.ActionFactory;
 import photon.action.ActionRequest;
-import photon.action.Generator;
+import photon.action.Producer;
 import photon.action.Transformation;
 import photon.crud.OafService;
 import photon.crud.CrudService;
@@ -15,9 +15,9 @@ import java.lang.reflect.Constructor;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static photon.query.Conventions.DICT_KEY_OWNER;
+import static photon.query.RequestKeys.OWNER;
 
-public class SearchActionFactory extends ActionFactory<Generator<GraphContainer>> {
+public class SearchActionFactory extends ActionFactory<Producer<GraphContainer>> {
     private static final String actionName = "search";
     private static final ConcurrentMap<String, Searcher> SEARCHER_MAP = new ConcurrentHashMap<>();
 
@@ -50,10 +50,10 @@ public class SearchActionFactory extends ActionFactory<Generator<GraphContainer>
     }
 
     @Override
-    public Generator<GraphContainer> createAction(ActionRequest request) {
+    public Producer<GraphContainer> createAction(ActionRequest request) {
         String searcherName = request.get("searcher", String.class);
         return Transformation.of(
-                () -> findSearcher(searcherName).search(request.get(DICT_KEY_OWNER, Owner.class), request)
+                () -> findSearcher(searcherName).search(request.get(OWNER, Owner.class), request)
         );
     }
 

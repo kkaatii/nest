@@ -3,12 +3,12 @@ package photon.action;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public abstract class Generator<T> extends Action {
+public abstract class Producer<T> extends Action {
     public abstract T output();
 
-    public static <V> Generator<V> of(Supplier<V> supplier) {
+    public static <V> Producer<V> of(Supplier<V> supplier) {
         Objects.requireNonNull(supplier);
-        return new Generator<V>() {
+        return new Producer<V>() {
             private V output;
 
             @Override

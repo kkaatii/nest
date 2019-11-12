@@ -7,8 +7,6 @@ import photon.model.Owner;
 import javax.inject.Inject;
 import java.util.List;
 
-import static photon.query.Conventions.*;
-
 /**
  * In the default implementation, the authenticity of the <tt>Owner</tt> object (i.e. whether the id and the nickname
  * truly exist and match with each other) is not checked as the owner info is always provided by the server-side

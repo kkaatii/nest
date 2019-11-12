@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static photon.query.Conventions.DICT_KEY_NODE;
-import static photon.query.Conventions.DICT_KEY_OWNER;
+import static photon.query.RequestKeys.NODE;
+import static photon.query.RequestKeys.OWNER;
 
-public class NodeActionFactory extends ActionFactory<Generator<Collection<Node>>> {
+public class NodeActionFactory extends ActionFactory<Producer<Collection<Node>>> {
     private static final String actionName = "node";
     private final CrudService crudService;
     private final OafService oafService;
@@ -26,9 +26,9 @@ public class NodeActionFactory extends ActionFactory<Generator<Collection<Node>>
     }
 
     @Override
-    public Generator<Collection<Node>> createAction(ActionRequest actionRequest) {
-        Node reqNode = actionRequest.get(DICT_KEY_NODE, Node.class);
-        Owner owner = actionRequest.get(DICT_KEY_OWNER, Owner.class);
+    public Producer<Collection<Node>> createAction(ActionRequest actionRequest) {
+        Node reqNode = actionRequest.get(NODE, Node.class);
+        Owner owner = actionRequest.get(OWNER, Owner.class);
         List<Node> nodes = new ArrayList<>();
         /*
          * Read a Node

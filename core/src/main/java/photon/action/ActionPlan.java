@@ -67,7 +67,7 @@ public class ActionPlan {
         }
     }
 
-    private class StageAdapter extends Generator<Object[]> {
+    private class StageAdapter extends Producer<Object[]> {
         private final Object[] storage;
         private final AtomicInteger counter;
 

@@ -87,7 +87,7 @@ public abstract class Action {
      * Beware when overriding the state-changing methods. Removing or making modification to the original functions
      * may lead to unpredictable {@code ActionScheduler} behavior.
      */
-    protected void finish() {
+    final void finish() {
         state = ActionState.FINISHED;
     }
 
@@ -95,7 +95,7 @@ public abstract class Action {
      * Beware when overriding the state-changing methods. Removing or making modification to the original functions
      * may lead to unpredictable {@code ActionScheduler} behavior.
      */
-    protected void queue() {
+    final void queue() {
         state = ActionState.QUEUEING;
     }
 
@@ -103,7 +103,7 @@ public abstract class Action {
      * Beware when overriding the state-changing methods. Removing or making modification to the original functions
      * may lead to unpredictable {@code ActionScheduler} behavior.
      */
-    protected void abort() {
+    final void abort() {
         state = ActionState.ABORTED;
     }
 

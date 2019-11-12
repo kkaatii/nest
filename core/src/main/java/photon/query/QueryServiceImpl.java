@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Future;
 
-import static photon.query.Conventions.*;
+import static photon.query.RequestKeys.*;
 
 public class QueryServiceImpl implements QueryService {
 
@@ -34,7 +34,7 @@ public class QueryServiceImpl implements QueryService {
     @Override
     public void executeQuery(Owner owner, String query, QueryCallback callback) {
         try {
-            JsonNode actionsNode = jsonMapper.readTree(query).get(DICT_KEY_ACTIONS);
+            JsonNode actionsNode = jsonMapper.readTree(query).get(ACTIONS);
             Action headAction = new Action() {
                 @Override
                 protected void run() {
@@ -44,7 +44,7 @@ public class QueryServiceImpl implements QueryService {
             Action tailAction = headAction;
             for (JsonNode jsonNode : actionsNode) {
                 ActionRequest request = new ActionRequest();
-                request.put(DICT_KEY_OWNER, Owner.class, owner);
+                request.put(OWNER, Owner.class, owner);
                 parseActionJson(jsonNode, request);
                 ActionFactory<?> factory = factories.get(request.actionName());
                 if (factory == null)
@@ -64,7 +64,7 @@ public class QueryServiceImpl implements QueryService {
                     })
                     .then(Transformation.of(callback::onSuccess));
 
-            ActionScheduler.getInstance().submit(headAction, callback);
+            ActionScheduler.assignScheduler().submit(headAction, callback);
         } catch (IOException ioe) {
             callback.onException(new FailedQueryException("JSON parsing failed because of ", ioe));
         } catch (Exception e) {
@@ -80,9 +80,9 @@ public class QueryServiceImpl implements QueryService {
     }
 
     void parseActionJson(JsonNode json, ActionRequest request) throws IOException {
-        String actionName = json.get(DICT_KEY_ACTION_NAME).asText();
+        String actionName = json.get(ACTION_NAME).asText();
         request.setActionName(actionName);
-        JsonNode arguments = json.get(DICT_KEY_ARGUMENTS);
+        JsonNode arguments = json.get(ARGUMENTS);
         if (arguments != null) {
             Iterator<String> fieldNames = arguments.fieldNames();
             while (fieldNames.hasNext()) {
@@ -131,11 +131,11 @@ public class QueryServiceImpl implements QueryService {
                         request.put(fieldName, Boolean.class, fieldNode.asBoolean());
                     } else if (fieldNode.isObject()) {
                         switch (fieldName) {
-                            case DICT_KEY_NODE:
-                                request.put(DICT_KEY_NODE, Node.class, jsonMapper.treeToValue(fieldNode, Node.class));
+                            case NODE:
+                                request.put(NODE, Node.class, jsonMapper.treeToValue(fieldNode, Node.class));
                                 break;
-                            case DICT_KEY_ARROW:
-                                request.put(DICT_KEY_ARROW, Arrow.class, jsonMapper.treeToValue(fieldNode, Arrow.class));
+                            case ARROW:
+                                request.put(ARROW, Arrow.class, jsonMapper.treeToValue(fieldNode, Arrow.class));
                                 break;
                             default:
                                 request.put(fieldName, String.class, jsonMapper.writeValueAsString(fieldNode));
